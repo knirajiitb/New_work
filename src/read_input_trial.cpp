@@ -90,7 +90,7 @@ int VASP;
 //using namespace std;
  
 
-int main()
+void read_input_trial()
 {
     //char s[180];
     cout.precision(6);                        //set precision
