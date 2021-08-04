@@ -90,7 +90,7 @@ int free_e,len_T,len_n;
 //using namespace std;
  
 
-int main()
+read_input_trial main()
 {
     //char s[180];
     cout.precision(6);                        //set precision
@@ -124,7 +124,7 @@ int main()
         string str;
         string ss;
         
-        ifstream in("ammcrinput_TRIAL.dat");
+        ifstream in("ammcrinput_TRIAL.dat"); // change input file name accordingly
         int count=0;
 
         while(!in.eof()){
