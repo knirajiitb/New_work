@@ -85,12 +85,12 @@ C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 double Bfield;
 
 int free_e,len_T,len_n;
-
+int VASP;
 
 //using namespace std;
  
 
-read_input_trial main()
+int main()
 {
     //char s[180];
     cout.precision(6);                        //set precision
@@ -124,7 +124,7 @@ read_input_trial main()
         string str;
         string ss;
         
-        ifstream in("ammcrinput_TRIAL.dat"); // change input file name accordingly
+        ifstream in("ammcrinput_TRIAL.dat");
         int count=0;
 
         while(!in.eof()){
@@ -290,7 +290,10 @@ read_input_trial main()
         }
         if(str=="LPOPFREQUENCY"){
           getline(in,ss);
-          cout<< "LONGITUDINAL POP FREQUENCY " <<ss<< " THz " <<endl;
+          stringstream tmp(ss);
+          tmp>> omega_LO;
+          cout<< "LONGITUDINAL POP FREQUENCY " <<omega_LO<< " THz " <<endl;
+          omega_LO = omega_LO*2*pi*1e12;
         }
         if(str=="ADP"){
           getline(in,ss);
@@ -413,7 +416,9 @@ read_input_trial main()
         }
         if(str=="VASP-INPUT"){
           getline(in,ss);
-          cout<< "VASP-INPUT  " <<ss<<endl;
+          stringstream tmp(ss);
+          tmp>> VASP;
+          cout<< "VASP-INPUT  " <<VASP<<endl;
         }
 
 
