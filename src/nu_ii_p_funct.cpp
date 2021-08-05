@@ -13,6 +13,14 @@ double nu_ii_p_funct(double k, int counter, double beta_constant, double epsilon
 	
 	double ii_p= iiA*iiB ;
 	
+	FILE *fid1;
+	fid1= fopen("nu_iip.dat");
+	for(int i=0;i<points;i++){
+		fprintf(energy_n[i], ii_p);
+	}
+	fclose(fid1);
+		
+	
 	return ii_p;
 	
 }
