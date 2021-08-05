@@ -17,7 +17,7 @@ double mu_overall_time(double e_f,double T,double coefficients[5][7],double kind
     {
         for (int counter = 0;counter<points-1;counter++)
         {            
-            g[counter] = (-1)*Efield[j]/(h_bar*nu_el[counter])*(df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa)*1e-7);
+            g[counter] = (-1)*Efield_time[j]/(h_bar*nu_el[counter])*(df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa)*1e-7);
             // The last number is the conversion from convensional units to cancel out to be unitless (as in g)
             //end
         }
@@ -36,7 +36,7 @@ double mu_overall_time(double e_f,double T,double coefficients[5][7],double kind
 
             for (int i = 0;i<=factor-1;i++)
             {
-                integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter]+i*dv)*g[counter]/Efield[j];
+                integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter]+i*dv)*g[counter]/Efield_time[j];
                         // =1/Efield*int[g(En)*DOS(En)*v(En)*dEn]
 
                     integral_denominator = integral_denominator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(f0(energy_n[counter],e_f,T)+i*df);
@@ -63,7 +63,7 @@ double mu_overall_time(double e_f,double T,double coefficients[5][7],double kind
         for (int counter = 0;counter<=points-2;counter++)
         {
             de = (energy_n[counter+1] - energy_n[counter]);
-            integral_numerator = integral_numerator+de*(Ds_n[counter]/volume1)*v_n[counter]*g[counter]/Efield[j];
+            integral_numerator = integral_numerator+de*(Ds_n[counter]/volume1)*v_n[counter]*g[counter]/Efield_time[j];
             
             //cout<<"counter = "<<counter<<"   integral_numerator = "<<integral_numerator<<endl;
                     // =1/Efield*int[g(En)*DOS(En)*v(En)*dEn]
@@ -73,7 +73,8 @@ double mu_overall_time(double e_f,double T,double coefficients[5][7],double kind
                     // =int[f(En)*DOS(En)*dEn]
         }
     }
-
+	
+	
     double mobility_overall = (1/3.0)*integral_numerator/integral_denominator;
     // According to equation (46) in Rode's book; units of (cm^2/V.s)
     // work out automatically from other conventional units of group velocity (cm$

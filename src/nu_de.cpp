@@ -6,7 +6,7 @@ double nu_de(double k,int counter,double T,double v)
 {
 
 // From equation (112) of Rode's book (book8):
-    double de =(k_B*T*pow(E_deformation_n,2)*k*k)/(3*pi*h_bar*h_bar*v*C_long)*(3-8*pow(c_n[counter],2)
+    double de =(k_B*T*pow(E_deformation,2)*k*k)/(3*pi*h_bar*h_bar*v*C_long)*(3-8*pow(c_n[counter],2)
                 +6*pow(c_n[counter],4))*1e10*1.60217657/1e8;
     /*
     if (kk==1)

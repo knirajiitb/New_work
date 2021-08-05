@@ -18,34 +18,30 @@ void pop_So(double T, double efef, int ii)
 
 	double average_dummy = sum/points;
 	//cout<<"average dummy = "<<average_dummy<<endl;
-
+	//cout<<"N_poph_atT   =   "<<N_poph_atT<<endl;
+	
 	for (int counter1 = 0;counter1 < points;counter1++)
 	{
-		double k_dum =	k_grid[counter1];
-		//f_dist(counter) = 1/(1+exp((energy(counter)-efef)/(k_B*T)))+g(counter);
+		//cout<<"counter = "<<counter1<<endl;
+		//cout<<"plus_index   =   "<<plus_index_pop[counter1]<<endl;
+		//cout<<"minus_index   =   "<<minus_index_pop[counter1]<<endl;
 
-		double arr[points];
-		for (int i=0;i<points;i++)
-		arr[i] = abs(k_grid[i] - kminus_grid[counter1]);
-		int minus_index =FindMinInd(arr,points);
-
-		for (int i=0;i<points;i++)
-		arr[i] = abs(k_grid[i] - kplus_grid[counter1]);
-		int plus_index =FindMinInd(arr,points);
-
-		// If POP scattering is included
-		if (scattering_mechanisms[1] == 1)
-		{
-
-			if ((lambda_o_minus_grid[counter1]==0) && (lambda_o_plus_grid[counter1]==0))
-			    S_o_grid[counter1] = average_dummy;
-			    // Just to avoid instability since S_o is the only denominator in g_LO and cannot be zero
-			else
-			    S_o_grid[counter1] = (N_poph_atT+1-f_dist[minus_index])*lambda_o_minus_grid[counter1] +
-			    (N_poph_atT+f_dist[plus_index])*lambda_o_plus_grid[counter1];
-
-
-		}
+		if ((lambda_o_minus_grid[counter1]==0) && (lambda_o_plus_grid[counter1]==0))
+		    S_o_grid[counter1] = average_dummy;
+		    // Just to avoid instability since S_o is the only denominator in g_LO and cannot be zero
+		else
+		    S_o_grid[counter1] = (N_poph_atT+1-f_dist[minus_index_pop[counter1]])*lambda_o_minus_grid[counter1] +
+		    (N_poph_atT+f_dist[plus_index_pop[counter1]])*lambda_o_plus_grid[counter1];
+		/*
+		cout<<"(N_poph_atT+1-f_dist[minus_index_pop[counter1]])  = "<<(N_poph_atT+1-f_dist[minus_index_pop[counter1]])<<endl;
+		cout<<"(N_poph_atT+f_dist[plus_index_pop[counter1]])   =   "<<(N_poph_atT+f_dist[plus_index_pop[counter1]])<<endl;
+		cout<<"lambda_o_plus_grid[counter1]   = "<<lambda_o_plus_grid[counter1]<<endl;
+		cout<<"lambda_o_minus_grid[counter1] = "<<lambda_o_minus_grid[counter1]<<endl;
+		cout<<"f_dist[plus_index_pop[counter1]]  = "<<f_dist[plus_index_pop[counter1]]<<endl;
+		cout<<"f_dist[minus_index_pop[counter1]]  = "<<f_dist[minus_index_pop[counter1]]<<endl;
+		cout<<"S_o_grid[counter1]  =    "<<S_o_grid[counter1]<<endl;
+		getchar();
+		*/
 	}
 
         for (int counter1=0;counter1<points;counter1++)
