@@ -140,6 +140,7 @@ void fitting_band();
 void solve_g(double T);
 void save_results();
 void initialize_array();
+void pop_So(double T, double efef, int ii);
 
 /*
 void find_cbm(int spinorbit);
@@ -189,16 +190,26 @@ extern int a11[2],b11[2];
 
 double mu_overall_time(double e_f,double T,double coefficients[5][7],double kindex[], double g[],double nu_el[],int points,int aa[], int j);
 void conductivity_time(double T, int j);
-void pop_So(double T, double efef, int ii);
+void conductivity_freq();
+void conductivity_with_freq(double T);
 
-extern double Efield[limit1];  // unit cgs V/cm
-extern double omega_s;    // unit 1/s
+
+extern double Efield_time[limit1];  // unit cgs V/cm
+extern double omega_s, freq[30], initial, tau;    // unit 1/s
+
+extern double mobility_freqr2[30], mobility_freqi2[30], sigma_freqr2[30], sigma_freqi2[30];
+extern double mobility_drude_freqr2[30], mobility_drude_freqi2[30], sigma_drude_freqr2[30], sigma_drude_freqi2[30];
+
+extern int len_freq;
 extern double J_time[limit1], sigma_time[limit1], mobility_time[limit1];
+extern double J_freqr[30], sigma_freqr[30], Efield_freqr[30], J_freqi[30], sigma_freqi[30], Efield_freqi[30];
 extern int time_variation;
 extern int time_limit;
 extern double g_time[limit2],g_time_old[limit2];
+extern int freq_variation;
 
 //-----------------------------------------------------------------------------------
+
 
 extern int degree1,length_fraction;
 extern double fraction[4];
@@ -222,7 +233,7 @@ extern int points, points1, points2;
 
 extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[10], iv_number, fitting_1, fitting_2, fitting_3;
 
-extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation_n, C_long, C_trans, c_bar, C_11, C_12, C_44,
+extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation, C_long, C_trans, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 
 extern double Bfield;
@@ -233,7 +244,7 @@ extern double gH_LO[limit2], hH_LO[limit2], S_i_grid_g[limit2], S_i_grid_h[limit
 extern double S_iLO_grid_g[limit2], S_iLO_grid_h[limit2], S_o_gridH[limit2], S_o_grid_totalH[limit2];
             
 extern string  type;
-extern int free_e;
+extern int free_e, flag[50];
 extern int len_T,len_n;
 //----------------------------find_cbm_vbm-------------------------------------------------------------------------
 extern double ecbm,evbm,kcbm1[3],kvbm1[3];
@@ -252,7 +263,7 @@ extern double electric_driving_force[limit2], thermal_driving_force[limit2];
 
 extern double df0dk_grid[limit2], f0x1_f0[limit2], electric_driving_force[limit2], thermal_driving_force[limit2], f_dist[limit2];
 
-extern double kplus_grid[limit2], kminus_grid[limit2];
+extern double kplus_grid_pop[limit2], kminus_grid_pop[limit2];
 
 extern double betaplus_grid[limit2], betaminus_grid[limit2];
 
@@ -270,6 +281,7 @@ extern double N_poph_atT, N_e[limit4], df0dz_integral_n, beta_constant;
 extern double nu_deformation[limit2], nu_piezoelectric[limit2], nu_ionizedimpurity[limit2], nu_dislocation[limit2], nu_alloy[limit2];
 extern double nu_neutralimpurity[limit2], nu_iv[limit2][limit4], nu_iv_total[limit2], nu_el[limit2], nu_npop[limit2][limit5];
 extern double nu_npop_total[limit2];
+extern double denom[limit2];
 
 extern double nu_deformation_p[limit2][2][2], nu_ionizedimpurity_p[limit2][2][2], nu_el_p[limit2][2][2];
 extern double nu_npop_p[limit2][2][2], nu_So_p[limit2][2][2];
@@ -277,7 +289,8 @@ extern double nu_npop_p[limit2][2][2], nu_So_p[limit2][2][2];
 extern double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
 extern double gH_LO[limit2], hH_LO[limit2], S_i_grid_g[limit2], S_i_grid_h[limit2];
 extern double S_iLO_grid_g[limit2], S_iLO_grid_h[limit2], S_o_gridH[limit2], S_o_grid_totalH[limit2];
- 
+
+extern int plus_index_pop[limit2], minus_index_pop[limit2]; 
 
 extern double g[limit2], g_rta[limit2], g_old[limit2], g_LO[limit2], g_iv[limit2], g_th[limit2], g_th_old[limit2], g_LO_th[limit2];
 extern double S_o_grid[limit2], S_o_grid_total[limit2], S_i_grid[limit2], S_iLO_grid[limit2], S_i_th_grid[limit2], S_iLO_th_grid[limit2];

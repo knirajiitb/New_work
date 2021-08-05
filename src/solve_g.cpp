@@ -42,8 +42,6 @@ void solve_g(double T)
 		S_iLO_grid_g[i]=0;
 		S_iLO_grid_h[i]=0;
 
-
-
 	     }
 	     	
             for(int counter=0;counter<points;counter++)
@@ -82,36 +80,23 @@ void solve_g(double T)
 
                 for (int counter1 = 0;counter1 < points;counter1++)
                 {
-                    double k_dum =	k_grid[counter1];
-                    //f_dist(counter) = 1/(1+exp((energy(counter)-E_F)/(k_B*T)))+g(counter);
-
-                    //f_dist_th(counter)= 1/(1+exp((energy(counter)-E_F)/(k_B*T)))+g_th(counter);
-
-                    double arr[points];
-                    for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kminus_grid[counter1]);
-                    int minus_index =FindMinInd(arr,points);
-
-                    for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kplus_grid[counter1]);
-                    int plus_index =FindMinInd(arr,points);
 
                     // If POP scattering is included
                     if (scattering_mechanisms[1] == 1)
                     {
-                        S_i_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g[minus_index]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g[plus_index];
+                        S_i_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g[minus_index_pop[counter1]]+
+                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g[plus_index_pop[counter1]];
 
-                        S_iLO_grid[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO[minus_index]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO[plus_index];
-
-
-                        S_i_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_th[minus_index]+
-                        (N_poph_atT + 1 - f_dist[counter1])*lambda_i_plus_grid[counter1]*g_th[plus_index];
+                        S_iLO_grid[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO[minus_index_pop[counter1]]+
+                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO[plus_index_pop[counter1]];
 
 
-                        S_iLO_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO_th[minus_index]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO_th[plus_index];
+                        S_i_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_th[minus_index_pop[counter1]]+
+                        (N_poph_atT + 1 - f_dist[counter1])*lambda_i_plus_grid[counter1]*g_th[plus_index_pop[counter1]];
+
+
+                        S_iLO_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO_th[minus_index_pop[counter1]]+
+                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO_th[plus_index_pop[counter1]];
 
                             
                             /*
@@ -121,7 +106,7 @@ void solve_g(double T)
                             cout<<"S_i_th_grid[counter1] =    "<<S_i_th_grid[counter1]<<endl;
                             cout<<"S_iLO_th_grid[counter1] =   "<<S_iLO_th_grid[counter1]<<endl;
 			     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-			     cout<<"f_dist[minus_index]   "<<f_dist[minus_index]<<endl;
+			     cout<<"f_dist[minus_index_pop[counter1]]   "<<f_dist[minus_index_pop[counter1]]<<endl;
 			     cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
 			     cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
 			     getchar();
@@ -133,8 +118,8 @@ void solve_g(double T)
 
                 for (int counter1=0;counter1<points;counter1++)
                 {
-                    g[counter1] = (S_i_grid[counter1]+electric_driving_force[counter1])/(S_o_grid_total[counter1] + nu_el[counter1]);
-                    g_th[counter1] = (S_i_th_grid[counter1] + thermal_driving_force[counter1])/(S_o_grid_total[counter1] + nu_el[counter1]);
+                    g[counter1] = (S_i_grid[counter1]+electric_driving_force[counter1])/(denom[counter1]);
+                    g_th[counter1] = (S_i_th_grid[counter1] + thermal_driving_force[counter1])/(denom[counter1]);
                 }
 
                 // If POP scattering is included
@@ -199,31 +184,21 @@ void solve_g(double T)
 		     		
 		        for (int counter1 = 0;counter1 < points;counter1++)
 		        {
-		            double k_dum =	k_grid[counter1];
-
-		            double arr[points];
-		            for (int i=0;i<points;i++)
-		                arr[i] = abs(k_grid[i] - kminus_grid[counter1]);
-		            int minus_index =FindMinInd(arr,points);
-
-		            for (int i=0;i<points;i++)
-		                arr[i] = abs(k_grid[i] - kplus_grid[counter1]);
-		            int plus_index =FindMinInd(arr,points);
 
 		            // If POP scattering is included
 		            if (scattering_mechanisms[1] == 1)
 		            {
-		                S_i_grid_g[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*gH[minus_index]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH[plus_index];
+		                S_i_grid_g[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*gH[minus_index_pop[counter1]] +
+		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH[plus_index_pop[counter1]];
 
-		                S_iLO_grid_g[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*gH_LO[minus_index]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH_LO[plus_index];
+		                S_iLO_grid_g[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*gH_LO[minus_index_pop[counter1]]+
+		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH_LO[plus_index_pop[counter1]];
 
-		                S_i_grid_h[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*hH[minus_index]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH[plus_index];
+		                S_i_grid_h[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*hH[minus_index_pop[counter1]]+
+		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH[plus_index_pop[counter1]];
 
-		                S_iLO_grid_h[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*hH_LO[minus_index]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH_LO[plus_index];
+		                S_iLO_grid_h[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*hH_LO[minus_index_pop[counter1]]+
+		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH_LO[plus_index_pop[counter1]];
 
 
 		                    /*		
@@ -233,7 +208,7 @@ void solve_g(double T)
 		                    cout<<"S_i_grid_h[counter1] = "<<S_i_grid_h[counter1]<<endl;
 		                    cout<<"S_iLo_grid_h[counter1] = "<<S_iLO_grid_h[counter1]<<endl;
 				     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-				     cout<<"f_dist[minus_index]   "<<f_dist[minus_index]<<endl;
+				     cout<<"f_dist[minus_index_pop[counter1]]   "<<f_dist[minus_index_pop[counter1]]<<endl;
 				     cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
 				     cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
 				     getchar();
@@ -248,13 +223,13 @@ void solve_g(double T)
 		        for (int counter1=0;counter1<points;counter1++)
 		        {
 
-		        	beta1[counter1] = e*(v_n[counter1]*0.01)*Bfield/((h_bar*e)*(k_grid[counter1]*pow(10,9)) * 				(S_o_grid_total[counter1] + nu_el[counter1]));
+		        	beta1[counter1] = e*(v_n[counter1]*0.01)*Bfield/((h_bar*e)*(k_grid[counter1]*pow(10,9)) * 				(denom[counter1]));
 		        	
 		        	beta1_LO[counter1] = e*(v_n[counter1]*0.01)*Bfield/((h_bar*e)*(k_grid[counter1]*pow(10,9)) * 				(S_o_grid_total[counter1]));
 
-		            	gH[counter1] = (S_i_grid_g[counter1] + electric_driving_force[counter1] + beta1[counter1] * 			S_i_grid_h[counter1])/((S_o_grid_total[counter1] + nu_el[counter1])*(1 + beta1[counter1]*beta1[counter1]));
+		            	gH[counter1] = (S_i_grid_g[counter1] + electric_driving_force[counter1] + beta1[counter1] * 			S_i_grid_h[counter1])/((denom[counter1])*(1 + beta1[counter1]*beta1[counter1]));
 		            	
-		            	hH[counter1] = (S_i_grid_h[counter1] - beta1[counter1] * electric_driving_force[counter1] -                    	 			beta1[counter1] * S_i_grid_g[counter1])/((S_o_grid_total[counter1] + nu_el[counter1]) * (1 + 				beta1[counter1]*beta1[counter1]));
+		            	hH[counter1] = (S_i_grid_h[counter1] - beta1[counter1] * electric_driving_force[counter1] -                    	 			beta1[counter1] * S_i_grid_g[counter1])/((denom[counter1]) * (1 + 				beta1[counter1]*beta1[counter1]));
 
 		            	gH_LO[counter1] = (S_iLO_grid_g[counter1] + electric_driving_force[counter1] + beta1_LO[counter1] * 			S_iLO_grid_h[counter1])/((S_o_grid_total[counter1] )*(1 + beta1_LO[counter1]*beta1_LO[counter1]));
 		            	

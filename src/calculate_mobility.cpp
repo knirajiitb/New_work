@@ -8,7 +8,8 @@ void calculate_mobility(double T, int ii)
             cout.setf(ios::scientific);
 
             cout<<endl;
-	
+	FILE *fid;
+	char line[1000];
 	if(type=="n")
 	{	
 	//--------------------------- conductivity with time ------------------------------------------------------------------------
@@ -16,25 +17,59 @@ void calculate_mobility(double T, int ii)
 		
 		if(time_variation==1)
 		{
+			
+			double t, dt;
+
+			//tau = 75e-15;
+			//initial = +0.8e-12;
+			dt = 1/omega_s; 
+
+			fid = fopen("Efield_time.dat", "r");
+			if (fid==NULL)
+			{
+			    if (fid==NULL)
+			    {
+				cout<<"Efield_time.dat file is not present. Exit from program";
+				exit(EXIT_FAILURE);
+			    }
+			}
+			fgets(line, 1000, (FILE*)fid);   // pass first line
+			double dummy;
+			
 			for(int i=0;i<time_limit;i++)
 			{
+				//t = initial + i*dt + dt;
+				//t = initial + i*dt ;
 				cout<<"i = "<<i<<endl;
-				Efield[i] = 1000;   // unit V/cm
+				//Efield_time[i] = 1000;   // unit V/cm
+				//Efield_time[i] = -100*exp(-t*t/(tau*tau))*(2*t*t/(tau*tau) - 1);   // unit V/cm
+						
+				fgets(line, 1000, (FILE*)fid);   
+				sscanf(line, "%lf %lf ", &dummy, &Efield_time[i]);  
+				
 				conductivity_time(T,i);
 			}
 			
+			
+			//conductivity_freq();
+			
 			FILE *fid1;
 			fid1 = fopen("time_variation.dat","w");
-			fprintf(fid1,"#index	time		mobility(cm^2/(V-s))  sigma(S/cm)  J(A/cm^2) \n");	
+			fprintf(fid1,"#index	time		mobility(cm^2/(V-s))  sigma(S/cm)  J(A/cm^2)      Efield (V/cm)\n");	
 			{	
 			for (int i = 0; i < time_limit; i++)
-				fprintf(fid1,"%d	%e	%e	%e	%e \n", i+1, ((i+1)/omega_s), mobility_time[i], sigma_time[i], J_time[i]);
+				fprintf(fid1,"%d	%e	%e	%e	%e	%e \n", i+1, ((i+1)/omega_s), mobility_time[i], sigma_time[i], J_time[i], Efield_time[i]);
 			fclose(fid1);
 
 			}	
-		}
-
+		}   // end of time variation
+		
+		
 	//--------------------------- conductivity with time completed ----------------------------------------------------------
+		/*
+		if(freq_variation==1)
+			conductivity_with_freq(T);
+		*/
 
 		    // ionized impurity scattering
 		    if (scattering_mechanisms[0]==1)
@@ -107,7 +142,7 @@ void calculate_mobility(double T, int ii)
 		            a =E_F;
 		        else
 		            a=0;
-		        mobility_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation_n*E_deformation_n*
+		        mobility_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation*E_deformation*
 		                            pow((a+h_bar*omega_TO),0.5) ) * 1e4*pow(e,0.5);
 		                            //Last coeff. is to convert to cm2/V.s
 		        //nu_to(:) = e/(m*m_e*mobility_to)*1e4;
@@ -285,7 +320,7 @@ void calculate_mobility(double T, int ii)
 		            a =E_F;
 		        else
 		            a=0;
-		        mobility_hall_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation_n*E_deformation_n*
+		        mobility_hall_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation*E_deformation*
 		                            pow((a+h_bar*omega_TO),0.5) ) * 1e4*pow(e,0.5);
 		                            //Last coeff. is to convert to cm2/V.s
 		        //nu_to(:) = e/(m*m_e*mobility_to)*1e4;
