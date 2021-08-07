@@ -16,7 +16,7 @@ double nu_ii_p_funct(double k, int counter, double beta_constant, double epsilon
 	FILE *fid1;
 	fid1= fopen("nu_iip.dat","w");
 	for(int i=0;i<points;i++){
-		fprintf(fid1,"%e     %e\n", energy_n[i], ii_p);
+		fprintf(fid1,"%e     %e\n", energy_p[i], ii_p);
 	}
 	fclose(fid1);
 		
