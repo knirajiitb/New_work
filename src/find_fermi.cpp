@@ -20,7 +20,7 @@ void find_fermi(double n, double T, int ii)
     {
         if (i==1)
         {
-		E1 = x;
+		E1 = x;			
 		e_f = E1;
         }
         else if (i==2)
