@@ -97,7 +97,7 @@ void conductivity_time(double T, int j)
 	for (int counter1=0;counter1<points;counter1++)
 		g_time_old[counter1] = g_time[counter1];
 
-
+	/*
 		FILE *fid1;
 		fid1 = fopen("g_time.txt","w");
 		fprintf(fid1,"#index	1	2	3	4	5	6	7    8     9    10 \n" );
@@ -111,9 +111,10 @@ void conductivity_time(double T, int j)
 			fprintf(fid1,"\n");
 		}
 		fclose(fid1);
-		cout<<"file saved"<<endl;
-		getchar();
-
+		//cout<<"file saved"<<endl;
+		//getchar();
+	*/
+	
 	/*
 		if(j==0)
 		{

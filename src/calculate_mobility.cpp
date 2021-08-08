@@ -23,7 +23,7 @@ void calculate_mobility(double T, int ii)
 			//tau = 75e-15;
 			//initial = +0.8e-12;
 			dt = 1/omega_s; 
-
+			/*
 			fid = fopen("Efield_time.dat", "r");
 			if (fid==NULL)
 			{
@@ -35,17 +35,18 @@ void calculate_mobility(double T, int ii)
 			}
 			fgets(line, 1000, (FILE*)fid);   // pass first line
 			double dummy;
+			*/
 			
 			for(int i=0;i<time_limit;i++)
 			{
 				//t = initial + i*dt + dt;
 				//t = initial + i*dt ;
 				cout<<"i = "<<i<<endl;
-				//Efield_time[i] = 1000;   // unit V/cm
+				Efield_time[i] = 1000;   // unit V/cm
 				//Efield_time[i] = -100*exp(-t*t/(tau*tau))*(2*t*t/(tau*tau) - 1);   // unit V/cm
 						
-				fgets(line, 1000, (FILE*)fid);   
-				sscanf(line, "%lf %lf ", &dummy, &Efield_time[i]);  
+				//fgets(line, 1000, (FILE*)fid);   
+				//sscanf(line, "%lf %lf ", &dummy, &Efield_time[i]);  
 				
 				conductivity_time(T,i);
 			}
