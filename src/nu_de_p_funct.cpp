@@ -12,22 +12,31 @@ void nu_de_p_funct()
 	double v;
 	double k_dum;
 	double nu_deform[limit2]={0};
-	cout<<"trial,I'M getting compiled"<<endl;
+	//cout<<"trial,I'M getting compiled nicely"<<endl;
 	
-
-	for (int counter = 0;counter<points;counter++)
+	//cout<< "cLONG = "<<C_long<<endl;
+	//cout<<"E = "<<E_deformation<<endl;
+	for(int i=0;i<20;i++)
+	{	
+		T= T_array[i];
+		cout<< "temp  "<<T<< endl;
+		for (int counter = 0;counter<points;counter++)
 	    		{
 			        k_dum = k_grid[counter];
-			        v= v_p[counter];					
+			        v= v_p[counter];
+			        //cout<<"v_p = "<< v<<endl;
+				//cout<<" k_dum ="<< k_dum<<endl;					
 	            		//nu_deform[counter] = nu_de_p_funct(k_dum,T);
+	            		
 	            		nu_deform[counter] = (k_B*T*pow(E_deformation,2)*k_dum*k_dum)/(2*pi*h_bar*h_bar*C_long*v)*1e10*1.60217657/1e8;
 				//cout<<"nu_deformation_p[counter] =  "<<nu_deform[counter]<<endl;
+			}
 			}
 	
 		FILE *fid1;
 		fid1= fopen("ADPscatt.dat","w");
 			for(int i=0;i<points;i++){
-			fprintf(fid1,"%e     %e\n", energy_p[i], nu_deform[i]);
+			fprintf(fid1,"%e      %e\n", energy_p[i], nu_deform[i]);
 			}
 		fclose(fid1);
 			
