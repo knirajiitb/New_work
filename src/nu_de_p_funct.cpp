@@ -16,7 +16,7 @@ void nu_de_p_funct()
 	
 	//cout<< "cLONG = "<<C_long<<endl;
 	//cout<<"E = "<<E_deformation<<endl;
-	for(int i=0;i<20;i++)
+	for(int i=0;i<21;i++)
 	{	
 		T= T_array[i];
 		//cout<< "temp  "<<T<< endl;
