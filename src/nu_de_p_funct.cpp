@@ -19,7 +19,7 @@ void nu_de_p_funct()
 	for(int i=0;i<20;i++)
 	{	
 		T= T_array[i];
-		cout<< "temp  "<<T<< endl;
+		//cout<< "temp  "<<T<< endl;
 		for (int counter = 0;counter<points;counter++)
 	    		{
 			        k_dum = k_grid[counter];
