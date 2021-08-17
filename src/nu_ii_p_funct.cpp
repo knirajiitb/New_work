@@ -4,8 +4,7 @@
 // ionized imprity scattering calculation //---- equation 3.29 of Ramu Thesis
 void nu_ii_p_funct()
 {
-	double T;
-	int T_loop;
+	
 	double v;
 	double k_dum;
 	double ii_p[limit2]={0};
@@ -14,8 +13,11 @@ void nu_ii_p_funct()
 	double iiB;
 	double iiA;
 	double epsilon_lf= epsilon_s[0];
-	//double beta_constant =  0.140607315390570;
+	double beta_constant =  0.140607315390570;
 	
+	/*
+	double T;
+	int T_loop;
 	double beta_constant;
 	double k , de, k_step;
     	double integral = 0;
@@ -48,7 +50,8 @@ void nu_ii_p_funct()
 		    beta_constant = bet*1e-9;
 		    //converted from 1/m to 1/nm
 		    cout<<"screening length is ="<<beta_constant<<endl;
-		    
+		    */
+			    
 		for (int counter = 0;counter<points;counter++)
 	    		{
 			        k_dum = k_grid[counter];
@@ -63,7 +66,7 @@ void nu_ii_p_funct()
 				iiA= (pow(e,4)* abs(N_ii))/(32*pi*k_dum*k_dum*epsilon_0*epsilon_lf*epsilon_lf*epsilon_0*v*pow(h_bar,2));
 				iiB = ((3*A -1)*(3*A -1)*log(B) - 18*A +12 -8/(A+1));
 				
-				ii_p[counter]= iiA*iiB ;
+				ii_p[counter]= iiA*iiB*1e27 ;
 				
 				
 				
