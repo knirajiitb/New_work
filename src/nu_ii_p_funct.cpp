@@ -56,9 +56,9 @@ void nu_ii_p_funct()
 				A= 0.5*(2 + (beta_constant*beta_constant/(k_dum*k_dum)));
 				
 				B= abs((A+1)/(A-1));
+				
+				//cout<<"A = "<<A<<endl;
 				//cout<<"B = "<<B<<endl;
-				cout<<"A = "<<A<<endl;
-				cout<<"B = "<<B<<endl;
 				
 				iiA= (pow(e,4)* abs(N_ii))/(32*pi*k_dum*k_dum*epsilon_0*epsilon_lf*epsilon_lf*epsilon_0*v*pow(h_bar,2));
 				iiB = ((3*A -1)*(3*A -1)*log(B) - 18*A +12 -8/(A+1));
