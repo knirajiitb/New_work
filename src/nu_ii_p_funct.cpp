@@ -15,7 +15,7 @@ void nu_ii_p_funct()
 	double epsilon_lf= epsilon_s[0];
 	double beta_constant =  0.140607315390570;
 	
-	/*
+	/*    // This segment is from beta.cpp to calculate inverse screening length for p-type
 	double T;
 	int T_loop;
 	double beta_constant;
