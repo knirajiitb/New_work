@@ -17,7 +17,7 @@ void nu_de_p_funct(int T_loop)
 		v= v_p[counter];
 			        
 	        nu_deformation_p[counter][0][0] = (k_B*T*pow(E_deformation,2)*k_dum*k_dum)/(2*pi*h_bar*h_bar*C_long*v)*1e10*1.60217657/1e8; // equation taken from ramu thesis equation 3.32a 
-		//cout<<"nu_deformation_p[counter] =  "<<nu_deform[counter]<<endl;
+		//cout<<"nu_deformation_p[counter][0][0] =  "<<nu_deformation_p[counter][0][0]<<endl;
 		// for unit conversion  *1e10*1.60217657/1e8
 	    }
 			
