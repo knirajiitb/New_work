@@ -624,7 +624,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// POP scattering
 	        if (scattering_mechanisms[1]==1)
 		{
-			nu_So_p_funct();
+			nu_So_p_funct(T, T_loop, omega_LO);
 		}
 			
 		// npop scattering
