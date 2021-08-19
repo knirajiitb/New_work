@@ -56,7 +56,7 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	 	 		
 		B_minus= (((1+3*C_minus*C_minus)/2)*log(abs((1+C_minus)/(1-C_minus))) - 3*C_minus);		//from equation 3.22 of ramu thesis
 		B_plus= (((1+3*C_plus*C_plus)/2)*log(abs((1+C_plus)/(1-C_plus))) - 3*C_plus);		//from equation 3.22 of ramu thesis
-		int j = 
+		 
 		pop1= (e*e*omega_LO/(16*pi*h_bar*v*epsilon_0))*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop]);
 		pop1= pop1/e; // for unit conversion of h_bar
 		pop2= B_plus*(N_op*(1-f0(energy_p[plus_index_pop_p[counter]],efef_p,T)) + (N_op+1)*f0(energy_p[plus_index_pop_p[counter]],efef_p,T));
