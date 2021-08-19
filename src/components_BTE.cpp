@@ -618,7 +618,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// ionized impourity scattering
 	        if (scattering_mechanisms[0]==1)
 	        {
-	        	nu_ii_p_funct();
+	        	nu_ii_p_funct(T_loop);
 		}
 		
 		// POP scattering
@@ -636,7 +636,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// acoustic scattering
 		if (scattering_mechanisms[3]==1)
 		{
-			nu_de_p_funct();
+			nu_de_p_funct(T_loop);
 		}
 		//*/
 			
