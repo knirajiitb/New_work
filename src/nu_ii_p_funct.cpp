@@ -33,6 +33,8 @@ void nu_ii_p_funct(int T_loop)
 		if (free_e ==0)  // DOSCAR is used
 		{
 		   integral_1 = integral_1+ de_p*((1e6*Ds_p[counter])/volume1)*f0(energy_p[counter],efef_p,T)*(1-f0(energy_p[counter],efef_p,T));
+		   // volume unit is cm^3
+		   
 		   //cout<< "integral doscar = "<<integral_1<<endl;
 		   // unit is (1/m)^3; 1e6 is multiplied to convert volume from (1/cm)^3 to (1/m)^3
 		}
@@ -50,15 +52,15 @@ void nu_ii_p_funct(int T_loop)
 	double beta = (e*e/(epsilon_s[T_loop]*epsilon_0*(k_B*e)*T)*integral_1);   // unit (1/m)^2		    								
 	beta_const = pow(beta,0.5);   // unit (1/m) 
 		    
-	//beta_const = beta_const*1e-9;
+	beta_const = beta_const*1e-9;
 	//converted from 1/m to 1/nm
 		   
-	cout<<"screening length is ="<<beta_const<<endl;
+	cout<<"screening length is ="<<beta_const<<" 1/nm"<<endl;
 		    
 	for (int counter = 0;counter<points;counter++)
 	   {
 		k_dum = k_grid[counter];
-		v= v_p[counter];
+		v= v_p[counter]/100;   // divided with 100 to convert from cm/s to m/s
 		
 		A= 0.5*(2 + (beta_const*beta_const/(k_dum*k_dum)));		
 		B= abs((A+1)/(A-1));
@@ -66,8 +68,11 @@ void nu_ii_p_funct(int T_loop)
 		//cout<<"A = "<<A<<endl;
 		//cout<<"B = "<<B<<endl;
 				
-		iiA= (pow(e,4)* abs(N_ii))/(32*pi*k_dum*k_dum*epsilon_0*epsilon_lf*epsilon_lf*epsilon_0*v*pow(h_bar,2));
-		iiA= iiA*10e-10/(e*e);			// 10e-10/e*e  is for unit conversion
+
+		// N_ii is convterd from 1/cm^3 to 1/m^3
+		// k-dum is converted from 1/nm to 1/m
+		// h_bar is multiplied with e to convert from eV-s to J-s
+		iiA= (pow(e,4)* abs(N_ii*1e6))/(32*pi*(k_dum*k_dum*1e18)*epsilon_0*epsilon_0*epsilon_lf*epsilon_lf*v*pow(h_bar*e,2));
 		
 		iiB = abs((3*A -1)*(3*A -1)*log(B) - 18*A +12 -8/(A+1));
 				
@@ -86,6 +91,4 @@ void nu_ii_p_funct(int T_loop)
 	}
 	fclose(fid1);
 		
-				
-	
 }
