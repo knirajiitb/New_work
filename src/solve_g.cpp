@@ -49,7 +49,6 @@ void solve_g(double T)
                 result_g[counter][0] = k_grid[counter];
                 result_g_LO[counter][0] = k_grid[counter];
                 result_g_th[counter][0] = k_grid[counter];
-                result_f[counter][0] = k_grid[counter];
             }
 
 
@@ -59,24 +58,11 @@ void solve_g(double T)
 		/*
                 for (int counter1=0;counter1<points;counter1++)
                 {
-		     //f_dist_temp[counter1] = f0(energy_n[counter1],E_F,T) ;
-		     	
-                    //f_dist_temp[counter1] = f0(energy_n[counter1],E_F,T) + g[counter1];
-                    //f_dist_temp_th[counter1] = f0(energy_n[counter1],E_F,T) + g_th[counter1];
                     //cout<<"energy_n[counter1] = "<<energy_n[counter1]<<endl;
                     //cout<<"g[counter1] = "<<g[counter1]<<endl;
-                    //cout<<"f_dist_temp[counter1] = "<<f_dist_temp[counter1]<<endl;
-                    //cout<<"f_dist_temp_th[counter1] = "<<f_dist_temp_th[counter1]<<endl;
                     //getchar();
                 }
 		*/
-
-                double sum=0;
-                for (int counter1 = 0;counter1 < points;counter1++)
-                    sum = sum +  S_o_grid[counter1];
-
-                double average_dummy = sum/points;
-                //cout<<"average dummy = "<<average_dummy<<endl;
 
                 for (int counter1 = 0;counter1 < points;counter1++)
                 {
@@ -134,8 +120,6 @@ void solve_g(double T)
                     result_g[counter1][iteration+1] = g[counter1];
 
                     result_g_th[counter1][iteration+1] = g_th[counter1];
-
-                    //result_f[counter1][iteration+1] = f_dist_temp[counter1];
 
                 //fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
 
@@ -285,8 +269,158 @@ void solve_g(double T)
 		    //getchar();
 			//----------------------------------------------------------------------------------
 	}
-	else
+	else    // for p type
 	{
+		for (int i=0;i<points;i++)
+		{
+			g[i]=0;
+
+			g_rta[i]=0;
+
+			g_old[i]=0;
+			g_LO[i]=0;
+			g_iv[i]=0;
+
+			g_th[i]=0;
+			g_th_old[i]=0;
+			g_LO_th[i]=0;
+
+
+			S_i_grid[i]=0;
+			S_iLO_grid[i]=0;
+			S_i_th_grid[i]=0;
+			S_iLO_th_grid[i]=0;
+
+			/*		
+			// for magnetic field
+			beta1[i]=0;
+			gH[i]=0;
+			hH[i]=0;
+
+			gH_rta[i]=0;
+			hH_rta[i]=0;
+
+			gH_LO[i]=0;
+			hH_LO[i]=0;
+
+			S_i_grid_g[i]=0;
+			S_i_grid_h[i]=0;
+
+			S_iLO_grid_g[i]=0;
+			S_iLO_grid_h[i]=0;
+			*/	
+		}
+	     	
+		for(int counter=0;counter<points;counter++)
+		{
+			result_g[counter][0] = k_grid[counter];
+			result_g_LO[counter][0] = k_grid[counter];
+			result_g_th[counter][0] = k_grid[counter];
+		}
+
+		
+		for (int iteration = 0;iteration<iterations;iteration++)
+		{
+
+			/*
+			for (int counter1=0;counter1<points;counter1++)
+			{
+			//cout<<"energy_p[counter1] = "<<energy_p[counter1]<<endl;
+			//cout<<"g[counter1] = "<<g[counter1]<<endl;
+			//getchar();
+			}
+			*/
+
+			for (int counter1 = 0;counter1 < points;counter1++)
+			{
+
+			// If POP scattering is included
+				if (scattering_mechanisms[1] == 1)
+				{
+        
+                        S_i_grid[counter1] = lambda_i_minus_grid[counter1]*g[minus_index_pop[counter1]] +
+                        lambda_i_plus_grid[counter1]*g[plus_index_pop[counter1]];
+
+                        S_iLO_grid[counter1] = lambda_i_minus_grid[counter1]*g_LO[minus_index_pop[counter1]] +
+                        lambda_i_plus_grid[counter1]*g_LO[plus_index_pop[counter1]];
+
+
+                        S_i_th_grid[counter1] = lambda_i_minus_grid[counter1]*g_th[minus_index_pop[counter1]] +
+                        lambda_i_plus_grid[counter1]*g_th[plus_index_pop[counter1]];
+
+
+                        S_iLO_th_grid[counter1] = lambda_i_minus_grid[counter1]*g_LO_th[minus_index_pop[counter1]] +
+                        lambda_i_plus_grid[counter1]*g_LO_th[plus_index_pop[counter1]];
+
+
+
+			/*
+			cout<<"counter1 = "<<counter1<<endl;
+			cout<<"S_i_grid[counter1] = "<<S_i_grid[counter1]<<endl;
+			cout<<"S_iLo_grid[counter1] = "<<S_iLO_grid[counter1]<<endl;
+			cout<<"S_i_th_grid[counter1] =    "<<S_i_th_grid[counter1]<<endl;
+			cout<<"S_iLO_th_grid[counter1] =   "<<S_iLO_th_grid[counter1]<<endl;
+			cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
+			cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
+			getchar();
+			//*/	                            
+				}
+
+			}
+
+
+			for (int counter1=0;counter1<points;counter1++)
+			{
+				g[counter1] = (S_i_grid[counter1]+electric_driving_force[counter1])/(denom[counter1]);
+				g_th[counter1] = (S_i_th_grid[counter1] + thermal_driving_force[counter1])/(denom[counter1]);
+			}
+
+			// If POP scattering is included
+			if (scattering_mechanisms[1] == 1)
+			{
+				for (int counter1=0;counter1<points;counter1++)
+				g_LO[counter1] = (S_iLO_grid[counter1] + electric_driving_force[counter1])/nu_So_p[counter1][0][0];
+			}
+
+			for (int counter1=0;counter1<points;counter1++)
+			{
+				result_g[counter1][iteration+1] = g[counter1];
+
+				result_g_th[counter1][iteration+1] = g_th[counter1];
+
+				//fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
+
+				g_old[counter1] = g[counter1];
+				g_th_old[counter1] = g_th[counter1];
+
+				if (iteration==0)
+					g_rta[counter1] = g[counter1] ;
+
+				/*
+				if(iteration == iterations-1)
+				{	
+				cout<<"counter1 =   "<<counter1<<endl;	
+				cout<<"g[counter1] =   "<<g[counter1]<<endl;
+				cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
+				cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
+				getchar();
+				}
+				//*/
+			}
+		}   // iteration loop end here
+
+		/*
+		for (int counter1=0;counter1<points;counter1++)
+		{
+			     cout<<"counter1 =   "<<counter1<<endl;	
+			     cout<<"g[counter1] =   "<<g[counter1]<<endl;
+			     cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
+			     cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
+			     getchar();
+		}
+		*/
+		
+//---------------------------------------- solve BTE for g finished----------------------------------------------------------
 	
 	}
 }

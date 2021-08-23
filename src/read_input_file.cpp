@@ -38,9 +38,9 @@ double denom[limit2];
 int plus_index_pop[limit2], minus_index_pop[limit2];
 double g[limit2], g_rta[limit2], g_old[limit2], g_LO[limit2], g_iv[limit2], g_th[limit2], g_th_old[limit2], g_LO_th[limit2];
 double S_o_grid[limit2]={0}, S_o_grid_total[limit2]={0}, S_i_grid[limit2], S_iLO_grid[limit2], S_i_th_grid[limit2], S_iLO_th_grid[limit2];
-double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1], result_f[limit2][15+1];
+double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1];
 
-double N_poph_atT, df0dz_integral_n, N_e[limit4], beta_constant; 
+double N_poph_atT, df0dz_integral, N_e[limit4], beta_constant; 
 
 double k_min, k_trans, k_step_fine, k_step;
 int points, points1, points2;

@@ -8,6 +8,7 @@ void calculate_mobility(double T, int ii)
             cout.setf(ios::scientific);
 
             cout<<endl;
+
 	FILE *fid;
 	char line[1000];
 	if(type=="n")
@@ -236,7 +237,7 @@ void calculate_mobility(double T, int ii)
 		    	sigma_rta = mobility_rta *  abs(n_e) * e;
 		    	// unit S/cm
 		    }
-		    thermopower = -k_B*(df0dz_integral_n- E_F /(k_B*T))*1e6 + (J(T,m,g_th,points)/sigma)/dTdz*1e6;
+		    thermopower = -k_B*(df0dz_integral- E_F /(k_B*T))*1e6 + (J(T,m,g_th,points)/sigma)/dTdz*1e6;
 		    // Equation No. 52 of rode book
 
 	///---------------------------------------------------------------------------------------------------------------------

@@ -52,10 +52,10 @@ using namespace std;
 //------------ - ------------------------------------------------------------------------------
 
 //-----------function for Valence band --------
-void nu_ii_p_funct();
-void nu_So_p_funct();  
+void nu_ii_p_funct(int T_loop);
+void nu_So_p_funct(double T, int T_loop,double omega_LO);
 void nu_npop_p_funct();
-void nu_de_p_funct();
+void nu_de_p_funct(int T_loop);
 //---------------------------
 
 void read_OUTCAR();
@@ -275,7 +275,7 @@ extern double B_ii, D_ii, A_ii;
 extern double lambda_e_plus_grid_npop[limit2][limit5], lambda_e_minus_grid_npop[limit2][limit5], N_npop[limit5];
 extern double we_npop[limit5],De_npop[limit5];
 
-extern double N_poph_atT, N_e[limit4], df0dz_integral_n, beta_constant;
+extern double N_poph_atT, N_e[limit4], df0dz_integral, beta_constant;
 
 
 extern double nu_deformation[limit2], nu_piezoelectric[limit2], nu_ionizedimpurity[limit2], nu_dislocation[limit2], nu_alloy[limit2];
@@ -294,7 +294,7 @@ extern int plus_index_pop[limit2], minus_index_pop[limit2];
 
 extern double g[limit2], g_rta[limit2], g_old[limit2], g_LO[limit2], g_iv[limit2], g_th[limit2], g_th_old[limit2], g_LO_th[limit2];
 extern double S_o_grid[limit2], S_o_grid_total[limit2], S_i_grid[limit2], S_iLO_grid[limit2], S_i_th_grid[limit2], S_iLO_th_grid[limit2];
-extern double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1], result_f[limit2][15+1];
+extern double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1];
 
 
 extern double mobility_ii, mobility_po, mobility_to, mobility_npop, mobility_de, mobility_pe, mobility_dis;

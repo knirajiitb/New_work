@@ -3,36 +3,37 @@
 void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 {
 
+	double integral_numerator = 0;
+	double integral_denominator = 0;
+	double k_dum;
+
 //---------------------------- components for BTE ------------------------------------------------------------------
 	if(type == "n")
 	{	
-                   double k_dum;
 		    beta_constant = beta(T, T_loop);
 		    // unit 1/nm
 
 		    cout<< "Inverse screening length, beta = "<<beta_constant<<" (1/nm)"<<endl;
-		    double integral_numerator_n = 0;
-		    double integral_denominator_n = 0;
 
-		    //--------------------------- df0dz_integral_n -----------------------------------------
+		    //--------------------------- df0dz_integral -----------------------------------------
 		    int factr = 10;
 		    for(int counter = 0;counter<=points-2;counter++)
 		    {
 		        double dk = (k_grid[counter+1]-k_grid[counter])/factr;
 		        for (int ss = 0;ss<=factr-1;ss++)
 		        {
-		            integral_numerator_n = integral_numerator_n + dk*(pow(((k_grid[counter]+ss*dk)/pi),2))
+		            integral_numerator = integral_numerator + dk*(pow(((k_grid[counter]+ss*dk)/pi),2))
 		                                *f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T))*energy_n[counter]/(k_B*T);
 		            // Part of equation (54) of Rode's book
-		            integral_denominator_n = integral_denominator_n + dk*pow(((k_grid[counter]+ss*dk)/pi),2)
+		            integral_denominator = integral_denominator + dk*pow(((k_grid[counter]+ss*dk)/pi),2)
 		            *f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T));
 		            // Part of equation (54) of Rode's book
 		        }
 		    }
 
-		    df0dz_integral_n = integral_numerator_n/integral_denominator_n;
-		    //cout<<"df0dz_integral_n = "<<df0dz_integral_n<<endl;
-		    //--------------------------- df0dz_integral_n calculated -----------------------------------------
+		    df0dz_integral = integral_numerator/integral_denominator;
+		    //cout<<"df0dz_integral for n type = "<<df0dz_integral<<endl;
+		    //--------------------------- df0dz_integral calculated -----------------------------------------
 		    		    
 //--------------------------------------common terms calculated -------------------------------------------------------
 
@@ -52,7 +53,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		        //cout<<"efefn = "<<efefn<<endl;
 		        //cout<<"T = "<<T<<endl;
 
-		        thermal_driving_force[counter] = -1*v_n[counter]*df0dz(k_dum, efefn, T, df0dz_integral_n,coefficients_cond, kindex_cond, a11);
+		        thermal_driving_force[counter] = -1*v_n[counter]*df0dz(k_dum, efefn, T, df0dz_integral,coefficients_cond, kindex_cond, a11);
 
 		        f0x1_f0[counter] = f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T));
 
@@ -615,16 +616,69 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 	else 
 	{
 				
+		//--------------------------- df0dz_integral -----------------------------------------
+		int factr = 10;
+		for(int counter = 0;counter<=points-2;counter++)
+		{
+			double dk = (k_grid[counter+1]-k_grid[counter])/factr;
+			for (int ss = 0;ss<=factr-1;ss++)
+			{
+			    integral_numerator = integral_numerator + dk*(pow(((k_grid[counter]+ss*dk)/pi),2))
+						*f0(energy_p[counter],efefp,T)*(1-f0(energy_p[counter],efefp,T))*energy_p[counter]/(k_B*T);
+			    // Part of equation (54) of Rode's book
+			    integral_denominator = integral_denominator + dk*pow(((k_grid[counter]+ss*dk)/pi),2)
+			    *f0(energy_p[counter],efefp,T)*(1-f0(energy_p[counter],efefp,T));
+			    // Part of equation (54) of Rode's book
+			}
+		}
+
+		df0dz_integral = integral_numerator/integral_denominator;
+		//cout<<"df0dz_integral for p type = "<<df0dz_integral<<endl;
+		//--------------------------- df0dz_integral calculated -----------------------------------------		    		    
+//--------------------------------------common terms calculated -------------------------------------------------------
+
+		for (int counter = 0;counter<points;counter++)
+		{
+			k_dum = k_grid[counter];
+			// unit 1/nm
+			//cout<<"counter+1 = "<<counter+1<<endl;
+			//cout<<"k_dum = "<<k_dum<<endl;
+
+		        df0dk_grid[counter] = df0dk(k_dum, T, efefp, coefficients_val, kindex_val, b11);
+			 // unit (nm)
+
+		        f_dist[counter] = f0(energy_p[counter],efefp,T);
+		        //cout<<"In between "<<endl;
+		        //cout<<"energy_p[counter]  = "<<energy_p[counter]<<endl;
+		        //cout<<"efefp = "<<efefp<<endl;
+		        //cout<<"T = "<<T<<endl;
+
+		        thermal_driving_force[counter] = -1*v_p[counter]*df0dz(k_dum, efefp, T, df0dz_integral,coefficients_val, kindex_val, b11);
+
+		        f0x1_f0[counter] = f0(energy_p[counter],efefp,T)*(1-f0(energy_p[counter],efefp,T));
+
+		        electric_driving_force[counter] = -(1*E/h_bar)*df0dk_grid[counter]*1e-7;
+			// unit is 1/s , hbar unit is eV-s so e i s not multiplied in numerator
+
+		        //cout<<"df0dk_grid[counter] =  "<<df0dk_grid[counter]<<endl;
+		        //cout<<"f_dist[counter]  =  "<<f_dist[counter]<<endl;
+		        //cout<<"thermal_driving_force[counter] =  "<<thermal_driving_force[counter]<<endl;
+		        //cout<<"f0x1_f0[counter] =  "<<f0x1_f0[counter]<<endl;
+		        //cout<<"electric_driving_force[counter]  = "<<electric_driving_force[counter]<<endl;
+		}
+
+//--------------------------------------common terms calculated completed  --------------------------------------------
+
 		// ionized impourity scattering
 	        if (scattering_mechanisms[0]==1)
 	        {
-	        	nu_ii_p_funct();
+	        	nu_ii_p_funct(T_loop);
 		}
 		
 		// POP scattering
 	        if (scattering_mechanisms[1]==1)
 		{
-			nu_So_p_funct();
+			nu_So_p_funct(T, T_loop, omega_LO);
 		}
 			
 		// npop scattering
@@ -636,9 +690,89 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// acoustic scattering
 		if (scattering_mechanisms[3]==1)
 		{
-			nu_de_p_funct();
+			nu_de_p_funct(T_loop);
 		}
 		//*/
+
+		// total scattering rates calculated here
+		for(int counter=0;counter<points;counter++)
+		{
+		        nu_el[counter] = nu_ionizedimpurity_p[counter][0][0]*scattering_mechanisms[0] + 
+		        	nu_npop_p[counter][0][0] * scattering_mechanisms[2] + 
+		        	nu_deformation_p[counter][0][0]*scattering_mechanisms[3]; 
+		       
+			denom[counter] = (nu_So_p[counter][0][0]*scattering_mechanisms[1] + nu_el[counter]);	
+			//cout<<"nu_el[counter] = "<<nu_el[counter]<<endl;
+		}			
+
+
+//----------------------in scattering terms are calulated here ----------------------------------------------------------------
+			    
+		 // polar optical phonon scattering 
+		if (scattering_mechanisms[1]==1)
+		{
+		    N_poph_atT = N_poph(omega_LO,T);
+		    //cout<<"N_poph_atT = "<<N_poph_atT<<endl;
+
+			int minus_index, plus_index;
+			double arr[points];
+
+			for (int counter1 = 0;counter1 < points;counter1++)
+			{
+
+				kplus_grid_pop[counter1] = kplus(counter1,omega_LO,points,energy_p);
+				kminus_grid_pop[counter1] = kminus(counter1,omega_LO,points,energy_p);
+
+				for (int i=0;i<points;i++)
+				arr[i] = abs(k_grid[i] - kminus_grid_pop[counter1]);
+				minus_index =FindMinInd(arr,points);
+
+				for (int i=0;i<points;i++)
+				arr[i] = abs(k_grid[i] - kplus_grid_pop[counter1]);
+				plus_index =FindMinInd(arr,points);
+
+				plus_index_pop[counter1] = plus_index;
+				minus_index_pop[counter1] = minus_index;
+			    
+			    //cout<<"counter1 = "<<counter1<<endl;
+			    //cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
+			    //cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;	
+			    //cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
+			    //cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
+			    //getchar();	
+			}
+		}
+								
+		// POP scattering
+		if (scattering_mechanisms[1]==1)
+		{
+			double const1, c_plus, c_minus, C_plus, C_minus;
+			
+			for (int counter = 0;counter < points;counter++)
+			{
+			    const1 = 0000;		
+			    c_plus = 0000;      // 
+			    c_minus = 0000;     // 
+
+			    C_plus = 0000;    // 
+			    C_minus = 0000;   // 
+
+			    lambda_i_plus_grid[counter] = 0000;
+
+			    lambda_i_minus_grid[counter] = 0000;
+
+				//---------------------------- code to debug -------------------------------------------------------------
+				//cout<<"counter = "<<counter<<endl;
+
+				//cout<<"lambda_i_plus_grid[counter] =  "<<lambda_i_plus_grid[counter]<<endl;
+				//cout<<"lambda_i_minus_grid[counter] =  "<<lambda_i_minus_grid[counter]<<endl;
+				//getchar();
+			}
+		}
+
+//-------------------------------------------------------- pop_So calculated---------------------------------------
+
+//----------------------POP scattering rate completed--------------------------------------------------------------------
 			
 	}
 }
