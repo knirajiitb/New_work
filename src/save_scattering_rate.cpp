@@ -24,21 +24,23 @@ void save_scattering_rate()
 	    }
 
 	    	
-        	fprintf(fid1,"# energy           nu_im            nu_po          nu_de            nu_pe           nu_dis        nu_alloy        nu_iv           nu_nim       nu_npop      nu_total (total relaxation time 1/second)\n");
-
-        	fprintf(fid2,"# energy           Mean free path (nm)\n");
 	    
 	    if(type=="n")
 	    {
+
+        	fprintf(fid1,"# energy           nu_im            nu_pop         nu_npop        nu_de            nu_pz           nu_dis        nu_alloy        nu_iv           nu_nim      nu_total (total relaxation time 1/second)\n");
+
+        	fprintf(fid2,"# energy           Mean free path (nm)\n");
+
 		    double nu_total[points]={0}, inv_nu_total[points]={0}, mfp[points]={0};	
 		    
 		    for (int i = 0; i < points; i++)
 		    {
 		        nu_total[i] = scattering_mechanisms[0] * nu_ionizedimpurity[i] + scattering_mechanisms[1] * S_o_grid_total[i] + 
-		        scattering_mechanisms[3] * nu_deformation[i] + scattering_mechanisms[4] * nu_piezoelectric[i] + 
+		        scattering_mechanisms[2] * nu_npop_total[i] + scattering_mechanisms[3] * nu_deformation[i] +
+		        scattering_mechanisms[4] * nu_piezoelectric[i] + 
 		        scattering_mechanisms[6] * nu_dislocation[i] + scattering_mechanisms[7] * nu_alloy[i] + 
-		        scattering_mechanisms[8] * nu_iv_total[i] + scattering_mechanisms[9] * nu_neutralimpurity[i] + 
-		        scattering_mechanisms[2] * nu_npop_total[i];
+		        scattering_mechanisms[8] * nu_iv_total[i] + scattering_mechanisms[9] * nu_neutralimpurity[i] ;
 		        
 		        if(nu_total[i]!=0)
 		        	inv_nu_total[i] = 1.0/nu_total[i];
@@ -51,8 +53,8 @@ void save_scattering_rate()
 		        mfp[i] = mfp[i]/(1e-9);
 		        
 		        fprintf(fid1,"  %e    %e    %e    %e    %e    %e    %e    %e    %e 	 %e 	%e\n", energy_n[i], nu_ionizedimpurity[i], 
-			S_o_grid_total[i],nu_deformation[i],nu_piezoelectric[i],nu_dislocation[i], 
-			nu_alloy[i], nu_iv_total[i], nu_neutralimpurity[i], nu_npop_total[i], nu_total[i] );
+			S_o_grid_total[i], nu_npop_total[i], nu_deformation[i],nu_piezoelectric[i],nu_dislocation[i], 
+			nu_alloy[i], nu_iv_total[i], nu_neutralimpurity[i], nu_total[i] );
 
 		        fprintf(fid2,"  %e    	%e   \n", energy_n[i], mfp[i] );
 		    }
@@ -100,6 +102,38 @@ void save_scattering_rate()
 	}
 	else
 	{
+
+		fprintf(fid1,"# energy           nu_im            nu_pop         nu_npop        nu_de           nu_total (total relaxation time 1/second)\n");
+
+		fprintf(fid2,"# energy           Mean free path (nm)\n");
+
+		double nu_total[points]={0}, inv_nu_total[points]={0}, mfp[points]={0};	
+
+		for (int i = 0; i < points; i++)
+		{
+			nu_total[i] = scattering_mechanisms[0] * nu_ionizedimpurity[i] + scattering_mechanisms[1] * S_o_grid_total[i] + 
+			scattering_mechanisms[2] * nu_npop_total[i] + scattering_mechanisms[3] * nu_deformation[i];
+
+			if(nu_total[i]!=0)
+				inv_nu_total[i] = 1.0/nu_total[i];
+
+			if(nu_total[i] > max_scattering_rate)
+				max_scattering_rate = nu_total[i];
+				
+			mfp[i] = v_n[i] * inv_nu_total[i];
+
+			mfp[i] = mfp[i]/(1e-9);
+
+			fprintf(fid1,"  %e    %e    %e    %e    %e    %e \n", energy_n[i], nu_ionizedimpurity[i], 
+			S_o_grid_total[i], nu_npop_total[i], nu_deformation[i], nu_total[i] );
+
+			fprintf(fid2,"  %e    	%e   \n", energy_n[i], mfp[i] );
+		}
+		fclose(fid1);
+		fclose(fid2);
+
+		cout<<"Maximum scattering rate for RTA = "<<max_scattering_rate<<endl;
+		//-------------------------- save data ---------------------------------------------------
 	
 	}	
 }

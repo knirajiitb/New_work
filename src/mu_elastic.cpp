@@ -1,7 +1,7 @@
 
 #include"main.h"
 
-double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[], double nu_elastic[],double g[],int points, int aa[])
+double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[], double nu_elastic[],double g[],int points, int aa[], double energy[], double v[], double Ds[])
 // It gives effect of an elastic scattering mechanism on mobility in units of (cm^2/V.s)
 {
     // According to Equation
@@ -15,24 +15,26 @@ double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[],
     int factor = 10;
 
     double k_step,dv,ddf,df,de,ds;
+    
+    
     if (free_e ==1)
     {
         for (int counter = 0;counter<points-1;counter++)
         {
             k_step = (k_grid[counter+1]-k_grid[counter])/factor;
-            dv = (v_n[counter+1]-v_n[counter])/factor;
+            dv = (v[counter+1]-v[counter])/factor;
 
 
             ddf = (df0dk(k_grid[counter+1],T,e_f,coefficients,kindex,aa)-df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa))/factor;
-	    df = (f0(energy_n[counter+1],e_f,T)-f0(energy_n[counter],e_f,T))/factor;
+	    df = (f0(energy[counter+1],e_f,T)-f0(energy[counter],e_f,T))/factor;
 
             for (int i=0;i<=factor-1;i++)
             {
                 g_elastic[counter] = (-1)*E/(h_bar*nu_elastic[counter])*(df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa)+i*ddf)*1e-7;
                 // The last number is the conversion from convensional units to cancel out to be unitless (as in g)
-                integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter]+i*dv)*g_elastic[counter]/E;
+                integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter]+i*dv)*g_elastic[counter]/E;
                 // =1/E*int[g_elastic(En)*DOS(En)*v(En)*dEn]
-                    integral_denominator = integral_denominator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(f0(energy_n[counter],e_f,T)+i*df);
+                    integral_denominator = integral_denominator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(f0(energy[counter],e_f,T)+i*df);
                     ////// =int[f(En)*DOS(En)*dEn]
             }
         }
@@ -41,21 +43,21 @@ double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[],
     {
         for (int counter = 0;counter<dos_intervals-1;counter++)
         {
-            de = (energy_n[counter+1]-energy_n[counter])/factor;
-            ds = (Ds_n[counter+1]-Ds_n[counter])/factor;
-            dv = (v_n[counter+1]-v_n[counter])/factor;
+            de = (energy[counter+1]-energy[counter])/factor;
+            ds = (Ds[counter+1]-Ds[counter])/factor;
+            dv = (v[counter+1]-v[counter])/factor;
             ddf = (df0dk(k_grid[counter+1],T,e_f,coefficients,kindex,aa)-df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa))/factor;
 
-		df = (f0(energy_n[counter+1],e_f,T)-f0(energy_n[counter],e_f,T))/factor;
+		df = (f0(energy[counter+1],e_f,T)-f0(energy[counter],e_f,T))/factor;
 
             for (int i = 0;i<=factor-1;i++)
             {
                 g_elastic[counter] = (-1)*E/(h_bar*nu_elastic[counter])*(df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa)+i*ddf)*1e-7;
                 //// The last number is the conversion from convensional units to cancel out to be unitless (as in g)
-                integral_numerator = integral_numerator+de*(Ds_n[counter]+i*ds)/volume1*(v_n[counter]+i*dv)*g_elastic[counter]/E;
+                integral_numerator = integral_numerator+de*(Ds[counter]+i*ds)/volume1*(v[counter]+i*dv)*g_elastic[counter]/E;
                 //// =1/E*int[g_elastic(En)*DOS(En)*v(En)*dEn]
 
-            integral_denominator = integral_denominator+de*(Ds_n[counter]+i*ds)/volume1*(f0(energy_n[counter],e_f,T)+i*df);
+            integral_denominator = integral_denominator+de*(Ds[counter]+i*ds)/volume1*(f0(energy[counter],e_f,T)+i*df);
             // =int[f0(En)*DOS(En)*dEn]
                     // =int[f(En)*DOS(En)*dEn]
             }

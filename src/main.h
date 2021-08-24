@@ -118,22 +118,22 @@ void generate_required_data(double T);
 double df0dk(double k,double T,double e_f, double coefficients[5][7],double kindex[], int aa[]);
 double df0dz(double k, double e_f, double T, double df0dz_integral, double coefficients[5][7], double kindex[], int aa[]);
 
-double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[],double nu_elastic[],double g[],int points, int aa[]);
+double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[],double nu_elastic[],double g[],int points, int aa[], double energy[], double v[], double Ds[]);
 double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[],
         double nu_elastic[], int points, int aa[]);
 
 double mu_overall(double e_f,double T,double coefficients[5][7],double kindex[],
-        double g[],double nu_el[],int points,int aa[]);
+        double g[],double nu_el[],int points,int aa[], double energy[], double v[], double Ds[]);
 double mu_overallH(double e_f,double T,double coefficients[5][7],double kindex[],
         double g[], double h[], double nu_el[],int points,int aa[]);
 
 void save_scattering_rate();
 void save_perturbation();
-double mu_po(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double g[],double nu_el[],int points, int aa[]);
+double mu_po(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double g[],double nu_el[],int points, int aa[], double energy[], double v[], double Ds[]);
 double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double h_LO[],double nu_el[],int points, int aa[]);
 void components_BTE(double T, int T_loop, double efefn, double efefp, int ii);
 
-double J(double T,double m,double g_th[],  int points);
+double J(double T,double m,double g_th[],  int points, double v[]);
 double DOS_value1(double energy, int a);
 int read_ispin();
 void fitting_band();

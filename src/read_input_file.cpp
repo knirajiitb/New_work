@@ -101,7 +101,7 @@ int degree1;
 double fraction[4];
 int length_fraction;
 
-int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[10], iv_number, fitting_1, fitting_2, fitting_3;
+int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[10]={0}, iv_number, fitting_1, fitting_2, fitting_3;
 
 double rho=0, k_max, N_dis, omega_LO, omega_TO, E_deformation, C_long, C_trans, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
@@ -541,14 +541,14 @@ void read_input_file()
 
 		  scattering_mechanisms[0] = a1[0];       // Ionized imourity 
 		  scattering_mechanisms[1] = a1[1];     	// Polar Optical phonon scattering due to longitudinal phonon
-		  scattering_mechanisms[2] = a1[8];     // npop phonon
-		  scattering_mechanisms[3] = a1[2];	// Acoustic deformation scattering
-		  scattering_mechanisms[4] = a1[3];	// Piezoelectric scattering          
-		  
-		  scattering_mechanisms[6] = a1[4];	// Dislocation scattering 
-		  scattering_mechanisms[7] = a1[5];	// Alloy scattering
-		  scattering_mechanisms[8] = a1[6];	// Intra-valley scattering
-		  scattering_mechanisms[9] = a1[7];	// Neutral impurity scattering
+		  scattering_mechanisms[2] = a1[2];     // npop phonon
+		  scattering_mechanisms[3] = a1[3];	// Acoustic deformation scattering
+		  scattering_mechanisms[4] = a1[4];	// Piezoelectric scattering          
+		  //scattering_mechanisms[5] = 0;  // Transverse optical POP scattering be default is zero
+		  scattering_mechanisms[6] = a1[5];	// Dislocation scattering 
+		  scattering_mechanisms[7] = a1[6];	// Alloy scattering
+		  scattering_mechanisms[8] = a1[7];	// Intra-valley scattering
+		  scattering_mechanisms[9] = a1[8];	// Neutral impurity scattering
 		  cout<< "-SCATTERING MECHANISM CONTROL " <<ss<<endl;
 
 
@@ -770,25 +770,16 @@ void read_input_file()
 	}
 	
 	
-	if(len_nn==0 && len_na ==0)
-	{
-		len_nn = len_nd;
+	if(len_na ==0)
 		len_na = len_nd;
-	}
-	else if(len_nn==0 && len_nd ==0)
-	{
-		len_nn = len_na;
+	else if(len_nd ==0)
 		len_nd = len_na;
-	}
-	else if(len_nn==0)
-	{
-		len_nn = len_nd;
-	}
+
 	
 	// To check array size of donor, neutral impurity and acceptor concentration
-	if(len_nn!=len_na || len_nn!=len_nd)
+	if(len_nd!=len_na)
 	{
-		cout<<"Error Donor array length, acceptor array length and neutral impurity conc. array length must be same. Exit from program "<<endl;
+		cout<<"Error Donor array length and acceptor array length array length must be same. Exit from program "<<endl;
 		exit (EXIT_FAILURE);
 	}
 

@@ -76,36 +76,37 @@ void calculate_mobility(double T, int ii)
 		    // ionized impurity scattering
 		    if (scattering_mechanisms[0]==1)
 		    {
-		        mobility_ii = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_ionizedimpurity,g,points,a11);
+		        mobility_ii = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_ionizedimpurity,g,points,a11,energy_n,v_n,Ds_n);
 		        cout<<"mobility_ii = "<<mobility_ii<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
 		        mobility_ii = 1e10;
 
 
+		    // POP scattering
+		    if (scattering_mechanisms[1]==1)
+		    {
+		        mobility_po = mu_po(E_F,T,coefficients_cond,kindex_cond,g_LO,g,nu_el,points,a11,energy_n,v_n,Ds_n);
+		        cout<<"mobility_po = "<<mobility_po<<" cm^2/(V-s)"<<endl;
+		    }
+		    else
+		        mobility_po=1e10;
+
 		    // npop scattering
 		    if (scattering_mechanisms[2]==1)
 		    {
-		        mobility_npop = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_npop_total,g,points,a11);
+		        mobility_npop = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_npop_total,g,points,a11, energy_n, v_n, Ds_n);
 		        cout<<"mobility_npop = "<<mobility_npop<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
 		        mobility_npop = 1e10;
 
 
-		    // POP scattering
-		    if (scattering_mechanisms[1]==1)
-		    {
-		        mobility_po = mu_po(E_F,T,coefficients_cond,kindex_cond,g_LO,g,nu_el,points,a11);
-		        cout<<"mobility_po = "<<mobility_po<<" cm^2/(V-s)"<<endl;
-		    }
-		    else
-		        mobility_po=1e10;
 
 		    // Acoustic deformation scattering
 		    if (scattering_mechanisms[3]==1)
 		    {
-		        mobility_de = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_deformation,g,points,a11);
+		        mobility_de = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_deformation,g,points,a11,energy_n,v_n,Ds_n);
 		        cout<<"mobility_de = "<<mobility_de<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
@@ -114,21 +115,11 @@ void calculate_mobility(double T, int ii)
 		    // piezoelectric scattering
 		    if (scattering_mechanisms[4]==1)
 		    {
-		        mobility_pe = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_piezoelectric,g,points,a11);
+		        mobility_pe = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_piezoelectric,g,points,a11,energy_n,v_n,Ds_n);
 		        cout<<"mobility_pe = "<<mobility_pe<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
 		        mobility_pe=1e10;
-
-		    // dislocation scattering
-		    if (scattering_mechanisms[6]==1)
-		    {
-		        mobility_dis = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_dislocation,g,points,a11);
-		        cout<<"mobility_dis = "<<mobility_dis<<" cm^2/(V-s)"<<endl;
-		    }
-		    else
-		        mobility_dis=1e10;
-
 
 
 		   // Transverse optical POP scattering 
@@ -152,11 +143,23 @@ void calculate_mobility(double T, int ii)
 
 		        cout<<"mobility_to = "<<mobility_to<<" cm^2/(V-s)"<<endl;
 		    }
+		    
+
+		    // dislocation scattering
+		    if (scattering_mechanisms[6]==1)
+		    {
+		        mobility_dis = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_dislocation,g,points,a11,energy_n,v_n,Ds_n);
+		        cout<<"mobility_dis = "<<mobility_dis<<" cm^2/(V-s)"<<endl;
+		    }
+		    else
+		        mobility_dis=1e10;
+
+		    
 
 		    // alloy scattering
 		    if (scattering_mechanisms[7]==1)
 		    {
-		        mobility_alloy = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_alloy,g,points,a11);
+		        mobility_alloy = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_alloy,g,points,a11,energy_n,v_n,Ds_n);
 		        cout<<"mobility_alloy = "<<mobility_alloy<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
@@ -165,7 +168,7 @@ void calculate_mobility(double T, int ii)
 		    // inter-valley scattering
 		    if (scattering_mechanisms[8]==1)
 		    {
-		        mobility_iv = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_iv_total,g,points,a11);
+		        mobility_iv = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_iv_total,g,points,a11,energy_n,v_n,Ds_n);
 		        cout<<"mobility_iv  = "<<mobility_iv<<" cm^2/(V-s)"<<endl;
 		    }
 		    else
@@ -174,7 +177,7 @@ void calculate_mobility(double T, int ii)
 		    // neutral impurity scattering
 		    if (scattering_mechanisms[9]==1)
 		    {
-		        mobility_neutral = mu_elastic(E_F,T,coefficients_cond,kindex_cond, nu_neutralimpurity,g,points,a11);
+		     mobility_neutral = mu_elastic(E_F,T,coefficients_cond,kindex_cond,nu_neutralimpurity,g,points,a11,energy_n,v_n,Ds_n);
 
 		        cout<<"mobility_neutral = "<<mobility_neutral<<" cm^2/(V-s)"<<endl;
 		    }
@@ -186,19 +189,18 @@ void calculate_mobility(double T, int ii)
 		    
 		    mobility_all[0] = mobility_ii;
 		    mobility_all[1] = mobility_po;
-		    //mobility_all[2] = mobility_npop;
+		    mobility_all[2] = mobility_npop;
 		    mobility_all[3] = mobility_de;
 		    mobility_all[4] = mobility_pe;
-		    mobility_all[5] = mobility_dis;
-		    mobility_all[6] = mobility_to;
+		    mobility_all[5] = mobility_to;
+		    mobility_all[6] = mobility_dis;
 		    mobility_all[7] = mobility_alloy;
 		    mobility_all[8] = mobility_iv;
 		    mobility_all[9] = mobility_neutral;
-		    mobility_all[10] = mobility_npop;
-		    
+
 		    //scattering_mechanisms
 		    double sum =0 ;
-		    for (int i=0;i<11;i++)
+		    for (int i=0;i<10;i++)
 		    {
 		        if (scattering_mechanisms[i]!=0 && mobility_all[i]!=0)
 		        sum = sum + 1/ (mobility_all[i]*scattering_mechanisms[i]);
@@ -208,10 +210,10 @@ void calculate_mobility(double T, int ii)
 
 		    mobility_avg = 1/sum;
 
-		    mobility = mu_overall(E_F,T,coefficients_cond,kindex_cond,g,nu_el,points,a11);
+		    mobility = mu_overall(E_F,T,coefficients_cond,kindex_cond,g,nu_el,points,a11,energy_n,v_n,Ds_n);
 		    // unit cm^2/(V-s)
 		    
-		    mobility_rta = mu_overall(E_F,T,coefficients_cond,kindex_cond,g_rta,nu_el,points,a11);
+		    mobility_rta = mu_overall(E_F,T,coefficients_cond,kindex_cond,g_rta,nu_el,points,a11,energy_n,v_n,Ds_n);
 		     // unit cm^2/(V-s)
 		     	
 		    if (omega_TO > 0.0)
@@ -237,7 +239,7 @@ void calculate_mobility(double T, int ii)
 		    	sigma_rta = mobility_rta *  abs(n_e) * e;
 		    	// unit S/cm
 		    }
-		    thermopower = -k_B*(df0dz_integral- E_F /(k_B*T))*1e6 + (J(T,m,g_th,points)/sigma)/dTdz*1e6;
+		    thermopower = -k_B*(df0dz_integral- E_F /(k_B*T))*1e6 + (J(T,m,g_th,points,v_n)/sigma)/dTdz*1e6;
 		    // Equation No. 52 of rode book
 
 	///---------------------------------------------------------------------------------------------------------------------
@@ -261,6 +263,15 @@ void calculate_mobility(double T, int ii)
 		        mobility_hall_ii = 1e10;
 
 
+		    // POP scattering
+		    if (scattering_mechanisms[1]==1)
+		    {
+		        mobility_hall_po = mu_poH(E_F,T,coefficients_cond,kindex_cond,gH_LO,hH_LO,nu_el,points,a11);
+		        cout<<"mobility_hall_po = "<<mobility_hall_po<<" cm^2/(V-s)"<<endl;
+		    }
+		    else
+		        mobility_hall_po=1e10;
+
 		    // npop scattering
 		    if (scattering_mechanisms[2]==1)
 		    {
@@ -270,15 +281,6 @@ void calculate_mobility(double T, int ii)
 		    else
 		        mobility_hall_npop = 1e10;
 
-
-		    // POP scattering
-		    if (scattering_mechanisms[1]==1)
-		    {
-		        mobility_hall_po = mu_poH(E_F,T,coefficients_cond,kindex_cond,gH_LO,hH_LO,nu_el,points,a11);
-		        cout<<"mobility_hall_po = "<<mobility_hall_po<<" cm^2/(V-s)"<<endl;
-		    }
-		    else
-		        mobility_hall_po=1e10;
 
 		    // Acoustic deformation scattering
 		    if (scattering_mechanisms[3]==1)
@@ -297,17 +299,6 @@ void calculate_mobility(double T, int ii)
 		    }
 		    else
 		        mobility_hall_pe=1e10;
-
-		    // dislocation scattering
-		    if (scattering_mechanisms[6]==1)
-		    {
-		        mobility_hall_dis = mu_elasticH(E_F,T,coefficients_cond,kindex_cond,nu_dislocation,points,a11);
-		        cout<<"mobility_hall_dis = "<<mobility_hall_dis<<" cm^2/(V-s)"<<endl;
-		    }
-		    else
-		        mobility_hall_dis=1e10;
-
-
 
 		   // Transverse optical POP scattering 
 		    if (scattering_mechanisms[5]==1)
@@ -331,6 +322,17 @@ void calculate_mobility(double T, int ii)
 		        cout<<"mobility_hall_to = "<<mobility_hall_to<<" cm^2/(V-s)"<<endl;
 		    }
 
+		    // dislocation scattering
+		    if (scattering_mechanisms[6]==1)
+		    {
+		        mobility_hall_dis = mu_elasticH(E_F,T,coefficients_cond,kindex_cond,nu_dislocation,points,a11);
+		        cout<<"mobility_hall_dis = "<<mobility_hall_dis<<" cm^2/(V-s)"<<endl;
+		    }
+		    else
+		        mobility_hall_dis=1e10;
+
+
+
 		    // alloy scattering
 		    if (scattering_mechanisms[7]==1)
 		    {
@@ -339,6 +341,7 @@ void calculate_mobility(double T, int ii)
 		    }
 		    else
 		        mobility_hall_alloy=1e10;
+
 
 		    // inter-valley scattering
 		    if (scattering_mechanisms[8]==1)
@@ -365,20 +368,19 @@ void calculate_mobility(double T, int ii)
 		    
 		    mobility_hall_all[0] = mobility_hall_ii;
 		    mobility_hall_all[1] = mobility_hall_po;
-		    //mobility_hall_all[2] = mobility_hall_npop;
+		    mobility_hall_all[2] = mobility_hall_npop;
 		    mobility_hall_all[3] = mobility_hall_de;
 		    mobility_hall_all[4] = mobility_hall_pe;
-		    mobility_hall_all[5] = mobility_hall_dis;
-		    mobility_hall_all[6] = mobility_hall_to;
+		    mobility_hall_all[5] = mobility_hall_to;
+		    mobility_hall_all[6] = mobility_hall_dis;
 		    mobility_hall_all[7] = mobility_hall_alloy;
 		    mobility_hall_all[8] = mobility_hall_iv;
 		    mobility_hall_all[9] = mobility_hall_neutral;
-		    mobility_hall_all[10] = mobility_hall_npop;
-
+		    
 		    //scattering_mechanisms
 		    
 		    double sum_hall =0 ;
-		    for (int i=0;i<11;i++)
+		    for (int i=0;i<10;i++)
 		    {
 		        if (scattering_mechanisms[i]!=0 && mobility_hall_all[i]!=0)
 		        sum_hall = sum_hall + 1/ (mobility_hall_all[i]*scattering_mechanisms[i]);
@@ -422,33 +424,6 @@ void calculate_mobility(double T, int ii)
 		}
 	//--------------------------------------------------------------------------------------------------------------------------------
 
-
-
-		cout.precision(6);                        //set precision
-		cout.setf(ios::scientific);
-		cout<<endl<<"Drift mobility results"<<endl;
-		cout<<"Temperature = "<<T<<" K"<<endl;
-		cout<<"doping = "<<n_array[ii]<<" cm^-3"<<endl;
-		cout<<"mobility = "<<mobility<<" cm^2/(V-s)"<<endl;
-		cout<<"mobility_rta = "<<mobility_rta<<" cm^2/(V-s)"<<endl;
-		cout<<"mobility_avg = "<<mobility_avg<<" cm^2/(V-s)"<<endl;
-		cout<<"sigma = "<<sigma<<" S/cm "<<endl;
-		cout<<"sigma_rta = "<<sigma_rta<<" S/cm "<<endl;
-		cout<<"thermopower = "<<thermopower<<" V/K"<<endl<<endl;
-
-		if(Bfield!=0)
-		{
-
-		    cout<<"Hall mobility results"<<endl;
-		    cout<<"mobility_hall = "<<mobility_hall<<" cm^2/(V-s)"<<endl;
-		    cout<<"mobility_hall_rta = "<<mobility_hall_rta<<" cm^2/(V-s)"<<endl;
-		    cout<<"mobility_hall_avg = "<<mobility_hall_avg<<" cm^2/(V-s)"<<endl;
-		    cout<<"Hall factor = "<<hall_factor1<<endl;
-		    cout<<"Hall factor RTA = "<<hall_factor_rta1<<endl;
-		    cout<<"sigma_hall = "<<sigma_hall<<" S/cm "<<endl;
-		    cout<<"sigma_hall_rta = "<<sigma_hall_rta<<" S/cm "<<endl<<endl<<endl;
-
-		}
 		
 		cc = cc+1;
 
@@ -461,14 +436,14 @@ void calculate_mobility(double T, int ii)
 
 		calc_mobility_ii[cc][1] = mobility_ii;
 		calc_mobility_po[cc][1] = mobility_po;
+		calc_mobility_npop[cc][1] = mobility_npop;
 		calc_mobility_de[cc][1] = mobility_de;
 		calc_mobility_pe[cc][1] = mobility_pe;
-		calc_mobility_dis[cc][1] = mobility_dis;
 		calc_mobility_to[cc][1] = mobility_to;
+		calc_mobility_dis[cc][1] = mobility_dis;
 		calc_mobility_alloy[cc][1] = mobility_alloy;
 		calc_mobility_iv[cc][1] = mobility_iv;
 		calc_mobility_neutral[cc][1] = mobility_neutral;
-		calc_mobility_npop[cc][1] = mobility_npop;
 
 		if(Bfield!=0)
 		{
@@ -481,20 +456,148 @@ void calculate_mobility(double T, int ii)
 
 		    calc_mobility_hall_ii[cc][1] = mobility_hall_ii;
 		    calc_mobility_hall_po[cc][1] = mobility_hall_po;
+		    calc_mobility_hall_npop[cc][1] = mobility_hall_npop;
 		    calc_mobility_hall_de[cc][1] = mobility_hall_de;
 		    calc_mobility_hall_pe[cc][1] = mobility_hall_pe;
-		    calc_mobility_hall_dis[cc][1] = mobility_hall_dis;
 		    calc_mobility_hall_to[cc][1] = mobility_hall_to;
+		    calc_mobility_hall_dis[cc][1] = mobility_hall_dis;
 		    calc_mobility_hall_alloy[cc][1] = mobility_hall_alloy;
 		    calc_mobility_hall_iv[cc][1] = mobility_hall_iv;
 		    calc_mobility_hall_neutral[cc][1] = mobility_hall_neutral;
-		    calc_mobility_hall_npop[cc][1] = mobility_hall_npop;
 		    hall_factor[cc][1] = hall_factor1; 
 		    hall_factor_rta[cc][1] = hall_factor_rta1; 
 		}
 	}
 	else
 	{
+		double scatt[limit2]={0};
+
+		if (scattering_mechanisms[0]==1)
+		{
+
+			for (int counter = 0;counter<points;counter++)
+				scatt[counter] = nu_ionizedimpurity_p[counter][0][0];		    		
+
+			mobility_ii = mu_elastic(E_F,T,coefficients_val,kindex_val,scatt, g,points,b11,energy_p,v_p,Ds_p);
+			cout<<"mobility_ii = "<<mobility_ii<<" cm^2/(V-s)"<<endl;
+		}
+		else
+			mobility_ii = 1e10;
+
+
+
+		// POP scattering
+		if (scattering_mechanisms[1]==1)
+		{
+			mobility_po = mu_po(E_F,T,coefficients_val,kindex_val,g_LO,g,nu_el,points,b11,energy_p,v_p,Ds_p);
+			cout<<"mobility_po = "<<mobility_po<<" cm^2/(V-s)"<<endl;
+		}
+		else
+			mobility_po=1e10;
+
+		// npop scattering
+		if (scattering_mechanisms[2]==1)
+		{
+			for (int counter = 0;counter<points;counter++)
+				scatt[counter] = nu_npop_p[counter][0][0];		    		
+
+			mobility_npop = mu_elastic(E_F,T,coefficients_val,kindex_val,scatt,g,points,b11,energy_p,v_p,Ds_p);
+			cout<<"mobility_npop = "<<mobility_npop<<" cm^2/(V-s)"<<endl;
+		}
+		else
+			mobility_npop = 1e10;
+
+
+		// Acoustic deformation scattering
+		if (scattering_mechanisms[3]==1)
+		{	 
+			for (int counter = 0;counter<points;counter++)
+				scatt[counter] = nu_deformation_p[counter][0][0];
+						    		
+			mobility_de = mu_elastic(E_F,T,coefficients_val,kindex_val,scatt,g,points,b11,energy_p,v_p,Ds_p);
+			cout<<"mobility_de = "<<mobility_de<<" cm^2/(V-s)"<<endl;
+		}
+		else
+			mobility_de=1e10;
 	
+	
+		mobility_all[0] = mobility_ii;
+		mobility_all[1] = mobility_po;
+		mobility_all[2] = mobility_npop;
+		mobility_all[3] = mobility_de;
+		    
+		//scattering_mechanisms
+		double sum =0 ;
+		for (int i=0;i<=3;i++)
+		{
+			if (scattering_mechanisms[i]!=0 && mobility_all[i]!=0)
+				sum = sum + 1/ (mobility_all[i]*scattering_mechanisms[i]);
+		}
+
+		//cout<<"sum = "<<sum<<endl;
+
+		mobility_avg = 1/sum;
+
+		mobility = mu_overall(E_F,T,coefficients_val,kindex_val,g,nu_el,points,b11,energy_p,v_p,Ds_p);
+		// unit cm^2/(V-s)
+
+		mobility_rta = mu_overall(E_F,T,coefficients_val,kindex_val,g_rta,nu_el,points,b11,energy_p,v_p,Ds_p);
+		// unit cm^2/(V-s)
+
+		if (omega_TO > 0.0)
+			mobility = 1 / (1/mobility + 1/mobility_to);
+		// unit cm^2/(V-s)
+
+		if (mobility < 0)
+			mobility = mobility_avg;
+		// unit cm^2/(V-s)
+
+			
+	//----------------------------------calculate mobility -------------------------------------------------------------
+
+		    sigma = mobility *  n0 * e;
+		    // unit S/cm 	
+			
+		    sigma_rta = mobility_rta * n0 * e;
+		    // unit S/cm
+		    	
+		    if (n0 == 0)
+		    {
+		    	sigma = mobility *  abs(n_h) * e;
+		    	sigma_rta = mobility_rta *  abs(n_h) * e;
+		    	// unit S/cm
+		    }
+
+		    thermopower = -k_B*(df0dz_integral- E_F /(k_B*T))*1e6 + (J(T,m,g_th,points,v_p)/sigma)/dTdz*1e6;
+		    // Equation No. 52 of rode book
+
+	///---------------------------------------------------------------------------------------------------------------------
 	}	
+
+	cout.precision(6);                        //set precision
+	cout.setf(ios::scientific);
+	cout<<endl<<"Drift mobility results"<<endl;
+	cout<<"Temperature = "<<T<<" K"<<endl;
+	cout<<"doping = "<<n_array[ii]<<" cm^-3"<<endl;
+	cout<<"mobility = "<<mobility<<" cm^2/(V-s)"<<endl;
+	cout<<"mobility_rta = "<<mobility_rta<<" cm^2/(V-s)"<<endl;
+	cout<<"mobility_avg = "<<mobility_avg<<" cm^2/(V-s)"<<endl;
+	cout<<"sigma = "<<sigma<<" S/cm "<<endl;
+	cout<<"sigma_rta = "<<sigma_rta<<" S/cm "<<endl;
+	cout<<"thermopower = "<<thermopower<<" V/K"<<endl<<endl;
+
+	if(Bfield!=0 && type=="n")
+	{
+
+	    cout<<"Hall mobility results"<<endl;
+	    cout<<"mobility_hall = "<<mobility_hall<<" cm^2/(V-s)"<<endl;
+	    cout<<"mobility_hall_rta = "<<mobility_hall_rta<<" cm^2/(V-s)"<<endl;
+	    cout<<"mobility_hall_avg = "<<mobility_hall_avg<<" cm^2/(V-s)"<<endl;
+	    cout<<"Hall factor = "<<hall_factor1<<endl;
+	    cout<<"Hall factor RTA = "<<hall_factor_rta1<<endl;
+	    cout<<"sigma_hall = "<<sigma_hall<<" S/cm "<<endl;
+	    cout<<"sigma_hall_rta = "<<sigma_hall_rta<<" S/cm "<<endl<<endl<<endl;
+
+	}
+	
 }

@@ -9,7 +9,7 @@ void generate_output_files()
     	{
 		FILE *fid1;
 		fid1 = fopen("mobility.dat","w");
-		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral Mobility_npop \n");
+		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po      Mobility_npop	 Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity.dat","w");
@@ -23,7 +23,7 @@ void generate_output_files()
 		if(Bfield!=0)
 		{
 			fid1 = fopen("mobility_hall.dat","w");
-			fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_hall_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral  Mobility_npop\n");
+			fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_hall_rta          Mobility_ii      Mobility_po       Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 			fclose(fid1);
 
 			fid1 = fopen("conductivity_hall.dat","w");
@@ -40,7 +40,7 @@ void generate_output_files()
     	{
 		FILE *fid1;
 		fid1 = fopen("mobility_up_spin.dat","w");
-		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral  Mobility_npop\n");
+		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po       Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral\n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity_up_spin.dat","w");
@@ -52,7 +52,7 @@ void generate_output_files()
 		fclose(fid1);
 
 		fid1 = fopen("mobility_down_spin.dat","w");
-		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop \n");
+		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	 Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity_down_spin.dat","w");
@@ -64,7 +64,7 @@ void generate_output_files()
 		fclose(fid1);
 		
 		fid1 = fopen("mobility_hall_up_spin.dat","w");
-		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral  Mobility_npop\n");
+		fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 		fclose(fid1);
 
 		if(Bfield!=0)
@@ -79,7 +79,7 @@ void generate_output_files()
 
 
 			fid1 = fopen("mobility_hall_down_spin.dat","w");
-			fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop\n");
+			fprintf(fid1,"#Temperature(K)  Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	 Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 			fclose(fid1);
 
 			fid1 = fopen("conductivity_hall_down_spin.dat","w");
@@ -100,7 +100,7 @@ void generate_output_files()
 		FILE *fid1;
 
 		fid1 = fopen("mobility.dat","w");
-		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop \n");
+		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity.dat","w");
@@ -115,7 +115,7 @@ void generate_output_files()
 		{
 
 			fid1 = fopen("mobility_hall.dat","w");
-			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop \n");
+			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 			fclose(fid1);
 
 			fid1 = fopen("conductivity_hall.dat","w");
@@ -134,7 +134,7 @@ void generate_output_files()
 		FILE *fid1;
 
 		fid1 = fopen("mobility_up_spin.dat","w");
-		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop \n");
+		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity_up_spin.dat","w");
@@ -146,7 +146,7 @@ void generate_output_files()
 		fclose(fid1);
 
 		fid1 = fopen("mobility_down_spin.dat","w");
-		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral    Mobility_npop \n");
+		fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral  \n");
 		fclose(fid1);
 
 		fid1 = fopen("conductivity_down_spin.dat","w");
@@ -161,7 +161,7 @@ void generate_output_files()
 		{
 
 			fid1 = fopen("mobility_hall_up_spin.dat","w");
-			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral    Mobility_npop \n");
+			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	   Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral  \n");
 			fclose(fid1);
 
 			fid1 = fopen("conductivity_hall_up_spin.dat","w");
@@ -174,7 +174,7 @@ void generate_output_files()
 
 			
 			fid1 = fopen("mobility_hall_down_spin.dat","w");
-			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral   Mobility_npop \n");
+			fprintf(fid1,"#Doping(cm^-3)   Mobility(cm^2/V-s)    Mobility_rta          Mobility_ii      Mobility_po     Mobility_npop	   Mobility_de     Mobility_pe     Mobility_dis    Mobility_to     Mobility_alloy  Mobility_iv   Mobility_neutral \n");
 			fclose(fid1);
 
 			fid1 = fopen("conductivity_hall_down_spin.dat","w");
