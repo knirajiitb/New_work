@@ -87,7 +87,7 @@ double B_ii = 0, D_ii = 0, A_ii = 0;
 
 double N_im_de, Nd_plus,N_im_modified;
 
-int kk, ispin=1;
+int kk, ispin=1, TBS=0;
 
 double T_array[30],epsilon_s[30],epsilon_inf[30],Bgap[30],P_piezo[30],C_piezo_h14[30],n_array[30],Nd[30],Na[30],N_im[30];
 
@@ -344,6 +344,15 @@ void read_input_file()
 		  cout<< "NUMBER OF CONDUCTION-BAND VALLIES IN BZ " <<N_cb<<endl;
 		}
 		
+		if(str=="TIGHTBINDING-BANDSTRUCTURE")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp>>E_deformation;		  
+		  cout<< "Tight binding bandstructure calculation are to be done for 2D material "<<endl;
+		  TBS = 1;
+		}
+
 		if(str=="DENSITYOFSEMICONDUCTOR")
 		{
 		  getline(in,ss);

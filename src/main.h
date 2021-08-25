@@ -81,6 +81,7 @@ double conduction_dispersion(double k,double coefficients[5][7],double kindex[4]
 double admixture_value(double k,int coloumn);
 double admixture_value_p(double k,int coloumn);
 double DOS_value(double energy, int a);
+void tight_binding_band_structure();
 
 void find_fermi(double n, double T, int ii);
 double f0(double E1, double e_f, double T);
@@ -255,7 +256,7 @@ extern int ispin;
 extern double DOS_n[limit2][2],DOS_p[limit2][2];
 extern double fermi;
 
-extern int ispin;
+extern int ispin, TBS;
 
 extern double k_grid[limit2], v_n[limit2], v_p[limit2], energy_n[limit2], energy_p[limit2];
 extern double a_n[limit2], c_n[limit2], a_p[limit2], c_p[limit2], Ds_n[limit2], Ds_p[limit2];

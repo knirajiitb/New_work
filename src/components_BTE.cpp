@@ -741,25 +741,36 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 			    //cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
 			    //getchar();	
 			}
-		}
 								
-		// POP scattering
-		if (scattering_mechanisms[1]==1)
-		{
-			double const1, c_plus, c_minus, C_plus, C_minus;
+//------------------------- In scattering term for POP scattering rate calculation  --------------------------------
+			double const1, c_plus, c_minus, C_plus, C_minus, A, B, C, const2;
+			
+			// Eq no. 20 of paper coupled band Ramu paper
+			const1 = e*e*omega_LO*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop])/(16*pi*(h_bar*e));
 			
 			for (int counter = 0;counter < points;counter++)
-			{
-			    const1 = 0000;		
-			    c_plus = 0000;      // 
-			    c_minus = 0000;     // 
+			{    
+			    const2= const1/(v_p[counter]/100);		
+			    
+			    c_plus = (k_grid[counter]*k_grid[counter] + kplus_grid_pop[counter]*kplus_grid_pop[counter])/(2*k_grid[counter]*kplus_grid_pop[counter]);      // 
+			    
+			    c_minus = (k_grid[counter]*k_grid[counter] + kminus_grid_pop[counter]*kminus_grid_pop[counter])/(2*k_grid[counter]*kminus_grid_pop[counter]);     // 
 
-			    C_plus = 0000;    // 
-			    C_minus = 0000;   // 
+			    A = abs((1+c_plus)/(1-c_plus));
+			    B = (c_plus+3*c_plus*c_plus*c_plus)/2.0;
+			    C = 2.0 + 3.0 * (c_plus*c_plus);
+			    
+			    C_plus = B*log(A) - C;    //
+			     
+			    A = abs((1+c_minus)/(1-c_minus));
+			    B = (c_minus+3*c_minus*c_minus*c_minus)/2.0;
+			    C = 2.0 + 3.0 * (c_minus*c_minus);
 
-			    lambda_i_plus_grid[counter] = 0000;
+			    C_minus = B*log(A) - C;   // 
 
-			    lambda_i_minus_grid[counter] = 0000;
+			    lambda_i_plus_grid[counter] = const2*C_plus*((N_poph_atT+1)*(1 - f0(energy_p[counter],efefp,T))+(N_poph_atT)*f0(energy_p[counter],efefp,T));
+
+			    lambda_i_minus_grid[counter] = const2*C_minus*((N_poph_atT)*(1 - f0(energy_p[counter],efefp,T))+(N_poph_atT+1)*f0(energy_p[counter],efefp,T));
 
 				//---------------------------- code to debug -------------------------------------------------------------
 				//cout<<"counter = "<<counter<<endl;
@@ -769,6 +780,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 				//getchar();
 			}
 		}
+//------------------------- In scattering term for POP scattering rate calculated  --------------------------------
 
 //-------------------------------------------------------- pop_So calculated---------------------------------------
 

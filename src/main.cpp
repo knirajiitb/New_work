@@ -21,7 +21,10 @@ int main()
     //VASP=0;	// read from table
 
     int jj=0;
-    	
+	
+    if(TBS==1)	
+	tight_binding_band_structure();
+			    	
     if(VASP==1)    	
     {
 	//--------------------------------// reading outcar file ----------------------------------  	
