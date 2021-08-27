@@ -1,6 +1,6 @@
 #include"main.h"
 // NPOP scattering calculation
-void nu_npop_p_funct(double T,int T_loop,int npop_number)			
+void nu_npop_p_funct(double T)			
 {
 	double k_pp;
 	double k_mm;
