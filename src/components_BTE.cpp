@@ -630,7 +630,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// npop scattering
 		if (scattering_mechanisms[2]==1)
 		{
-			nu_npop_p_funct();
+			nu_npop_p_funct(T,T_loop,npop_number);
 		}
 
 		// acoustic scattering
