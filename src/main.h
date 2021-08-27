@@ -54,7 +54,7 @@ using namespace std;
 //-----------function for Valence band --------
 void nu_ii_p_funct(int T_loop);
 void nu_So_p_funct(double T, int T_loop,double omega_LO);  
-void nu_npop_p_funct();
+void nu_npop_p_funct(double T,int T_loop,int npop_number);
 void nu_de_p_funct(int T_loop);
 //---------------------------
 
