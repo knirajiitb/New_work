@@ -111,8 +111,9 @@ void save_scattering_rate()
 
 		for (int i = 0; i < points; i++)
 		{
-			nu_total[i] = scattering_mechanisms[0] * nu_ionizedimpurity[i] + scattering_mechanisms[1] * S_o_grid_total[i] + 
-			scattering_mechanisms[2] * nu_npop_total[i] + scattering_mechanisms[3] * nu_deformation[i];
+			nu_total[i] = scattering_mechanisms[0] * nu_ionizedimpurity_p[i][0][0] + 
+			scattering_mechanisms[1] * nu_So_p[i][0][0] + 
+			scattering_mechanisms[2] * nu_npop_p[i][0][0] + scattering_mechanisms[3] * nu_deformation_p[i][0][0];
 
 			if(nu_total[i]!=0)
 				inv_nu_total[i] = 1.0/nu_total[i];
@@ -124,8 +125,8 @@ void save_scattering_rate()
 
 			mfp[i] = mfp[i]/(1e-9);
 
-			fprintf(fid1,"  %e    %e    %e    %e    %e    %e \n", energy_n[i], nu_ionizedimpurity[i], 
-			S_o_grid_total[i], nu_npop_total[i], nu_deformation[i], nu_total[i] );
+			fprintf(fid1,"  %e    %e    %e    %e    %e    %e \n", energy_n[i], nu_ionizedimpurity_p[i][0][0], 
+			nu_So_p[i][0][0], nu_npop_p[i][0][0], nu_deformation_p[i][0][0], nu_total[i] );
 
 			fprintf(fid2,"  %e    	%e   \n", energy_n[i], mfp[i] );
 		}

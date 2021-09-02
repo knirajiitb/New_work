@@ -118,6 +118,15 @@ void read_input_file()
 	
     //char s[180];
     cout.precision(6);                        //set precision
+	
+	FILE *fid;	
+	fid = fopen("input.dat", "r");
+	if (fid==NULL)
+	{
+		cout<<"input.dat  file is not present. Exit from program";
+		exit(EXIT_FAILURE);
+	}
+	fclose(fid);
 
         cout.setf(ios::scientific);
         cout<<"Data from input.dat file"<<endl;

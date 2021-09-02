@@ -191,44 +191,54 @@ void generate_required_data(double T)
                     Ds_p[counter] = 1e-10;
             }
 //-----------------------------------------saving data ----------------------------------------------------------------
-            /*
+            /*	
+            fid1 = fopen("k_grid.txt","w");
+            for (int i = 0; i < points; i++)
+                fprintf(fid1,"%d    %e\n", i+1, k_grid[i]);
+	fclose(fid1);
+
             fid1 = fopen("energy_n.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, energy_n[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], energy_n[i]);
 	fclose(fid1);
 
             fid1 = fopen("energy_p.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, energy_p[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], energy_p[i]);
 	fclose(fid1);
 
             fid1 = fopen("v_n.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, v_n[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], v_n[i]);
 	fclose(fid1);
 
 
+            fid1 = fopen("v_p.txt","w");
+            for (int i = 0; i < points; i++)
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], v_p[i]);
+	fclose(fid1);
+
             fid1 = fopen("a_n.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, a_n[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], a_n[i]);
 	fclose(fid1);
 
             fid1 = fopen("c_n.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, c_n[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], c_n[i]);
 	fclose(fid1);
 
             fid1 = fopen("Ds_n.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, Ds_n[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], Ds_n[i]);
 	fclose(fid1);
 
             fid1 = fopen("Ds_p.txt","w");
             for (int i = 0; i < points; i++)
-                fprintf(fid1,"%d    %e\n", i+1, Ds_p[i]);
+                fprintf(fid1,"%d    %e	%e\n", i+1, k_grid[i], Ds_p[i]);
 	fclose(fid1);
 
-            */
+            //*/
             /*
             fid1 = fopen("a_n.txt","r");
             for (int i = 0; i < points; i++)

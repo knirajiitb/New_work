@@ -20,8 +20,6 @@ void nu_ii_p_funct(int T_loop)
 	double de_p, k_step_p;
     	double integral_1 = 0;
 	
-	
-	
 	for(int counter = 0;counter <= points-2; counter++)
 	    {
 		k_dum = k_grid[counter];
@@ -53,6 +51,7 @@ void nu_ii_p_funct(int T_loop)
 	beta_const = pow(beta,0.5);   // unit (1/m) 
 		    
 	beta_const = beta_const*1e-9;
+	
 	//converted from 1/m to 1/nm
 		   
 	cout<<"screening length is ="<<beta_const<<" 1/nm"<<endl;
@@ -77,19 +76,23 @@ void nu_ii_p_funct(int T_loop)
 		iiB = abs((3*A -1)*(3*A -1)*log(B) - 18*A +12 -8/(A+1));
 				
 		nu_ionizedimpurity_p[counter][0][0]= iiA*iiB  ; 
-		//cout<<"counter = "<<counter<<endl;		
-				
+		/*
+		cout<<"counter = "<<counter<<endl;	
+		cout<<"v = "<<v<<endl;
+		cout<<"nu_ionizedimpurity_p[counter][0][0]   =   "<<nu_ionizedimpurity_p[counter][0][0]<<endl;
+		getchar();	
+		*/		
 	     }
 				
 	// saving results
 	/*
 	FILE *fid1;
-	fid1= fopen("iipScatt.dat","w");
+	fid1= fopen("ii.dat","w");
 	fprintf(fid1,"#energy              nu_ii_p\n");
 	for(int i=0;i<points;i++)
 	{
-		fprintf(fid1,"%e     %e\n", energy_p[i], nu_ionizedimpurity_p[i][0][0]);
+		fprintf(fid1,"%e     %e\n", k_grid[i], nu_ionizedimpurity_p[i][0][0]);
 	}
 	fclose(fid1);
-	*/	
+	//*/	
 }

@@ -5,7 +5,7 @@ clean:
 	rm -f *.o mobility.dat conductivity.dat themopower.dat scattering_rate.dat g.dat  conduction_band.dat valence_band.dat mobility_up_spin.dat conductivity_up_spin.dat thermopower_up_spin.dat scattering_rate_up_spin.dat g_up_spin.dat  conduction_band_up_spin.dat valence_band_up_spin.dat  mobility_down_spin.dat conductivity_down_spin.dat thermopower_down_spin.dat scattering_rate_down_spin.dat g_down_spin.dat  conduction_band_down_spin.dat valence_band_down_spin.dat 
 	
 clean1: 
-	rm -f *.dat *.o	
+	rm -f *.dat *.o  -f *.txt *.o	
 
 		
 	

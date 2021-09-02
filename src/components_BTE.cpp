@@ -658,7 +658,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		        f0x1_f0[counter] = f0(energy_p[counter],efefp,T)*(1-f0(energy_p[counter],efefp,T));
 
 		        electric_driving_force[counter] = -(1*E/h_bar)*df0dk_grid[counter]*1e-7;
-			// unit is 1/s , hbar unit is eV-s so e i s not multiplied in numerator
+			// unit is 1/s , hbar unit is eV-s so e is not multiplied in numerator
 
 		        //cout<<"df0dk_grid[counter] =  "<<df0dk_grid[counter]<<endl;
 		        //cout<<"f_dist[counter]  =  "<<f_dist[counter]<<endl;
@@ -684,7 +684,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// npop scattering
 		if (scattering_mechanisms[2]==1)
 		{
-			nu_npop_p_funct();
+			nu_npop_p_funct(T);
 		}
 
 		// acoustic scattering
@@ -716,61 +716,41 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 
 			int minus_index, plus_index;
 			double arr[points];
-
-			for (int counter1 = 0;counter1 < points;counter1++)
-			{
-
-				kplus_grid_pop[counter1] = kplus(counter1,omega_LO,points,energy_p);
-				kminus_grid_pop[counter1] = kminus(counter1,omega_LO,points,energy_p);
-
-				for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - kminus_grid_pop[counter1]);
-				minus_index =FindMinInd(arr,points);
-
-				for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - kplus_grid_pop[counter1]);
-				plus_index =FindMinInd(arr,points);
-
-				plus_index_pop[counter1] = plus_index;
-				minus_index_pop[counter1] = minus_index;
-			    
-			    //cout<<"counter1 = "<<counter1<<endl;
-			    //cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
-			    //cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;	
-			    //cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
-			    //cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
-			    //getchar();	
-			}
 								
 //------------------------- In scattering term for POP scattering rate calculation  --------------------------------
-			double const1, c_plus, c_minus, C_plus, C_minus, A, B, C, const2;
+			double const1, c_plus[points]={0}, c_minus[points]={0}, C_plus[points]={0}, C_minus[points]={0};
+			double A, B, C, const2[points]={0}, const3;
 			
 			// Eq no. 20 of paper coupled band Ramu paper
-			const1 = e*e*omega_LO*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop])/(16*pi*(h_bar*e));
+			const1 = e*e*omega_LO*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop])*(1/epsilon_0)/(16*pi*(h_bar*e));
 			
 			for (int counter = 0;counter < points;counter++)
 			{    
-			    const2= const1/(v_p[counter]/100);		
+			    const2[counter]= const1/(v_p[counter]/100);		
 			    
-			    c_plus = (k_grid[counter]*k_grid[counter] + kplus_grid_pop[counter]*kplus_grid_pop[counter])/(2*k_grid[counter]*kplus_grid_pop[counter]);      // 
+			    const3 = const2[counter];
 			    
-			    c_minus = (k_grid[counter]*k_grid[counter] + kminus_grid_pop[counter]*kminus_grid_pop[counter])/(2*k_grid[counter]*kminus_grid_pop[counter]);     // 
+			    c_plus[counter] = (k_grid[counter]*k_grid[counter] + kplus_grid_pop[counter]*kplus_grid_pop[counter])/(2*k_grid[counter]*kplus_grid_pop[counter]);      // 
+			    
+			    c_minus[counter] = (k_grid[counter]*k_grid[counter] + kminus_grid_pop[counter]*kminus_grid_pop[counter])/(2*k_grid[counter]*kminus_grid_pop[counter]);     // 
 
-			    A = abs((1+c_plus)/(1-c_plus));
-			    B = (c_plus+3*c_plus*c_plus*c_plus)/2.0;
-			    C = 2.0 + 3.0 * (c_plus*c_plus);
+			    A = abs((1.0+c_plus[counter])/(1.0-c_plus[counter]));
+			    B = (c_plus[counter]+3.0*c_plus[counter]*c_plus[counter]*c_plus[counter])/2.0;
+			    C = 2.0 + 3.0 * (c_plus[counter]*c_plus[counter]);
 			    
-			    C_plus = B*log(A) - C;    //
+			    C_plus[counter] = abs(B*log(A) - C);    //
 			     
-			    A = abs((1+c_minus)/(1-c_minus));
-			    B = (c_minus+3*c_minus*c_minus*c_minus)/2.0;
-			    C = 2.0 + 3.0 * (c_minus*c_minus);
+			    A = abs((1.0+c_minus[counter])/(1.0-c_minus[counter]));
+			    B = (c_minus[counter]+3.0*c_minus[counter]*c_minus[counter]*c_minus[counter])/2.0;
+			    C = 2.0 + 3.0 * (c_minus[counter]*c_minus[counter]);
 
-			    C_minus = B*log(A) - C;   // 
+			    C_minus[counter] = abs(B*log(A) - C);   // 
 
-			    lambda_i_plus_grid[counter] = const2*C_plus*((N_poph_atT+1)*(1 - f0(energy_p[counter],efefp,T))+(N_poph_atT)*f0(energy_p[counter],efefp,T));
+			    lambda_i_plus_grid[counter] = abs(const3*C_plus[counter]*((N_poph_atT+1)*(1 - f0(energy_p[counter],efefp,T))
+			    + (N_poph_atT)*f0(energy_p[counter],efefp,T)));
 
-			    lambda_i_minus_grid[counter] = const2*C_minus*((N_poph_atT)*(1 - f0(energy_p[counter],efefp,T))+(N_poph_atT+1)*f0(energy_p[counter],efefp,T));
+			    lambda_i_minus_grid[counter] = abs(const3*C_minus[counter]*((N_poph_atT)*(1 - f0(energy_p[counter],efefp,T))
+			    + (N_poph_atT+1)*f0(energy_p[counter],efefp,T)));
 
 				//---------------------------- code to debug -------------------------------------------------------------
 				//cout<<"counter = "<<counter<<endl;
@@ -779,7 +759,82 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 				//cout<<"lambda_i_minus_grid[counter] =  "<<lambda_i_minus_grid[counter]<<endl;
 				//getchar();
 			}
+			
+			/*
+			// save results
+			
+			FILE *fid1;
+			fid1 = fopen("electric_driving_force_p.txt","w");
+			
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", electric_driving_force[i]);	
+			fclose(fid1);
+
+
+			fid1 = fopen("df0dk_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", df0dk_grid[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("thermal_driving_force_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", thermal_driving_force[i]);	
+			fclose(fid1);
+		
+			fid1 = fopen("const2.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", const2[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("lambda_i_plus_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", lambda_i_plus_grid[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("lambda_i_minus_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", lambda_i_minus_grid[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("C_plus_in_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", C_plus[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("C_minus_in_p.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", C_minus[i]);	
+			fclose(fid1);
+			
+			fid1 = fopen("k_minus.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", kminus_grid_pop[i]);	
+			fclose(fid1);
+			
+			fid1 = fopen("k_plus.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", kplus_grid_pop[i]);	
+			fclose(fid1);
+			
+			fid1 = fopen("plus_index.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d \n", plus_index_pop[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("minus_index.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d \n", minus_index_pop[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("denom.txt","w");		
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", denom[i]);	
+			fclose(fid1);
+			*/
+			
 		}
+		
+		
 //------------------------- In scattering term for POP scattering rate calculated  --------------------------------
 
 //-------------------------------------------------------- pop_So calculated---------------------------------------
