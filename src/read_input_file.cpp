@@ -2,6 +2,12 @@
 
 int flag[50]={0};
 
+//---------------------------------------------------------------------------------------------------------------
+double vf;
+int linear_fit=0, SORT=0;
+//---------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------
 double Efield_time[limit1];
 double omega_s, initial, freq[30];
 double J_time[limit1]={0}, sigma_time[limit1]={0}, mobility_time[limit1]={0};
@@ -15,13 +21,18 @@ double mobility_drude_freqr2[30]={0}, mobility_drude_freqi2[30]={0}, sigma_drude
 int freq_variation=0;
 double tau;
 
+//---------------------------------------------------------------------------------------------------------------
+
 double nu_deformation_p[limit2][2][2]={0}, nu_ionizedimpurity_p[limit2][2][2]={0}, nu_el_p[limit2][2][2]={0};
 double nu_npop_p[limit2][2][2]={0}, nu_So_p[limit2][2][2]={0};
+
+//---------------------------------------------------------------------------------------------------------------
 
 
 double nu_deformation[limit2]={0}, nu_piezoelectric[limit2]={0}, nu_ionizedimpurity[limit2]={0}, nu_dislocation[limit2]={0}, nu_alloy[limit2]={0};
 double nu_neutralimpurity[limit2]={0}, nu_npop[limit2][limit5]={0}, nu_npop_total[limit2]={0}, nu_iv[limit2][limit4]={0}, nu_iv_total[limit2]={0}, nu_el[limit2]={0};
 
+//---------------------------------------------------------------------------------------------------------------
 
 string  type="n";
 
@@ -53,7 +64,7 @@ double lambda_i_minus_grid[limit2], lambda_o_minus_grid[limit2], lambda_e_plus_g
 double lambda_e_plus_grid_npop[limit2][limit5], lambda_e_minus_grid_npop[limit2][limit5], N_npop[limit5];
 int npop_number;
 
-double Ed;
+double Ed, Emax=0.5;
 int a11[2],b11[2];
 double h_bar,CBM,VBM;
 int count1,count2;
@@ -622,6 +633,31 @@ void read_input_file()
 			cout<<endl;
 		}
 	  
+		if(str=="LINEARFITTING")
+		{	
+		  linear_fit = 1;	// linear fitting without intercept or intercept = 0	  
+		  cout<< "Linear fitting is selected for band structure. Maximum value of energy given is "<<Emax<<endl;
+		}
+
+		if(str=="LINEARFITTING_2")
+		{	
+		  linear_fit = 2;	// linear fitting with intercept	  
+		  cout<< "Linear fitting with intercept is selected for band structure"<<endl;
+		}
+
+		if(str=="EMAX")
+		{	
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp>> Emax;
+		  cout<< "Maximum value of energy given for linear fitting is  "<<Emax<<"  eV "<<endl;
+		}
+	  
+		if(str=="SORTING") // sorting is done for only distance from reference point
+		{
+			SORT = 1;		
+			cout<< "SORTING is selected   "<<endl;
+		}
 		if(str=="MAGNETIC-FIELD")
 		{
 			getline(in,ss);

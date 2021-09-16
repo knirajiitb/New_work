@@ -121,7 +121,8 @@ void make_band(int typee)
 			    sscanf(line, "%lf %lf %lf %lf", &temp1[0], &temp1[1], &temp1[2], &temp1[3]);
 				
 			//cout<<"k_points  =  "<<temp1[0]<<"      "<<temp1[1]<<"       "<<temp1[2]<<"      "<<temp1[3]<<endl;
-					
+			    
+			    // unit is 1/nm		
 			    k_points[i][0] = (temp1[0] * lm[0][3] + temp1[1] * lm[1][3] + temp1[2] * lm[2][3]) * 2. * 3.14159265359 * 10;
 			    k_points[i][1] = (temp1[0] * lm[0][4] + temp1[1] * lm[1][4] + temp1[2] * lm[2][4]) * 2. * 3.14159265359 * 10;
 			    k_points[i][2] = (temp1[0] * lm[0][5] + temp1[1] * lm[1][5] + temp1[2] * lm[2][5]) * 2. * 3.14159265359 * 10;
@@ -190,7 +191,7 @@ void make_band(int typee)
 		//--------------------------------------------- band data saved ----------------------------------------------
 		//*/
 	}
-	else
+	else // for table form reading band structure 
 	{
 		//cout<<"Reading band data getchar(); three times"<<endl;
 		//getchar(); getchar(); getchar();
@@ -252,7 +253,7 @@ void make_band(int typee)
 			}
 		}
 		NKPTS = i;		
-		
+	// for table form reading band structure completed	
 	}    // if and else for reading VASP or from table completed
 
 	fclose(fid);
@@ -323,7 +324,7 @@ void make_band(int typee)
 		kx = pow(k_points[i][0] - reference_point[0], 2);
 		ky = pow(k_points[i][1] - reference_point[1], 2);
 		kz = pow(k_points[i][2] - reference_point[2], 2);
-		distance = sqrt(kx + ky + kz);
+		distance = sqrt(kx + ky + kz);   // unit is 1/nm
 		conduction_band[i][0] = distance;
 		conduction_band[i][1] = energies[i][1];    // CB
 		//printf("\n %e %lf", distance,energies[i]);
@@ -351,10 +352,35 @@ void make_band(int typee)
 		conduction_band2[i] = conduction_band[i][1];  // energy
 	}
 
-
-	sort(conduction_band1, conduction_band1+NKPTS);
-	sort(conduction_band2, conduction_band2+NKPTS);
-
+	if(SORT==0)	// by default this part is slected
+	{
+		sort(conduction_band1, conduction_band1+NKPTS);
+		sort(conduction_band2, conduction_band2+NKPTS);
+	}
+	else // if sorting is selected then only this part will run 
+	{	
+		double temp3;
+		// bubble sort according to distance 
+		for(int i=0;i<NKPTS-1;i++)
+		{
+			for(int j=0;j<NKPTS-i;j++)
+			{
+				if(conduction_band1[j+1] < conduction_band1[j])
+				{
+					// swap elements
+					temp3 = conduction_band1[j+1]; 
+					conduction_band1[j+1] = conduction_band1[j];
+					conduction_band1[j] = temp3;
+					
+					temp3 = conduction_band2[j+1]; 
+					conduction_band2[j+1] = conduction_band2[j];
+					conduction_band2[j] = temp3;
+				}   
+			}
+		}		 
+	}   // sorting completed
+	
+	
 	for (int i = 0; i < NKPTS; i++)
 	{
 		conduction_band_num_dum[i][0] = conduction_band1[i];    // distance
@@ -368,47 +394,50 @@ void make_band(int typee)
 	conduction_band_num[0][1] = conduction_band_num_dum[0][1];
 	//printf("\n %e %e", conduction_band_num[0][0], conduction_band_num[0][1]);
 
+//--------------------// doing average kpoints started----------------------------------------------------------
 	double avg[1][2] = {0}, z = 0.0001;
 	int start = 0, stop = 0;
 	countx = 0;
 
 	for (int i = 1; i < NKPTS - 1; i++)
 	{
-	if (abs(conduction_band_num_dum[i][0] - conduction_band_num_dum[i - 1][0]) < z)
-	{
-	    if (start == 0)
-		start = i - 1;
-
-	    if ((conduction_band_num_dum[i+1][0] - conduction_band_num_dum[i][0]) > z)
-	    {
-		stop = i;
-		for (int j = start; j <= stop; j++)
+		if (abs(conduction_band_num_dum[i][0] - conduction_band_num_dum[i - 1][0]) < z)
 		{
-		    avg[0][0] = avg[0][0]+conduction_band_num_dum[j][0];
-		    avg[0][1] = avg[0][1]+conduction_band_num_dum[j][1];
+		    if (start == 0)
+			start = i - 1;
+
+		    if ((conduction_band_num_dum[i+1][0] - conduction_band_num_dum[i][0]) > z)
+		    {
+			stop = i;
+			for (int j = start; j <= stop; j++)
+			{
+			    avg[0][0] = avg[0][0]+conduction_band_num_dum[j][0];
+			    avg[0][1] = avg[0][1]+conduction_band_num_dum[j][1];
+			}
+			avg[0][0] = avg[0][0]/(stop - start + 1);
+			avg[0][1] = avg[0][1]/(stop - start + 1);
+
+			countx++;
+			conduction_band_num[countx][0] = avg[0][0];
+			conduction_band_num[countx][1] = avg[0][1];
+
+			start = 0;
+			stop = 0;
+			avg[0][0] = 0;
+			avg[0][1] = 0;
+		    }
 		}
-		avg[0][0] = avg[0][0]/(stop - start + 1);
-		avg[0][1] = avg[0][1]/(stop - start + 1);
+		if( (abs(conduction_band_num_dum[i][0] - conduction_band_num_dum[i - 1][0]) > z) &
+		   ((conduction_band_num_dum[i + 1][0] - conduction_band_num_dum[i][0]) > z) )
+		{
+		    countx++;
+		    conduction_band_num[countx][0] = conduction_band_num_dum[i][0];
+		    conduction_band_num[countx][1] = conduction_band_num_dum[i][1];
 
-		countx++;
-		conduction_band_num[countx][0] = avg[0][0];
-		conduction_band_num[countx][1] = avg[0][1];
+		}
+	}
 
-		start = 0;
-		stop = 0;
-		avg[0][0] = 0;
-		avg[0][1] = 0;
-	    }
-	}
-	if( (abs(conduction_band_num_dum[i][0] - conduction_band_num_dum[i - 1][0]) > z) &
-	   ((conduction_band_num_dum[i + 1][0] - conduction_band_num_dum[i][0]) > z) )
-	{
-	    countx++;
-	    conduction_band_num[countx][0] = conduction_band_num_dum[i][0];
-	    conduction_band_num[countx][1] = conduction_band_num_dum[i][1];
-
-	}
-	}
+//--------------------// doing average of kpoints completed----------------------------------------------------------
 
 	if (conduction_band_num_dum[NKPTS-1][0] > conduction_band_num_dum[NKPTS-2][0])
 	{
@@ -427,10 +456,31 @@ void make_band(int typee)
 		countx--;
 	}
 
-	double normalization_factor = 0 - conduction_band_num_dum[0][1];
-	for (int i = 0; i < countx+1; i++)
-		conduction_band_num[i][1] = conduction_band_num[i][1] + normalization_factor;
 
+//------- -----------remove offset of energy 	 ------------------------------------------------------
+	double normalization_factor;
+	if(SORT==0)
+	{
+		normalization_factor = 0 - conduction_band_num_dum[0][1];
+		for (int i = 0; i < countx+1; i++)
+			conduction_band_num[i][1] = conduction_band_num[i][1] + normalization_factor;
+	}
+	else  // if buuble sort is done for only distance 
+	{
+		cout<<"SORTING is selected for bands"<<endl;
+		// find minimum energy
+		double  minimum=100;
+		for(int i=0;i<NKPTS;i++)
+		{
+			if(minimum > conduction_band_num[i][1])
+				minimum = conduction_band_num[i][1];	
+		}
+	
+		normalization_factor = -1*minimum;
+		for (int i = 0; i < countx+1; i++)
+			conduction_band_num[i][1] = conduction_band_num[i][1] + normalization_factor;			
+	}
+//------- -----------remove offset of energy completed ------------------------------------------------------	
 	//FILE *fid1;
 	/*
 	if (typee==1)
@@ -447,21 +497,106 @@ void make_band(int typee)
 	*/
 	countx = countx+1;
 
-	if (typee==1)
+	if (typee==1)  //  Conduction Band 
 	{
-	for (int i=0;i<countx;i++)
+		for (int i=0;i<countx;i++)
+		{
+		    cond_band[i][0] = conduction_band_num[i][0];
+		    cond_band[i][1] = conduction_band_num[i][1];
+		}
+	}
+	else    // Valence Band
 	{
-	    cond_band[i][0] = conduction_band_num[i][0];
-	    cond_band[i][1] = conduction_band_num[i][1];
+		for (int i=0;i<countx;i++)
+		{
+		    val_band[i][0] = conduction_band_num[i][0];
+		    val_band[i][1] = conduction_band_num[i][1];
+		}
 	}
-	}
-	else
+	
+//------------------------------------- linear fitting of band is done here for ----------------------------------
+
+	if(linear_fit==1) // without intercept
 	{
-	for (int i=0;i<countx;i++)
+		//cout<<endl<<"Linear fitting without intercept is selected"<<endl;
+		//cout<<"Emax = "<<Emax<<"  eV"<<endl;
+		//cout<<"countx = "<<countx<<endl;
+		
+		double sum_xy=0,sum_x2=0, a;
+		int n=0;
+		for(int i=0;i<countx;i++)
+		{	
+			if(conduction_band_num[i][1] < Emax)
+			{
+				n++;
+				sum_xy = sum_xy + conduction_band_num[i][1] * conduction_band_num[i][0]*1e9*e;
+				sum_x2 = sum_x2 + conduction_band_num[i][0] * conduction_band_num[i][0]*1e9*1e9;  
+
+				// multiplied with 1e9 to converted from 1/nm to 1/m
+				/*
+				if(typee!=1)
+				{
+					cout<<"i = "<<i<<endl;
+					cout<<"sum_xy = "<<sum_xy<<endl;
+					cout<<"sum_x2 = "<<sum_x2<<endl;
+					cout<<"conduction_band_num[i][0] = "<<conduction_band_num[i][0]<<endl;
+					cout<<"conduction_band_num[i][1] = "<<conduction_band_num[i][1]<<endl;
+					getchar();
+				}
+				*/
+			}			
+		}
+		
+		//cout<<"sum_xy = "<<sum_xy<<endl;
+		//cout<<"sum_x2 = "<<sum_x2<<endl;
+		cout<<"n = "<<n<<endl;
+		// slope multilped 
+		a = (sum_xy/sum_x2);  // unit is J-m     
+		vf = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
+		cout<<endl<<"Calculated fermi velocity = "<<vf<<"   m/s"<<endl;		
+		//getchar();	
+		
+	}
+	else if(linear_fit==2) //with intercept
 	{
-	    val_band[i][0] = conduction_band_num[i][0];
-	    val_band[i][1] = conduction_band_num[i][1];
-	}
-	}
+		//cout<<endl<<"Linear fitting with intercept is selected"<<endl;
+		//cout<<"Emax = "<<Emax<<"  eV"<<endl;
+		//getchar();
+		double sum_xy=0, sum_x2=0, sum_x=0, sum_y=0, delta=0, a, b;
+		int n=0;
+		for(int i=0;i<countx;i++)
+		{
+			if(conduction_band_num[i][1] < Emax)
+			{
+				n++;
+				sum_xy = sum_xy + conduction_band_num[i][1] * conduction_band_num[i][0]*1e9*e;
+				sum_x2 = sum_x2 + conduction_band_num[i][0] * conduction_band_num[i][0]*1e9*1e9;
+				sum_x = sum_x + conduction_band_num[i][0] * 1e9;
+				sum_y = sum_y + conduction_band_num[i][1] * e;
+				// multiplied with q to converted from eV to joule  
+				// multiplied with 1e9 to converted from 1/nm to 1/m
+			}
+			//cout<<"sum_xy = "<<sum_xy<<endl;
+			//cout<<"sum_x2 = "<<sum_x2<<endl;
+			//cout<<"sum_x = "<<sum_x<<endl;
+			//cout<<"sum_y = "<<sum_y<<endl;
+		}
+		delta = n*sum_x2 - sum_x*sum_x;
+		a = (n*sum_xy - sum_x * sum_y)/delta ;  // slope 
+		b = (sum_x2 * sum_y - sum_x * sum_xy)/delta;
+		vf = a/(e*h_bar); // fermi velocity 			
+
+		//cout<<"NKPTS= "<<NKPTS<<endl;
+		//cout<<"countx  = "<<countx<<endl;
+		//cout<<"n = "<<n<<endl;
+		//cout<<"a = "<<a<<endl;
+		//cout<<"b = "<<b<<endl;
+		//cout<<"delta = "<<delta<<endl;	
+		cout<<"Calculated fermi velocity = "<<vf<<"   m/s"<<endl;
+		//cout<<"With intercept "<<endl;	
+		//getchar();	
+
+	}	
+//--------------------------------------- linear fitting completed ---------------------------------------------	
 
 }

@@ -51,6 +51,9 @@ using namespace std;
 #define limit5 5    // for npop scattering no. limit 
 //------------ - ------------------------------------------------------------------------------
 
+extern double vf;   // fermi velocity
+extern int linear_fit, SORT;
+
 //-----------function for Valence band --------
 void nu_ii_p_funct(int T_loop);
 void nu_So_p_funct(double T, int T_loop,double omega_LO);
@@ -162,7 +165,7 @@ double find_fermi();
 extern double h_bar;
 //--------------------------------------------------------------------------------------------
 extern int cc, VASP;
-extern double lm[10][10], volume1, ion_mass1[5];
+extern double lm[10][10], volume1, ion_mass1[5], Emax;
 extern int ion_numbers1[5], spin_orbit_coupling;
 extern int npop_number;
 

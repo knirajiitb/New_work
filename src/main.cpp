@@ -93,8 +93,8 @@ int main()
 		int l = (sizeof(Bgap)/sizeof(*Bgap));
 		for (int i=0;i<l;i++)
 		    Bgap[i] = abs(CBM - VBM);
-		cout<<endl<<"Bgap = "<<Bgap[0]<<" eV"<<endl;
 	    }
+            cout<<endl<<"Bgap = "<<Bgap[0]<<" eV"<<endl;
 
 // ------------------------  analytical fitting of CB and VB bands -------------------------------------------------------- 	
 	    fitting_band();
