@@ -552,8 +552,20 @@ void make_band(int typee)
 		cout<<"n = "<<n<<endl;
 		// slope multilped 
 		a = (sum_xy/sum_x2);  // unit is J-m     
-		vf = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
-		cout<<endl<<"Calculated fermi velocity = "<<vf<<"   m/s"<<endl;		
+		
+		if(typee==1)
+		{
+			vf_cb = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
+			cout<<endl<<"Calculated fermi velocity for conduction band = "<<vf_cb<<"   m/s"<<endl;		
+		}
+		else
+		{
+			vf_vb = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
+			vf = (vf_cb + vf_vb)/2.0;
+			cout<<endl<<"Calculated fermi velocity for valence band = "<<vf_vb<<"   m/s"<<endl;		
+			cout<<endl<<"Average fermi velocity = "<<vf<<"   m/s"<<endl;	
+		}
+		
 		//getchar();	
 		
 	}
@@ -584,7 +596,18 @@ void make_band(int typee)
 		delta = n*sum_x2 - sum_x*sum_x;
 		a = (n*sum_xy - sum_x * sum_y)/delta ;  // slope 
 		b = (sum_x2 * sum_y - sum_x * sum_xy)/delta;
-		vf = a/(e*h_bar); // fermi velocity 			
+		if(typee==1)
+		{
+			vf_cb = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
+			cout<<endl<<"Calculated fermi velocity for conduction band = "<<vf_cb<<"   m/s"<<endl;		
+		}
+		else
+		{
+			vf_vb = a/(h_bar*e);  // unit is m/s, h_bar unit is eV-s
+			vf = (vf_cb + vf_vb)/2.0;
+			cout<<endl<<"Calculated fermi velocity for valence band = "<<vf_vb<<"   m/s"<<endl;		
+			cout<<endl<<"Average fermi velocity = "<<vf<<"   m/s"<<endl;	
+		}
 
 		//cout<<"NKPTS= "<<NKPTS<<endl;
 		//cout<<"countx  = "<<countx<<endl;
@@ -592,7 +615,6 @@ void make_band(int typee)
 		//cout<<"a = "<<a<<endl;
 		//cout<<"b = "<<b<<endl;
 		//cout<<"delta = "<<delta<<endl;	
-		cout<<"Calculated fermi velocity = "<<vf<<"   m/s"<<endl;
 		//cout<<"With intercept "<<endl;	
 		//getchar();	
 

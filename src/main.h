@@ -51,7 +51,7 @@ using namespace std;
 #define limit5 5    // for npop scattering no. limit 
 //------------ - ------------------------------------------------------------------------------
 
-extern double vf;   // fermi velocity
+extern double vf, vf_cb, vf_vb;   // fermi velocity
 extern int linear_fit, SORT;
 
 //-----------function for Valence band --------
@@ -110,12 +110,14 @@ double lambda_o_minus(int counter,double omega,double A_minus, double epsilon_s,
 double lambda_e_minus(int counter,double omega,double rho,double De,int nfv,int points);
 double lambda_e_plus(int counter,double omega,double rho,double De,int nfv,int points);
 
-double nu_ii(double k, int counter, double beta_constant, double v, double epsilon_s);
-double nu_de(double k,int counter,double T,double v);                    
-double nu_pe(double k,int counter,double T,double P_piezo,double epsilon_s,double v);
-double nu_dis(double k, int counter, double T, double beta_constant, double epsilon_s, double v);
-double nu_alloy1(double k,double v);
-double nu_im(double k_dum, int counter, double epsilon_s, double N_im, double v);
+void nu_ii(double epsilon_s);
+void nu_de(double T);                    
+void nu_pe(double T,double P_piezo,double epsilon_s);
+void nu_dis(double T, double beta_constant, double epsilon_s);
+void nu_alloy1();
+void nu_npop_n(double T);
+void nu_iv_n(double T);
+void nu_im(double epsilon_s, double N_im);
 
 void generate_required_data(double T);
 
@@ -144,7 +146,7 @@ void fitting_band();
 void solve_g(double T);
 void save_results();
 void initialize_array();
-void pop_So(double T, double efef, int ii);
+void pop_So(double T, double efef, int ii, int T_loop);
 
 /*
 void find_cbm(int spinorbit);
@@ -235,9 +237,9 @@ extern int points, points1, points2;
 
 //extern double k_min0,k_trans0,k_step_fine0,k_step0;
 
-extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[10], iv_number, fitting_1, fitting_2, fitting_3;
+extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[10], iv_number, de_number, fitting_1, fitting_2, fitting_3;
 
-extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation, C_long, C_trans, c_bar, C_11, C_12, C_44,
+extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation[3], C_long, C_trans, C_za, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 
 extern double Bfield;

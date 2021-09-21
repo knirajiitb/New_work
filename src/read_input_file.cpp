@@ -3,7 +3,7 @@
 int flag[50]={0};
 
 //---------------------------------------------------------------------------------------------------------------
-double vf;
+double vf, vf_cb, vf_vb;
 int linear_fit=0, SORT=0;
 //---------------------------------------------------------------------------------------------------------------
 
@@ -112,9 +112,10 @@ int degree1;
 double fraction[4];
 int length_fraction;
 
-int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[10]={0}, iv_number, fitting_1, fitting_2, fitting_3;
+int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[10]={0}, iv_number, de_number;
+int fitting_1, fitting_2, fitting_3;
 
-double rho=0, k_max, N_dis, omega_LO, omega_TO, E_deformation, C_long, C_trans, c_bar, C_11, C_12, C_44,
+double rho=0, k_max, N_dis, omega_LO, omega_TO, E_deformation[3]={0}, C_long, C_trans, C_za=0, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 
 double Bfield=0;
@@ -368,7 +369,6 @@ void read_input_file()
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
-		  tmp>>E_deformation;		  
 		  cout<< "Tight binding bandstructure calculation are to be done for 2D material "<<endl;
 		  TBS = 1;
 		}
@@ -402,10 +402,20 @@ void read_input_file()
 
 		if(str=="ADP")
 		{
-		  getline(in,ss);
-		  stringstream tmp(ss);
-		  tmp>>E_deformation;		  
-		  cout<< "ACOUSTIC DEFORMATION POTENTIAL " <<E_deformation<< " eV "<<endl;
+			getline(in,ss);
+			stringstream tmp(ss);
+
+			int i=0, count=0;			
+			while (tmp >> E_deformation[i]) 
+			{ count++; i++; } 
+			
+			de_number = count;
+
+			cout<< "ACOUSTIC DEFORMATION POTENTIAL " <<endl;
+			for(int i=0;i<de_number;i++)
+				cout<<E_deformation[i]<< " eV   "<<endl;
+
+			cout<<endl<<endl;
 		}
 
 		if(str=="PZCOEFFICIENT")
@@ -430,6 +440,14 @@ void read_input_file()
 		  stringstream tmp(ss);
 		  tmp>>C_trans;
 		  cout<< "ELASTIC CONSTANT FOR TRANSVERSE MODE " <<C_trans<<" dyne/cm^2 "<<endl;
+		}
+
+		if(str=="CZA")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp>>C_za;
+		  cout<< "ELASTIC CONSTANT FOR ZA MODE " <<C_za<<" dyne/cm^2 "<<endl;
 		}
 
 		if(str=="ALLOYPOTENTIAL")
@@ -922,6 +940,12 @@ void read_input_file()
 	}
 	
 	
+	if (C_za == 0 && de_number==3)
+	{
+		printf("\n C_za is not given for ZA phonon mode. Exit from program ");
+		exit(EXIT_FAILURE);		
+	}
+
 	c_bar = (1.0/3.0)*C_long + (2.0/3)*C_trans;   // in dyne/cm^2
 	printf("\n c_bar   =   %e dyne/cm^2 \n", c_bar);
 

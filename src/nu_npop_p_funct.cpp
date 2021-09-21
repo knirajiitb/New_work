@@ -106,12 +106,18 @@ void nu_npop_p_funct(double T)
 	 	*/
 	 }	
 		
-	/*	
 	
-	fid1 = fopen("npopscatt.dat","w");
+	FILE *fid1;
+	fid1 = fopen("npop_scattering_rate.dat","w");
+	fprintf(fid1,"# energy           total	individual cattering rates \n");
+
 	for (int i = 0; i < points; i++)
 	{
-		fprintf(fid1,"%e          %e  \n", k_grid[i], 	nu_npop_p[i][0][0] );
+		fprintf(fid1,"%e          %e  \t ", energy_p[i], 	nu_npop_p[i][0][0] );
+		for(int j=0;j<npop_number;j++)
+			fprintf(fid1,"%e \t", nu_npop_p_all[i][j]);
+		
+		fprintf(fid1,"\n "); 
 	}
 	fclose(fid1);
 	//*/

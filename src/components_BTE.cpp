@@ -71,83 +71,9 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 
 //----------------------POP scattering rate --------------------------------------------------------------------
 			    
-		 // polar optical phonon scattering 
-		if (scattering_mechanisms[1]==1)
-		{
-		    N_poph_atT = N_poph(omega_LO,T);
-		    //cout<<"N_poph_atT = "<<N_poph_atT<<endl;
-
-			int minus_index, plus_index;
-			double arr[points];
-
-			for (int counter1 = 0;counter1 < points;counter1++)
-			{
-
-				kplus_grid_pop[counter1] = kplus(counter1,omega_LO,points,energy_n);
-				kminus_grid_pop[counter1] = kminus(counter1,omega_LO,points,energy_n);
-
-				for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - kminus_grid_pop[counter1]);
-				minus_index =FindMinInd(arr,points);
-
-				for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - kplus_grid_pop[counter1]);
-				plus_index =FindMinInd(arr,points);
-
-				plus_index_pop[counter1] = plus_index;
-				minus_index_pop[counter1] = minus_index;
-			    
-			    //cout<<"counter1 = "<<counter1<<endl;
-			    //cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
-			    //cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;	
-			    //cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
-			    //cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
-			    //getchar();	
-			}
-		}
-								
-		// POP scattering
-		if (scattering_mechanisms[1]==1)
-		{
-			for (int counter = 0;counter < points;counter++)
-			{
-			    Aminus_grid[counter] = Aminus(counter,omega_LO,points,energy_n);
-			    Aplus_grid[counter] = Aplus(counter,omega_LO,points,energy_n);
-
-
-			    betaplus_grid[counter] = betaplus(counter,omega_LO,epsilon_s[T_loop],epsilon_inf[T_loop],points);
-			    betaminus_grid[counter] = betaminus(counter,omega_LO,epsilon_s[T_loop],epsilon_inf[T_loop],points);
-
-			    lambda_i_plus_grid[counter] = abs(lambda_i_plus(counter,omega_LO,Aplus_grid[counter], epsilon_s[T_loop],epsilon_inf[T_loop], points));
-
-			    lambda_i_minus_grid[counter] = abs(lambda_i_minus(counter,omega_LO,Aminus_grid[counter],                epsilon_s[T_loop],epsilon_inf[T_loop],points));
-
-			    lambda_o_plus_grid[counter] = abs(lambda_o_plus(counter,omega_LO,Aplus_grid[counter],
-			    epsilon_s[T_loop],epsilon_inf[T_loop],points));
-
-			    lambda_o_minus_grid[counter] = abs(lambda_o_minus(counter, omega_LO,Aminus_grid[counter],
-			    epsilon_s[T_loop],epsilon_inf[T_loop],points));
-
-				//---------------------------- code to debug -------------------------------------------------------------
-				//cout<<"counter = "<<counter<<endl;
-				//cout<<"Aplus_grid[counter] =   "<<Aplus_grid[counter]<<endl;
-				//cout<<"Aminus_grid[counter] =   "<<Aminus_grid[counter]<<endl;
-
-				//cout<<"betaplus_grid[counter] =  "<<betaplus_grid[counter]<<endl;
-				//cout<<"betaminus_grid[counter] =  "<<betaminus_grid[counter]<<endl;
-
-				//cout<<"lambda_i_plus_grid[counter] =  "<<lambda_i_plus_grid[counter]<<endl;
-				//cout<<"lambda_i_minus_grid[counter] =  "<<lambda_i_minus_grid[counter]<<endl;
-				//cout<<"lambda_o_plus_grid[counter] =  "<<lambda_o_plus_grid[counter]<<endl;
-				//cout<<"lambda_o_minus_grid[counter] =  "<<lambda_o_minus_grid[counter]<<endl;
-
-				//getchar();
-			}
-		}
-
 		// pop scattering
 		if(scattering_mechanisms[1]==1)
-			pop_So(T, efefn, ii);
+			pop_So(T, efefn, ii, T_loop);
 //-------------------------------------------------------- pop_So calculated---------------------------------------
 
 //----------------------POP scattering rate completed--------------------------------------------------------------------
@@ -158,32 +84,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// ionized impourity scattering
 	        if (scattering_mechanisms[0]==1)
 	        {
-			for (int counter = 0;counter < points;counter++)
-			{
-				k_dum = k_grid[counter];
-			    //cout<<"k_dum = "<<k_dum<<endl;
-			    //cout<<"beta_constant =  "<<beta_constant<<endl;
-			    //cout<<"c_n[counter] =  "<<c_n[counter]<<endl;
-			    //cout<<"counter =  "<<counter+1<<endl;
-
-			    B_ii = (4*(k_dum*k_dum)/(beta_constant*beta_constant))/(1+4*k_dum*k_dum/(beta_constant*beta_constant))
-			    +8*(beta_constant*beta_constant+2*k_dum*k_dum)/(beta_constant*beta_constant+4*k_dum*k_dum)*(pow(c_n[counter],2))
-			    +(3*pow(beta_constant,4)+
-			      6*pow(beta_constant,2)*k_dum*k_dum-8*k_dum*k_dum*k_dum*k_dum)/((beta_constant*beta_constant+4*k_dum*k_dum)*k_dum*k_dum)*pow(c_n[counter],4);
-			    // According to equation (92) of Semiconductors and Semimetals, volume 10 (Rode's chapter)
-
-
-			    D_ii = 1+(2*pow(beta_constant,2)*(pow(c_n[counter],2)/pow(k_dum,2))+
-			              (3*pow(beta_constant,4)*(pow(c_n[counter],4))/(4*pow(k_dum,4))));
-			              // According to equation (92) of Semiconductors and Semimetals, volume 10 (Rode's chapter)
-
-			    nu_ionizedimpurity[counter] = nu_ii(k_dum,counter,beta_constant,v_n[counter],epsilon_s[T_loop]);
-			     // unit 1/second	
-			    //cout<<"B_ii = "<<B_ii<<endl;
-			    //cout<<"D_ii = "<<D_ii<<endl;
-			    //cout<<"N_ii = "<<N_ii<<endl;
-			    //cout<<"nu_ionizedimpurity[counter] = "<<nu_ionizedimpurity[counter]<<endl;
-			}
+	        	nu_ii(epsilon_s[T_loop]);
 	        }
 //----------------------II scattering rate completed--------------------------------------------------------------------
 
@@ -192,12 +93,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// acoustic scattering 
 	        if (scattering_mechanisms[3]==1)
 	        {
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			        k_dum = k_grid[counter];					
-	            		nu_deformation[counter] = nu_de(k_dum,counter,T,v_n[counter]);
-				//cout<<"nu_deformation[counter] =  "<<nu_deformation[counter]<<endl;
-			}
+            		nu_de(T);
 		}	
 //----------------------Acoustic scattering rate completed--------------------------------------------------------------------
 
@@ -206,12 +102,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// Piezoelectric scattering
 	        if (scattering_mechanisms[4]==1)
 	        {
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			        k_dum = k_grid[counter];					
-	         		nu_piezoelectric[counter] = nu_pe(k_dum,counter,T,P_piezo[T_loop],epsilon_s[T_loop],v_n[counter]);
-				//cout<<"nu_piezoelectric[counter] =  "<<nu_piezoelectric[counter]<<endl;
-			}
+         		nu_pe(T,P_piezo[T_loop],epsilon_s[T_loop]);
 		}
 //----------------------PZ scattering rate --------------------------------------------------------------------
 			
@@ -219,12 +110,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// Dislocation scattering
 	        if (scattering_mechanisms[6]==1)
 	        {
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			        k_dum = k_grid[counter];					
-			        nu_dislocation[counter] = nu_dis(k_dum,counter,T,beta_constant,epsilon_s[T_loop], v_n[counter]);
-				//cout<<"nu_dislocation[counter] =  "<<nu_dislocation[counter]<<endl;
-			}
+			nu_dis(T,beta_constant,epsilon_s[T_loop]);
 		}
 //----------------------Disloaction scattering rate completed ------------------------------------------			
 
@@ -233,12 +119,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// Alloy scattering
 	        if (scattering_mechanisms[7]==1)
 	        {
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			        k_dum = k_grid[counter];					
-	     	                nu_alloy[counter] = nu_alloy1(k_dum, v_n[counter]);
-				//cout<<"nu_alloy[counter] =  "<<nu_alloy[counter]<<endl;
-			}
+		        nu_alloy1();
 		}
 //----------------------Alloy scattering rate completed ------------------------------------------			
 
@@ -247,14 +128,8 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 
 		// neutral impurity
 	        if (scattering_mechanisms[9]==1)  
-		{
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			        k_dum = k_grid[counter];					
-						
-				nu_neutralimpurity[counter] = nu_im(k_dum,counter,epsilon_s[T_loop],N_im[ii],v_n[counter]);
-				//cout<<"nu_neutralimpurity[counter] =  "<<nu_neutralimpurity[counter]<<endl;
-			}
+		{						
+			nu_im(epsilon_s[T_loop],N_im[ii]);
 		}
 			
 //---------------------- Neutral impurity scattering rate  completed ------------------------------------------			
@@ -265,180 +140,16 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		// intravalley scattering	
 		if (scattering_mechanisms[8]==1)   
 		{
-			for (int aa=0;aa<iv_number;aa++)
-			{
-				N_e[aa] = N_poph(we[aa],T);
-				//cout<<" N_e[aa] = "<<N_e[aa]<<endl;
-			}
-
-	            	//cout<<"For intervalley scattering   =   "<<endl;	
-	        	for (int counter = 0;counter<points;counter++)
-	    		{
-			    k_dum = k_grid[counter];					
-			    //cout<<"counter   =   "<<counter<<endl;
-			    for (int aa = 0;aa<iv_number;aa++)
-			    {
-			        lambda_e_plus_grid[counter][aa] = abs(lambda_e_plus(counter,we[aa],rho,De[aa],nfv[aa],points));
-			        lambda_e_minus_grid[counter][aa] = abs(lambda_e_minus(counter,we[aa],rho,De[aa],nfv[aa],points));
-				//cout<<"counter = "<<counter<<endl;
-			        //cout<<"aa   =   "<<aa<<endl;
-			        //cout<<"lambda_e_plus_grid   =   "<<lambda_e_plus_grid[counter][aa]<<endl;
-			        //cout<<"lambda_e_minus_grid   =   "<<lambda_e_minus_grid[counter][aa]<<endl;
-			        
-			        // Equation number 129 of rode book
-			    }
-			    //getchar();
-			}
-	        }
-
-	 	// intravalley scattering
-		if (scattering_mechanisms[8]==1)  
-		{
-			int len = sizeof(nu_iv_total)/sizeof(nu_iv_total[0]);	
-			for (int counter = 0;counter<len;counter++)
-				nu_iv_total[counter] = 0;
-			
-			//cout<<endl<<"Inside intravalley scattering"<<endl;
-			//cout<<" iv_number = "<<iv_number<<endl;
-		    for (int counter = 0;counter<points;counter++)
-		    {
-		    	//cout<<"counter = "<<counter<<endl;
-			for (int aa = 0;aa<iv_number;aa++)
-			{
-			    //cout<<"aa = "<<aa<<endl;
-			    double k_minus = kminus(counter,we[aa],points,energy_n);
-			    //cout<<"k_minus = "<<k_minus<<endl;
-
-			    double arr[points];
-			    for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - k_minus);
-			    int minus_index =FindMinInd(arr,points);
-
-
-			    double k_plus = kplus(counter,we[aa],points,energy_n);
-			    //cout<<"k_plus = "<<k_plus<<endl;
-
-			    for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - k_plus);
-			    int plus_index =FindMinInd(arr,points);
-
-			    //cout<<"plus_index = "<<plus_index<<endl;
-
-			    double f_negative = f0(energy_n[minus_index],efefn,T);
-			    double f_positive =  f0(energy_n[plus_index],efefn,T);
-
-			    //cout<<"f_negative = "<<f_negative<<endl;
-			    //cout<<"f_positive = "<<f_positive<<endl;
-
-			    if (energy_n[counter] < h_bar*we[aa])
-			    {
-				    nu_iv[counter][aa] = (N_e[aa] + f_positive) *lambda_e_plus_grid[plus_index][aa];
-			    }
-			    else
-			    {    
-				nu_iv[counter][aa] = (N_e[aa] + 1 - f_negative) * lambda_e_minus_grid[minus_index][aa] + 
-							(N_e[aa] + f_positive)*lambda_e_plus_grid[plus_index][aa];
-			    }
-			    
-			    
-			    nu_iv_total[counter] = nu_iv_total[counter] + nu_iv[counter][aa];            
-			    
-			    //cout<<"nu_iv[counter][aa] = "<<nu_iv[counter][aa]<<endl;
-			    //cout<<"nu_iv_total[counter] = "<<nu_iv_total[counter]<<endl;
-			    //getchar(); 	
-			     	
-			}  
-		    }
+			nu_iv_n(T);
 		}
 //------------------interavalley scattering rate completed ----------------------------
 		
 //---------------------- NPOP scattering rate  ---- ------------------------------------------			
 
-		// npop scattering
-	        if (scattering_mechanisms[2]==1)  
-	        {
-			for (int aa=0;aa<npop_number;aa++)
-			{
-				N_npop[aa] = N_poph(we_npop[aa],T);
-				//cout<<" N_npop[aa] = "<<N_npop[aa]<<endl;
-			}   
-			//getchar();	
-
-			//cout<<"For npop scattering   =   "<<endl;	
-			for (int counter = 0;counter<points;counter++)
-	    		{
-			    k_dum = k_grid[counter];					
-	            	
-			    for (int aa = 0;aa<npop_number;aa++)
-			    {
-			        lambda_e_plus_grid_npop[counter][aa] = abs(lambda_e_plus(counter,we_npop[aa],rho,De_npop[aa],1,points));
-			        lambda_e_minus_grid_npop[counter][aa] = abs(lambda_e_minus(counter,we_npop[aa],rho,De_npop[aa],1,points));
-			        // Equation number 129 of rode book  for npop nfv = 1 always
-			        //cout<<"aa   =   "<<aa<<endl;
-			        //cout<<"lambda_e_plus_grid_npop[counter][aa]   =   "<<lambda_e_plus_grid_npop[counter][aa]<<endl;
-			        //cout<<"lambda_e_minus_grid_npop[counter][aa]   =   "<<lambda_e_minus_grid_npop[counter][aa]<<endl; 
-			    }
-			    //getchar();
-			}
-	        }
-
 	 	// npop scattering
 		if (scattering_mechanisms[2]==1)  
 		{
-			int len = sizeof(nu_npop_total)/sizeof(nu_npop_total[0]);	
-			for (int counter = 0;counter<len;counter++)
-				nu_npop_total[counter] = 0;
-
-			//cout<<endl<<"Inside npop scattering"<<endl;
-			//cout<<" npop_number = "<<npop_number<<endl;
-		    for (int counter = 0;counter<points;counter++)
-		    {
-		    	//cout<<"counter = "<<counter<<endl;
-			for (int aa = 0;aa<npop_number;aa++)
-			{
-			    //cout<<"aa = "<<aa<<endl;
-			    double k_minus = kminus(counter,we_npop[aa],points,energy_n);
-			    //cout<<"k_minus = "<<k_minus<<endl;
-
-			    double arr[points];
-			    for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - k_minus);
-			    int minus_index =FindMinInd(arr,points);
-			    //cout<<"minus_index = "<<minus_index<<endl;	
-
-			    double k_plus = kplus(counter,we_npop[aa],points,energy_n);
-			    //cout<<"k_plus = "<<k_plus<<endl;
-
-			    for (int i=0;i<points;i++)
-				arr[i] = abs(k_grid[i] - k_plus);
-			    int plus_index =FindMinInd(arr,points);
-
-			    //cout<<"plus_index = "<<plus_index<<endl;
-
-			    double f_negative = f0(energy_n[minus_index],efefn,T);
-			    double f_positive =  f0(energy_n[plus_index],efefn,T);
-
-			    //cout<<"f_negative = "<<f_negative<<endl;
-			    //cout<<"f_positive = "<<f_positive<<endl;
-
-			    if (energy_n[counter] < h_bar*we_npop[aa])
-			    {
-				    nu_npop[counter][aa] = (N_npop[aa] + f_positive) *lambda_e_plus_grid_npop[plus_index][aa];
-			    }
-			    else
-			    {    
-				nu_npop[counter][aa] = (N_npop[aa] + 1 - f_negative) * lambda_e_minus_grid_npop[minus_index][aa] + 
-							(N_npop[aa] + f_positive)*lambda_e_plus_grid_npop[plus_index][aa];
-			    }
-			    
-			    
-			    nu_npop_total[counter] = nu_npop_total[counter] + nu_npop[counter][aa];            
-			    
-			    //cout<<"nu_npop[counter][aa] = "<<nu_npop[counter][aa]<<endl;
-			    //cout<<"nu_npop_total[counter] = "<<nu_npop_total[counter]<<endl;
-			    //getchar(); 	
-			}
-		    }
+			nu_npop_n(T);						
 		}
 		
 		

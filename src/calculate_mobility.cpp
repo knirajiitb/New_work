@@ -135,7 +135,7 @@ void calculate_mobility(double T, int ii)
 		            a =E_F;
 		        else
 		            a=0;
-		        mobility_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation*E_deformation*
+		        mobility_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation[0]*E_deformation[0]*
 		                            pow((a+h_bar*omega_TO),0.5) ) * 1e4*pow(e,0.5);
 		                            //Last coeff. is to convert to cm2/V.s
 		        //nu_to(:) = e/(m*m_e*mobility_to)*1e4;
@@ -313,7 +313,7 @@ void calculate_mobility(double T, int ii)
 		            a =E_F;
 		        else
 		            a=0;
-		        mobility_hall_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation*E_deformation*
+		        mobility_hall_to = ( pow(2,0.5)*pi*e*pow(h_bar,3)*rho*(exp(h_bar*omega_TO/(k_B*T))-1)*vs*vs ) / ( pow(m,2.5)*pow(m_e,2.5)*omega_TO*E_deformation[0]*E_deformation[0]*
 		                            pow((a+h_bar*omega_TO),0.5) ) * 1e4*pow(e,0.5);
 		                            //Last coeff. is to convert to cm2/V.s
 		        //nu_to(:) = e/(m*m_e*mobility_to)*1e4;
