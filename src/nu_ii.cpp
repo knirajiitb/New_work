@@ -39,6 +39,23 @@ void nu_ii(double epsilon_s)
 		//cout<<"N_ii = "<<N_ii<<endl;
 		//cout<<"nu_ionizedimpurity[counter] = "<<nu_ionizedimpurity[counter]<<endl;
 
-}
+	}
+
+	/*
+	fid1 = fopen("nu_ionizedimpurity.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_ionizedimpurity[i]);
+	fclose(fid1);
+	*/
 	
+	/*
+	fid1 = fopen("nu_ionizedimpurity.txt","r");
+	for (int i = 0; i < points; i++)
+	{
+	fgets(line, 1000, fid1);
+	sscanf(line, "%lf", &nu_ionizedimpurity[i]);
+	}
+	fclose(fid1);
+	
+	*/
 }

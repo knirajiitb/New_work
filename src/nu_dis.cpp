@@ -19,4 +19,12 @@ void nu_dis(double T, double beta_constant, double epsilon_s)
 
 	}
     // The coefficient for conversion of unit to get 1/s:
+
+	/*		    
+	fid1 = fopen("nu_dislocation.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_dislocation[i]);
+	fclose(fid1);    
+	*/    
+    
 }

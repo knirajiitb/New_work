@@ -35,9 +35,10 @@ double mu_po(double e_f,double T,double coefficients[5][7],double kindex[], doub
 
             for (int i = 0;i<=factor-1;i++)
             {
-                integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter]+i*dv)*g_LO[counter]/E;
-                    // =1/E*int[g_LO(En)*DOS(En)*v(En)*dEn]
-                    integral_denominator = integral_denominator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(f0(energy[counter],e_f,T)+i*df);
+
+		integral_numerator = integral_numerator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter]+i*dv)*g_LO[counter]/E;
+		// =1/E*int[g_LO(En)*DOS(En)*v(En)*dEn]
+		integral_denominator = integral_denominator+k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(f0(energy[counter],e_f,T)+i*df);
                 // =int[f0(En)*DOS(En)*dEn]
             }
         }
@@ -55,7 +56,13 @@ double mu_po(double e_f,double T,double coefficients[5][7],double kindex[], doub
         }
     }
 
-    double mobility_po = 1/3.0*integral_numerator/integral_denominator;
+    double mobility_po;
+
+    if(geometry==1)  // for 3D
+    	mobility_po = 1/3.0*integral_numerator/integral_denominator;
+    else if(geometry==2)   // for 2D
+    	mobility_po = 1/2.0*integral_numerator/integral_denominator;
+    
     // According to equation (46) in Rode's book; units of (cm^2/V.s)
     // work out automatically from other conventional units of group velocity (cm$
     return mobility_po;

@@ -69,6 +69,23 @@ void nu_de(double T)
 	}
 	fclose(fid1);
 	
+	/* 			
+	fid1 = fopen("nu_deformation.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_deformation[i]);
+	fclose(fid1);
+	*/
+
+//------------------------------ reading data -----------------------------------------------
+	/*
+	fid1 = fopen("nu_deformation.txt","r");
+	for (int i = 0; i < points; i++)
+	{
+		fgets(line, 1000, fid1);
+		sscanf(line, "%lf", &nu_deformation[i]);
+	}
+	fclose(fid1);
+	*/
 }
 
 

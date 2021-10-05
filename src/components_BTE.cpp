@@ -1,14 +1,14 @@
 #include"main.h"
 
-void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
+void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   // ii for doping variation loop
 {
 
 	double integral_numerator = 0;
 	double integral_denominator = 0;
 	double k_dum;
-
+	
 //---------------------------- components for BTE ------------------------------------------------------------------
-	if(type == "n")
+	if(geometry==1 && type == "n")
 	{	
 		    beta_constant = beta(T, T_loop);
 		    // unit 1/nm
@@ -167,7 +167,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		         	nu_iv_total[counter] * scattering_mechanisms[8] +
 		         	nu_neutralimpurity[counter]*scattering_mechanisms[9];
 
-			denom[counter] = (S_o_grid_total[counter]*scattering_mechanisms[1] + nu_el[counter]);	
+			denom[counter] = (nu_pop_total[counter]*scattering_mechanisms[1] + nu_el[counter]);	
 			//cout<<"nu_el[counter] = "<<nu_el[counter]<<endl;
 		}			
 
@@ -177,90 +177,8 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 				
 	//------------------------------------ components for BTE END --------------------------------------------------------------
 	// ----------------------------saving data ---------------------------------------------------
-		    /*
-		    FILE *fid1;
-		    fid1 = fopen("Aplus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, Aplus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("Aminus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, Aminus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("betaplus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, betaplus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("betaminus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, betaminus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_i_plus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_i_plus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_i_minus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_i_minus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_o_plus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_o_plus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_o_minus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_o_minus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_e_plus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_e_plus_grid[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("lambda_e_minus.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, lambda_e_minus_grid[i]);
-		fclose(fid1);
-		    */
 		    
-		    /* 			
-		    fid1 = fopen("nu_deformation.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_deformation[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("nu_piezoelectric.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_piezoelectric[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("nu_ionizedimpurity.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_ionizedimpurity[i]);
-		fclose(fid1);
-		    
-		    fid1 = fopen("nu_dislocation.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_dislocation[i]);
-		fclose(fid1);    
-
-		    fid1 = fopen("nu_alloy.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_alloy[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("nu_neutralimpurity.txt","w");
-		    for (int i = 0; i < points; i++)
-		        fprintf(fid1,"%d    %e\n", i+1, nu_neutralimpurity[i]);
-		fclose(fid1);
-		    
+		    /*		    
 		    //FILE *fid1;
 		    fid1 = fopen("nu_el.txt","w");
 		    for (int i = 0; i < points; i++)
@@ -295,36 +213,10 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		    //getchar();
 
 	// ----------------------------saving data ---------------------------------------------------
-	//------------------------------ reading data -----------------------------------------------
-		    /*
-		    fid1 = fopen("nu_deformation.txt","r");
-		    for (int i = 0; i < points; i++)
-		    {
-		        fgets(line, 1000, fid1);
-		        sscanf(line, "%lf", &nu_deformation[i]);
-		    }
-		fclose(fid1);
-
-		   fid1 = fopen("nu_ionizedimpurity.txt","r");
-		    for (int i = 0; i < points; i++)
-		    {
-		        fgets(line, 1000, fid1);
-		        sscanf(line, "%lf", &nu_ionizedimpurity[i]);
-		    }
-		fclose(fid1);
-
-		   fid1 = fopen("nu_piezoelectric.txt","r");
-		    for (int i = 0; i < points; i++)
-		    {
-		        fgets(line, 1000, fid1);
-		        sscanf(line, "%lf", &nu_piezoelectric[i]);
-		    }
-		fclose(fid1);
-		    */
 
 	//------------------------------------------------------------------------------------------------------------------
 	}  // if condition for type 'n'
-	else 
+	else if(geometry==1 && type == "p")
 	{
 				
 		//--------------------------- df0dz_integral -----------------------------------------
@@ -377,10 +269,29 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		        //cout<<"f0x1_f0[counter] =  "<<f0x1_f0[counter]<<endl;
 		        //cout<<"electric_driving_force[counter]  = "<<electric_driving_force[counter]<<endl;
 		}
+		/*
+		// save results
+		
+		FILE *fid1;
+		fid1 = fopen("electric_driving_force_p.txt","w");
+		
+		for (int i = 0; i < points; i++)
+			fprintf(fid1,"%e \n", electric_driving_force[i]);	
+		fclose(fid1);
 
-//--------------------------------------common terms calculated completed  --------------------------------------------
 
-		// ionized impourity scattering
+		fid1 = fopen("df0dk_p.txt","w");		
+		for (int i = 0; i < points; i++)
+			fprintf(fid1,"%e \n", df0dk_grid[i]);	
+		fclose(fid1);
+
+		fid1 = fopen("thermal_driving_force_p.txt","w");		
+		for (int i = 0; i < points; i++)
+			fprintf(fid1,"%e \n", thermal_driving_force[i]);	
+		fclose(fid1);
+		
+		*/
+			
 	        if (scattering_mechanisms[0]==1)
 	        {
 	        	nu_ii_p_funct(T_loop);
@@ -403,6 +314,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 		{
 			nu_de_p_funct(T_loop);
 		}
+
 		//*/
 
 		// total scattering rates calculated here
@@ -415,143 +327,91 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)
 			denom[counter] = (nu_So_p[counter][0][0]*scattering_mechanisms[1] + nu_el[counter]);	
 			//cout<<"nu_el[counter] = "<<nu_el[counter]<<endl;
 		}			
+	}
+	else if(geometry==2)
+	{
+//--------------------------------------common terms calculated -------------------------------------------------------
+		
+		//cout<<"Components  result for 2D "<<endl;
+		polarizability(T, ii);
+		
+		for (int counter = 0;counter<points;counter++)
+		{
+			k_dum = k_grid[counter];
+			// unit 1/nm
+			//cout<<"counter+1 = "<<counter+1<<endl;
+			//cout<<"k_dum = "<<k_dum<<endl;
+
+		        df0dk_grid[counter] = df0dk(k_dum, T, efefn, coefficients_cond, kindex_cond, a11);
+			 // unit (nm)
+
+		        f_dist[counter] = f0(energy_n[counter],efefn,T);
+		        //cout<<"In between "<<endl;
+		        //cout<<"energy_n[counter]  = "<<energy_n[counter]<<endl;
+		        //cout<<"efefn = "<<efefn<<endl;
+		        //cout<<"T = "<<T<<endl;
 
 
-//----------------------in scattering terms are calulated here ----------------------------------------------------------------
-			    
-		 // polar optical phonon scattering 
+		        f0x1_f0[counter] = f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T));
+
+		        electric_driving_force[counter] = -(1*E/h_bar)*df0dk_grid[counter]*1e-7;
+			// unit is 1/s , hbar unit is eV-s so e i s not multiplied in numerator
+
+		        //cout<<"df0dk_grid[counter] =  "<<df0dk_grid[counter]<<endl;
+		        //cout<<"f_dist[counter]  =  "<<f_dist[counter]<<endl;
+		        //cout<<"thermal_driving_force[counter] =  "<<thermal_driving_force[counter]<<endl;
+		        //cout<<"f0x1_f0[counter] =  "<<f0x1_f0[counter]<<endl;
+		        //cout<<"electric_driving_force[counter]  = "<<electric_driving_force[counter]<<endl;
+		}
+
+//--------------------------------------common terms calculated completed  --------------------------------------------
+		
+		// remote impurity scattering
+		if (scattering_mechanisms[0]==1)
+		{
+			nu_rim_2D(T);
+		}
+
+		// pop scattering
 		if (scattering_mechanisms[1]==1)
 		{
-		    N_poph_atT = N_poph(omega_LO,T);
-		    //cout<<"N_poph_atT = "<<N_poph_atT<<endl;
+			nu_pop_2D(T, T_loop);
+		}
 
-			int minus_index, plus_index;
-			double arr[points];
-								
-//------------------------- In scattering term for POP scattering rate calculation  --------------------------------
-			double const1, c_plus[points]={0}, c_minus[points]={0}, C_plus[points]={0}, C_minus[points]={0};
-			double A, B, C, const2[points]={0}, const3;
-			
-			// Eq no. 20 of paper coupled band Ramu paper
-			const1 = e*e*omega_LO*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop])*(1/epsilon_0)/(16*pi*(h_bar*e));
-			
-			for (int counter = 0;counter < points;counter++)
-			{    
-			    const2[counter]= const1/(v_p[counter]/100);		
-			    
-			    const3 = const2[counter];
-			    
-			    c_plus[counter] = (k_grid[counter]*k_grid[counter] + kplus_grid_pop[counter]*kplus_grid_pop[counter])/(2*k_grid[counter]*kplus_grid_pop[counter]);      // 
-			    
-			    c_minus[counter] = (k_grid[counter]*k_grid[counter] + kminus_grid_pop[counter]*kminus_grid_pop[counter])/(2*k_grid[counter]*kminus_grid_pop[counter]);     // 
+		// npop scattering
+		if (scattering_mechanisms[2]==1)
+		{
+			nu_npop_2D(T);
+		}
 
-			    A = abs((1.0+c_plus[counter])/(1.0-c_plus[counter]));
-			    B = (c_plus[counter]+3.0*c_plus[counter]*c_plus[counter]*c_plus[counter])/2.0;
-			    C = 2.0 + 3.0 * (c_plus[counter]*c_plus[counter]);
-			    
-			    C_plus[counter] = abs(B*log(A) - C);    //
-			     
-			    A = abs((1.0+c_minus[counter])/(1.0-c_minus[counter]));
-			    B = (c_minus[counter]+3.0*c_minus[counter]*c_minus[counter]*c_minus[counter])/2.0;
-			    C = 2.0 + 3.0 * (c_minus[counter]*c_minus[counter]);
-
-			    C_minus[counter] = abs(B*log(A) - C);   // 
-
-			    lambda_i_plus_grid[counter] = abs(const3*C_plus[counter]*((N_poph_atT+1)*(1 - f0(energy_p[counter],efefp,T))
-			    + (N_poph_atT)*f0(energy_p[counter],efefp,T)));
-
-			    lambda_i_minus_grid[counter] = abs(const3*C_minus[counter]*((N_poph_atT)*(1 - f0(energy_p[counter],efefp,T))
-			    + (N_poph_atT+1)*f0(energy_p[counter],efefp,T)));
-
-				//---------------------------- code to debug -------------------------------------------------------------
-				//cout<<"counter = "<<counter<<endl;
-
-				//cout<<"lambda_i_plus_grid[counter] =  "<<lambda_i_plus_grid[counter]<<endl;
-				//cout<<"lambda_i_minus_grid[counter] =  "<<lambda_i_minus_grid[counter]<<endl;
-				//getchar();
-			}
-			
-			/*
-			// save results
-			
-			FILE *fid1;
-			fid1 = fopen("electric_driving_force_p.txt","w");
-			
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", electric_driving_force[i]);	
-			fclose(fid1);
-
-
-			fid1 = fopen("df0dk_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", df0dk_grid[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("thermal_driving_force_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", thermal_driving_force[i]);	
-			fclose(fid1);
-		
-			fid1 = fopen("const2.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", const2[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("lambda_i_plus_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", lambda_i_plus_grid[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("lambda_i_minus_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", lambda_i_minus_grid[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("C_plus_in_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", C_plus[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("C_minus_in_p.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", C_minus[i]);	
-			fclose(fid1);
-			
-			fid1 = fopen("k_minus.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", kminus_grid_pop[i]);	
-			fclose(fid1);
-			
-			fid1 = fopen("k_plus.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", kplus_grid_pop[i]);	
-			fclose(fid1);
-			
-			fid1 = fopen("plus_index.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%d \n", plus_index_pop[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("minus_index.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%d \n", minus_index_pop[i]);	
-			fclose(fid1);
-
-			fid1 = fopen("denom.txt","w");		
-			for (int i = 0; i < points; i++)
-				fprintf(fid1,"%e \n", denom[i]);	
-			fclose(fid1);
-			*/
-			
+		// acoustic scattering
+		if (scattering_mechanisms[3]==1)
+		{
+			nu_de_2D(T);
 		}
 		
 		
-//------------------------- In scattering term for POP scattering rate calculated  --------------------------------
+		// so pop scattering
+		if (scattering_mechanisms[10]==1)
+		{
+			nu_so_pop_2D(T, T_loop);
+		}
 
-//-------------------------------------------------------- pop_So calculated---------------------------------------
+		// total scattering rates calculated here
+		for(int i=0;i<points;i++)
+		{
+		        nu_el[i] = nu_ionizedimpurity[i]*scattering_mechanisms[0] + 
+		        	nu_npop_total[i] * scattering_mechanisms[2] + 
+		        	nu_deformation[i]*scattering_mechanisms[3] + 
+		               nu_piezoelectric[i]*scattering_mechanisms[4];
 
-//----------------------POP scattering rate completed--------------------------------------------------------------------
+			denom[i] = (nu_pop_total[i]*scattering_mechanisms[1] + nu_el[i] 
+			+ nu_so_pop_total[i]*scattering_mechanisms[10]);				
+			//cout<<"nu_el[i] = "<<nu_el[i]<<endl;
+			//cout<<"denom[i] = "<<denom[i]<<endl;
 			
+		}			
+
 	}
 }
 

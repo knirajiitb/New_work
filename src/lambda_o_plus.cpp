@@ -7,7 +7,7 @@ double lambda_o_plus(int counter,double omega,double A_plus, double epsilon_s,do
     //cout<<endl<<"Inside lambda_o_plus"<<endl;
     double k_plus = kplus_grid_pop[counter];
 
-    int plus_index = plus_index_pop[counter];
+    int plus_index = plus_index_pop[0][counter];
 
     double l;
 

@@ -12,7 +12,7 @@ double lambda_o_minus(int counter,double omega,double A_minus, double epsilon_s,
     //cout<<"counter = "<<counter<<endl;    
     //cout<<"k_minus = "<<k_minus<<endl;
 
-    int minus_index = minus_index_pop[counter];;
+    int minus_index = minus_index_pop[0][counter];;
     //cout<<"minus_index = "<<minus_index<<endl;
 
     double l;

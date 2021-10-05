@@ -252,8 +252,8 @@ int decompose_wave()
 		for(int k=0;k<num_kpoints;k++)
 		{
 			//cout<<"kpoint no. = "<<k<<endl;
-			fgets(line, 1000, fid);
-			fgets(line, 1000, fid);
+			fgets(line, 1000, fid); 
+			fgets(line, 1000, fid);  // line of kpoints
 			//cout<<"line = "<<line<<endl;
 			//getchar();
 			i=0;

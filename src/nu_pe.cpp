@@ -21,5 +21,24 @@ void nu_pe(double T,double P_piezo,double epsilon_s)
     // 1e-4 is coming from unit conversion (take a look at OneNote notes in Piezoelectric Acoustic section in Book8 notes)
     // Please note that e^2 does not appear in this equation since P^2 has V^2
     // units and V^2 with e^2 is eV^2 canceled eV^2 of hbar^2 in the denominator
-	}	
+	}
+	
+	/*
+	fid1 = fopen("nu_piezoelectric.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_piezoelectric[i]);
+	fclose(fid1);
+	*/
+	
+	//------------------------------ reading data -----------------------------------------------
+	/*
+	fid1 = fopen("nu_piezoelectric.txt","r");
+	for (int i = 0; i < points; i++)
+	{
+	fgets(line, 1000, fid1);
+	sscanf(line, "%lf", &nu_piezoelectric[i]);
+	}
+	fclose(fid1);
+	*/
+	
 }

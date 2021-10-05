@@ -17,7 +17,7 @@ double betaminus(int counter, double omega,double epsilon_s, double epsilon_inf,
 	minus_index =FindMinInd(arr,points);
     }
     else		
-    	minus_index = minus_index_pop[counter];
+    	minus_index = minus_index_pop[0][counter];
 
     double bp = (e*e*omega*k_minus)/(4*pi*h_bar*k_grid[counter]*v_n[minus_index])*
     (1/(epsilon_inf*epsilon_0)-1/(epsilon_s*epsilon_0))*3.895643846e28*1.60217657/1e8;

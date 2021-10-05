@@ -48,19 +48,47 @@ using namespace std;
 #define limit2 2000  // size for kpoints after fitting
 #define limit3 20000  // size of kpoints for reading
 #define limit4 5    // for intervalley scattering no. limit 
-#define limit5 5    // for npop scattering no. limit 
+#define limit5 5    // for npop scattering no. limit and pop also
+#define limit6 1000  // for size of change in wave vector for polarizability calculation for 2D
+#define limit7 2000  // for theta variation for 2D
+#define limit8 25  // limit for iteration
+
 //------------ - ------------------------------------------------------------------------------
 
 extern double vf, vf_cb, vf_vb;   // fermi velocity
-extern int linear_fit, SORT;
+extern int linear_fit, SORT, geometry, save_data;
 
 //-----------function for Valence band --------
 void nu_ii_p_funct(int T_loop);
 void nu_So_p_funct(double T, int T_loop,double omega_LO);
 void nu_npop_p_funct(double T);
 void nu_de_p_funct(int T_loop);
-//---------------------------
 
+
+//---------------------------
+// functions for 2D
+void polarizability(double T, int ii);
+void nu_npop_2D(double T);
+void nu_pop_2D(double T, int T_loop);
+void nu_de_2D(double T);                       
+void nu_so_pop_2D(double T, int T_loop);
+void nu_rim_2D(double T);                       
+
+extern double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening;
+extern double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1];
+
+extern double So_ab_npop[limit5][limit2], So_em_npop[limit5][limit2], Se_npop[limit5][limit2], Sa_npop[limit5][limit2];
+extern double So_ab_pop[limit5][limit2], So_em_pop[limit5][limit2], Se_pop[limit5][limit2], Sa_pop[limit5][limit2];
+extern double So_ab_so_pop[limit5][limit2], So_em_so_pop[limit5][limit2], Se_so_pop[limit5][limit2], Sa_so_pop[limit5][limit2];
+extern double So_npop[limit5][limit2], So_pop[limit5][limit2], So_so_pop[limit5][limit2];
+extern double nu_pop_total[limit2], nu_so_pop_total[limit2];
+extern int pop_number, so_pop_number;
+extern double we_pop[limit5], we_to[limit5], dist;
+extern int gd[limit5];
+extern double rimp, Si_so_pop_grid[limit2];
+
+
+//-----------------------
 void read_OUTCAR();
 void read_input_file();
 void copyright(); 
@@ -111,7 +139,7 @@ double lambda_e_minus(int counter,double omega,double rho,double De,int nfv,int 
 double lambda_e_plus(int counter,double omega,double rho,double De,int nfv,int points);
 
 void nu_ii(double epsilon_s);
-void nu_de(double T);                    
+void nu_de(double T);                 
 void nu_pe(double T,double P_piezo,double epsilon_s);
 void nu_dis(double T, double beta_constant, double epsilon_s);
 void nu_alloy1();
@@ -171,6 +199,7 @@ extern double lm[10][10], volume1, ion_mass1[5], Emax;
 extern int ion_numbers1[5], spin_orbit_coupling;
 extern int npop_number;
 
+
 extern double CBM, kcbm[3];
 extern double kvbm[3], VBM;
 //extern double conduction_band[10000][2];
@@ -226,7 +255,7 @@ extern double fraction[4];
 
 extern double T_array[30],epsilon_s[30],epsilon_inf[30],Bgap[30],P_piezo[30],C_piezo_h14[30],n_array[30],Nd[30],Na[30],N_im[30];
 extern double we[limit4],De[limit4];
-extern double we_npop[limit5],De_npop[limit5];
+extern double we_npop[limit5], De_npop[limit5];
 extern int nfv[limit4];
 extern int variation;
 extern double kcbm[3],kvbm[3];
@@ -237,7 +266,7 @@ extern int points, points1, points2;
 
 //extern double k_min0,k_trans0,k_step_fine0,k_step0;
 
-extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[10], iv_number, de_number, fitting_1, fitting_2, fitting_3;
+extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[11], iv_number, de_number, fitting_1, fitting_2, fitting_3;
 
 extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation[3], C_long, C_trans, C_za, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
@@ -246,8 +275,8 @@ extern double Bfield;
 extern double kcbm[3],kvbm[3];
 
 extern double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
-extern double gH_LO[limit2], hH_LO[limit2], S_i_grid_g[limit2], S_i_grid_h[limit2];
-extern double S_iLO_grid_g[limit2], S_iLO_grid_h[limit2], S_o_gridH[limit2], S_o_grid_totalH[limit2];
+extern double gH_LO[limit2], hH_LO[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+extern double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2];
             
 extern string  type;
 extern int free_e, flag[50];
@@ -293,29 +322,34 @@ extern double nu_deformation_p[limit2][2][2], nu_ionizedimpurity_p[limit2][2][2]
 extern double nu_npop_p[limit2][2][2], nu_So_p[limit2][2][2];
 
 extern double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
-extern double gH_LO[limit2], hH_LO[limit2], S_i_grid_g[limit2], S_i_grid_h[limit2];
-extern double S_iLO_grid_g[limit2], S_iLO_grid_h[limit2], S_o_gridH[limit2], S_o_grid_totalH[limit2];
-
-extern int plus_index_pop[limit2], minus_index_pop[limit2]; 
-
-extern double g[limit2], g_rta[limit2], g_old[limit2], g_LO[limit2], g_iv[limit2], g_th[limit2], g_th_old[limit2], g_LO_th[limit2];
-extern double S_o_grid[limit2], S_o_grid_total[limit2], S_i_grid[limit2], S_iLO_grid[limit2], S_i_th_grid[limit2], S_iLO_th_grid[limit2];
-extern double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1];
+extern double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+extern double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2];
 
 
-extern double mobility_ii, mobility_po, mobility_to, mobility_npop, mobility_de, mobility_pe, mobility_dis;
+extern double Si_grid[limit2];
+extern double Si_pop_grid[limit2], Si_th_grid[limit2], Si_pop_th_grid[limit2];
+
+extern int plus_index_pop[limit5][limit2], minus_index_pop[limit5][limit2]; 
+extern int plus_index_so_pop[limit5][limit2], minus_index_so_pop[limit5][limit2];
+
+extern double g[limit2], g_rta[limit2], g_old[limit2], g_so_pop[limit2], g_pop[limit2];
+extern double g_iv[limit2], g_th[limit2], g_th_old[limit2], g_pop_th[limit2];
+extern double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1], result_g_th[limit2][limit8+1];
+extern double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+
+extern double mobility_ii, mobility_po, mobility_to, mobility_npop, mobility_de, mobility_pe, mobility_dis, mobility_so_pop;
 extern double mobility_alloy, mobility_iv, mobility_neutral, mobility_npop, mobility_avg, mobility, mobility_rta;
 extern double mobility_hall_ii, mobility_hall_po, mobility_hall_to, mobility_hall_npop, mobility_hall_de;
 extern double mobility_hall_pe, mobility_hall_dis, mobility_hall_alloy, mobility_hall_iv;
 extern double mobility_hall_neutral, mobility_hall_npop, mobility_hall_avg, mobility_hall, mobility_hall_rta, hall_factor1, hall_factor_rta1;
 extern double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta;
 
-extern double mobility_all[10] , calc_mobility[30][2] , calc_mobility_rta[30][2] ;
+extern double mobility_all[11] , calc_mobility[30][2] , calc_mobility_rta[30][2] ;
 extern double calc_thermopower[30][2] , calc_sigma[30][2] , calc_sigma_rta[30][2] ;
 
 extern double calc_mobility_pe[30][1] , calc_mobility_de[30][1] , calc_mobility_dis[30][1] , calc_mobility_ii[30][1] ;
 extern double calc_mobility_po[30][1] , calc_mobility_to[30][1] , calc_mobility_alloy[30][1] , calc_mobility_iv[30][1] ;
-extern double calc_mobility_neutral[30][1], calc_mobility_npop[30][1] ;
+extern double calc_mobility_neutral[30][1], calc_mobility_npop[30][1], calc_mobility_so_pop[30][1] ;
 
 extern double mobility_hall_all[10], calc_mobility_hall[30][2] , calc_mobility_hall_rta[30][2];
 extern double calc_sigma_hall[30][2] , calc_sigma_hall_rta[30][2] , hall_factor[30][2] , hall_factor_rta[30][2] ;

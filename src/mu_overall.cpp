@@ -61,17 +61,24 @@ double mu_overall(double e_f,double T,double coefficients[5][7],double kindex[],
     {
         for (int counter = 0;counter<=points-2;counter++)
         {
-            de = (energy[counter+1] - energy[counter]);
-            integral_numerator = integral_numerator+de*(Ds[counter]/volume1)*v[counter]*g[counter]/E;
-                    // =1/E*int[g(En)*DOS(En)*v(En)*dEn]
-                integral_denominator = integral_denominator + de*(Ds[counter]/volume1)*f0(energy[counter],e_f,T);
-                    // =int[f(En)*DOS(En)*dEn]
-                    // =int[f(En)*DOS(En)*dEn]
+		de = (energy[counter+1] - energy[counter]);
+		integral_numerator = integral_numerator+de*(Ds[counter]/volume1)*v[counter]*g[counter]/E;
+		// =1/E*int[g(En)*DOS(En)*v(En)*dEn]
+		// units of group velocity (cm/s) and E (V/cm)
+
+		integral_denominator = integral_denominator + de*(Ds[counter]/volume1)*f0(energy[counter],e_f,T);
+		// =int[f(En)*DOS(En)*dEn]
+		// =int[f(En)*DOS(En)*dEn]
         }
     }
 
-    double mobility_overall = (1/3.0)*integral_numerator/integral_denominator;
+    double mobility_overall;
+
+    if(geometry==1)  // for 3D   
+    	mobility_overall = (1/3.0)*integral_numerator/integral_denominator;
+    else if(geometry==2)   // for 2D		
+    mobility_overall = (1/2.0)*integral_numerator/integral_denominator;
     // According to equation (46) in Rode's book; units of (cm^2/V.s)
-    // work out automatically from other conventional units of group velocity (cm$
+
     return mobility_overall;
 }

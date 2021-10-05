@@ -16,7 +16,7 @@ double lambda_i_plus(int counter,double omega,double A_plus,double epsilon_s, do
     //A_plus =  47.695069008345868;
     //omega =  3.694512960621596e+13;
 
-    int plus_index = plus_index_pop[counter];
+    int plus_index = plus_index_pop[0][counter];
 
     //cout<<"plus_index = "<<plus_index<<endl;
     //cout<<"c[plus_index] = "<<c[plus_index]<<endl;

@@ -29,7 +29,18 @@ void nu_iv_n(double T)
 	    }
 	    //getchar();
 	}
+	
+	/*
+	fid1 = fopen("lambda_e_plus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_e_plus_grid[i]);
+	fclose(fid1);
 
+	fid1 = fopen("lambda_e_minus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_e_minus_grid[i]);
+	fclose(fid1);
+	*/
 
 	int len = sizeof(nu_iv_total)/sizeof(nu_iv_total[0]);	
 	for (int counter = 0;counter<len;counter++)

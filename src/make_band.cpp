@@ -324,6 +324,12 @@ void make_band(int typee)
 		kx = pow(k_points[i][0] - reference_point[0], 2);
 		ky = pow(k_points[i][1] - reference_point[1], 2);
 		kz = pow(k_points[i][2] - reference_point[2], 2);
+		
+		//cout<<"i = "<<i<<endl;
+		//cout<<"kz = "<<kz<<endl;
+		//cout<<"k_points[i][2] = "<<k_points[i][2]<<endl;
+		//getchar();
+		
 		distance = sqrt(kx + ky + kz);   // unit is 1/nm
 		conduction_band[i][0] = distance;
 		conduction_band[i][1] = energies[i][1];    // CB

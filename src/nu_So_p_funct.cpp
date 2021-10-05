@@ -37,12 +37,12 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		arr[i] = abs(k_grid[i] - kplus_grid_pop[counter]);
 		plus_index =FindMinInd(arr,points);
 
-		plus_index_pop[counter] = plus_index;
-		minus_index_pop[counter] = minus_index;
+		plus_index_pop[0][counter] = plus_index;
+		minus_index_pop[0][counter] = minus_index;
 
 		//cout<<"counter = "<<counter<<endl;
-		//cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
-		//cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;	
+		//cout<<"plus_index_pop[0][counter1] = "<<plus_index_pop[0][counter1]<<endl;
+		//cout<<"minus_index_pop[0][counter1] = "<<minus_index_pop[0][counter1]<<endl;	
 		//cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
 		//cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
 		//getchar();	
@@ -74,8 +74,8 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		 
 		pop1[counter]= (e*e*omega_LO/(16*pi*h_bar*v*epsilon_0))*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop]);
 		pop1[counter]= pop1[counter]/e; // for unit conversion of h_bar
-		pop2[counter]= B_plus[counter]*(N_op*(1-f0(energy_p[plus_index_pop[counter]],efef_p,T)) + (N_op+1)*f0(energy_p[plus_index_pop[counter]],efef_p,T));
-		pop3[counter]= B_minus[counter]*(N_op*f0(energy_p[minus_index_pop[counter]],efef_p,T) + (N_op+1)*(1-f0(energy_p[minus_index_pop[counter]],efef_p,T)));
+		pop2[counter]= B_plus[counter]*(N_op*(1-f0(energy_p[plus_index_pop[0][counter]],efef_p,T)) + (N_op+1)*f0(energy_p[plus_index_pop[0][counter]],efef_p,T));
+		pop3[counter]= B_minus[counter]*(N_op*f0(energy_p[minus_index_pop[0][counter]],efef_p,T) + (N_op+1)*(1-f0(energy_p[minus_index_pop[0][counter]],efef_p,T)));
 		
 		nu_So_p[counter][0][0] = pop1[counter]*(pop2[counter] + pop3[counter]);
 		
@@ -154,5 +154,105 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	}
 	fclose(fid1);
 	//*/
-			
+
+
+//----------------------in scattering terms are calulated here ----------------------------------------------------------------
+			    
+	// polar optical phonon scattering 
+	N_poph_atT = N_poph(omega_LO,T);
+	//cout<<"N_poph_atT = "<<N_poph_atT<<endl;
+
+								
+//------------------------- In scattering term for POP scattering rate calculation  --------------------------------
+	double const1, C_plus[points]={0}, C_minus[points]={0};
+	double A, B, C, const2[points]={0}, const3;
+
+	// Eq no. 20 of paper coupled band Ramu paper
+	const1 = e*e*omega_LO*(1/epsilon_inf[T_loop] - 1/epsilon_s[T_loop])*(1/epsilon_0)/(16*pi*(h_bar*e));
+
+	for (int counter = 0;counter < points;counter++)
+	{    
+	    const2[counter]= const1/(v_p[counter]/100);		
+	    
+	    const3 = const2[counter];
+	    
+	    A = abs((1.0+c_plus[counter])/(1.0-c_plus[counter]));
+	    B = (c_plus[counter]+3.0*c_plus[counter]*c_plus[counter]*c_plus[counter])/2.0;
+	    C = 2.0 + 3.0 * (c_plus[counter]*c_plus[counter]);
+	    
+	    C_plus[counter] = abs(B*log(A) - C);    //
+	     
+	    A = abs((1.0+c_minus[counter])/(1.0-c_minus[counter]));
+	    B = (c_minus[counter]+3.0*c_minus[counter]*c_minus[counter]*c_minus[counter])/2.0;
+	    C = 2.0 + 3.0 * (c_minus[counter]*c_minus[counter]);
+
+	    C_minus[counter] = abs(B*log(A) - C);   // 
+
+	    lambda_i_plus_grid[counter] = abs(const3*C_plus[counter]*((N_poph_atT+1)*(1 - f0(energy_p[counter],efef_p,T))
+	    + (N_poph_atT)*f0(energy_p[counter],efef_p,T)));
+
+	    lambda_i_minus_grid[counter] = abs(const3*C_minus[counter]*((N_poph_atT)*(1 - f0(energy_p[counter],efef_p,T))
+	    + (N_poph_atT+1)*f0(energy_p[counter],efef_p,T)));
+
+		//---------------------------- code to debug -------------------------------------------------------------
+		//cout<<"counter = "<<counter<<endl;
+
+		//cout<<"lambda_i_plus_grid[counter] =  "<<lambda_i_plus_grid[counter]<<endl;
+		//cout<<"lambda_i_minus_grid[counter] =  "<<lambda_i_minus_grid[counter]<<endl;
+		//getchar();
+	}
+	//------------------------- In scattering term for POP scattering rate calculated  --------------------------------
+
+
+	/*		
+	fid1 = fopen("const2.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", const2[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("lambda_i_plus_p.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", lambda_i_plus_grid[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("lambda_i_minus_p.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", lambda_i_minus_grid[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("C_plus_in_p.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", C_plus[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("C_minus_in_p.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", C_minus[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("k_minus.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", kminus_grid_pop[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("k_plus.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", kplus_grid_pop[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("plus_index.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%d \n", plus_index_pop[0][i]);	
+	fclose(fid1);
+
+	fid1 = fopen("minus_index.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%d \n", minus_index_pop[0][i]);	
+	fclose(fid1);
+
+	fid1 = fopen("denom.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", denom[i]);	
+	fclose(fid1);
+	*/
 }

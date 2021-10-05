@@ -23,12 +23,12 @@ void pop_So(double T, double efef, int ii, int T_loop)
 		arr[i] = abs(k_grid[i] - kplus_grid_pop[counter1]);
 		plus_index =FindMinInd(arr,points);
 
-		plus_index_pop[counter1] = plus_index;
-		minus_index_pop[counter1] = minus_index;
+		plus_index_pop[0][counter1] = plus_index;
+		minus_index_pop[0][counter1] = minus_index;
 	    
 	    //cout<<"counter1 = "<<counter1<<endl;
-	    //cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
-	    //cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;	
+	    //cout<<"plus_index_pop[0][counter1] = "<<plus_index_pop[0][counter1]<<endl;
+	    //cout<<"minus_index_pop[0][counter1] = "<<minus_index_pop[0][counter1]<<endl;	
 	    //cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
 	    //cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
 	    //getchar();	
@@ -69,11 +69,56 @@ void pop_So(double T, double efef, int ii, int T_loop)
 		//getchar();
 	}
 	
+	/*
+
+	FILE *fid1;
+	fid1 = fopen("Aplus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, Aplus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("Aminus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, Aminus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("betaplus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, betaplus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("betaminus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, betaminus_grid[i]);
+	fclose(fid1);
+
+
+	fid1 = fopen("lambda_i_plus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_i_plus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("lambda_i_minus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_i_minus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("lambda_o_plus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_o_plus_grid[i]);
+	fclose(fid1);
+
+	fid1 = fopen("lambda_o_minus.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, lambda_o_minus_grid[i]);
+	fclose(fid1);
+	*/
+	
 
 	for (int i=0;i<points;i++)
 	{
-		S_o_grid[i] = 1;
-		S_o_grid_total[i]=0;
+		So_pop[0][i] = 1;
+		nu_pop_total[i]=0;
 	}	
 
 
@@ -81,7 +126,7 @@ void pop_So(double T, double efef, int ii, int T_loop)
 	
 	double sum=0;
 	for (int counter1 = 0;counter1 < points;counter1++)
-	    sum = sum +  S_o_grid[counter1];
+	    sum = sum +  So_pop[0][counter1];
 
 	double average_dummy = sum/points;
 	//cout<<"average dummy = "<<average_dummy<<endl;
@@ -90,29 +135,34 @@ void pop_So(double T, double efef, int ii, int T_loop)
 	for (int counter1 = 0;counter1 < points;counter1++)
 	{
 		//cout<<"counter = "<<counter1<<endl;
-		//cout<<"plus_index   =   "<<plus_index_pop[counter1]<<endl;
-		//cout<<"minus_index   =   "<<minus_index_pop[counter1]<<endl;
+		//cout<<"plus_index   =   "<<plus_index_pop[0][counter1]<<endl;
+		//cout<<"minus_index   =   "<<minus_index_pop[0][counter1]<<endl;
 
 		if ((lambda_o_minus_grid[counter1]==0) && (lambda_o_plus_grid[counter1]==0))
-		    S_o_grid[counter1] = average_dummy;
+		    So_pop[0][counter1] = average_dummy;
 		    // Just to avoid instability since S_o is the only denominator in g_LO and cannot be zero
 		else
-		    S_o_grid[counter1] = (N_poph_atT+1-f_dist[minus_index_pop[counter1]])*lambda_o_minus_grid[counter1] +
-		    (N_poph_atT+f_dist[plus_index_pop[counter1]])*lambda_o_plus_grid[counter1];
+		    So_pop[0][counter1] = (N_poph_atT+1-f_dist[minus_index_pop[0][counter1]])*lambda_o_minus_grid[counter1] +
+		    (N_poph_atT+f_dist[plus_index_pop[0][counter1]])*lambda_o_plus_grid[counter1];
+		    
+
+		Sa_pop[0][counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1];
+		Se_pop[0][counter1] = (N_poph_atT + 1 - f_dist[counter1])*lambda_i_plus_grid[counter1];
+
 		/*
-		cout<<"(N_poph_atT+1-f_dist[minus_index_pop[counter1]])  = "<<(N_poph_atT+1-f_dist[minus_index_pop[counter1]])<<endl;
-		cout<<"(N_poph_atT+f_dist[plus_index_pop[counter1]])   =   "<<(N_poph_atT+f_dist[plus_index_pop[counter1]])<<endl;
+	cout<<"(N_poph_atT+1-f_dist[minus_index_pop[0][counter1]])  = "<<(N_poph_atT+1-f_dist[minus_index_pop[0][counter1]])<<endl;
+	cout<<"(N_poph_atT+f_dist[plus_index_pop[0][counter1]])   =   "<<(N_poph_atT+f_dist[plus_index_pop[0][counter1]])<<endl;
 		cout<<"lambda_o_plus_grid[counter1]   = "<<lambda_o_plus_grid[counter1]<<endl;
 		cout<<"lambda_o_minus_grid[counter1] = "<<lambda_o_minus_grid[counter1]<<endl;
-		cout<<"f_dist[plus_index_pop[counter1]]  = "<<f_dist[plus_index_pop[counter1]]<<endl;
-		cout<<"f_dist[minus_index_pop[counter1]]  = "<<f_dist[minus_index_pop[counter1]]<<endl;
-		cout<<"S_o_grid[counter1]  =    "<<S_o_grid[counter1]<<endl;
+		cout<<"f_dist[plus_index_pop[0][counter1]]  = "<<f_dist[plus_index_pop[0][counter1]]<<endl;
+		cout<<"f_dist[minus_index_pop[0][counter1]]  = "<<f_dist[minus_index_pop[0][counter1]]<<endl;
+		cout<<"So_pop[0][counter1]  =    "<<So_pop[0][counter1]<<endl;
 		getchar();
 		*/
 	}
 
         for (int counter1=0;counter1<points;counter1++)
-            S_o_grid_total[counter1] = S_o_grid[counter1];
+            nu_pop_total[counter1] = So_pop[0][counter1];
 }
 
 

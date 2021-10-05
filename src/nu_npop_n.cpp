@@ -101,5 +101,6 @@ void nu_npop_n(double T)
 	fclose(fid1);
 	//*/
 	
+
 			
 }

@@ -6,337 +6,32 @@ void solve_g(double T)
 	FILE *fid;	
 	char line[1000];	
 	
-	double S_i_grid_all[points][iterations+1]={0};
-	double gplus[points][iterations+1]={0};
-	double gminus[points][iterations+1]={0};
-
-//---------------------------------------- solve BTE for g ----------------------------------------------------------
-	if(type =="n")
+	if(geometry==1)
 	{	
-            for (int i=0;i<points;i++)
-            {
-		g[i]=0;
+		double Si_grid_all[points][iterations+1]={0};
 
-		g_rta[i]=0;
-
-		g_old[i]=0;
-		g_LO[i]=0;
-		g_iv[i]=0;
-
-		g_th[i]=0;
-		g_th_old[i]=0;
-		g_LO_th[i]=0;
-
-
-		S_i_grid[i]=0;
-		S_iLO_grid[i]=0;
-		S_i_th_grid[i]=0;
-		S_iLO_th_grid[i]=0;
-
-		beta1[i]=0;
-		gH[i]=0;
-		hH[i]=0;
-
-		gH_rta[i]=0;
-		hH_rta[i]=0;
-
-		gH_LO[i]=0;
-		hH_LO[i]=0;
-
-		S_i_grid_g[i]=0;
-		S_i_grid_h[i]=0;
-
-		S_iLO_grid_g[i]=0;
-		S_iLO_grid_h[i]=0;
-
-	     }
-	     	
-            for(int counter=0;counter<points;counter++)
-            {
-		 S_i_grid_all[counter][0] = k_grid[counter];  	
-                result_g[counter][0] = k_grid[counter];
-                result_g_LO[counter][0] = k_grid[counter];
-                result_g_th[counter][0] = k_grid[counter];
-            }
-
-
-            for (int iteration = 0;iteration<iterations;iteration++)
-            {
-		
-		/*
-                for (int counter1=0;counter1<points;counter1++)
-                {
-                    //cout<<"energy_n[counter1] = "<<energy_n[counter1]<<endl;
-                    //cout<<"g[counter1] = "<<g[counter1]<<endl;
-                    //getchar();
-                }
-		*/
-
-                    // If POP scattering is included
-                    if (scattering_mechanisms[1] == 1)
-                    {
-		        for (int counter1 = 0;counter1 < points;counter1++)
-		        {
-
-                        S_i_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g[minus_index_pop[counter1]]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g[plus_index_pop[counter1]];
-
-                        S_iLO_grid[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO[minus_index_pop[counter1]]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO[plus_index_pop[counter1]];
-
-
-                        S_i_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_th[minus_index_pop[counter1]]+
-                        (N_poph_atT + 1 - f_dist[counter1])*lambda_i_plus_grid[counter1]*g_th[plus_index_pop[counter1]];
-
-
-                        S_iLO_th_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_LO_th[minus_index_pop[counter1]]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_LO_th[plus_index_pop[counter1]];
-
-                            
-			 S_i_grid_all[counter1][iteration+1] = S_i_grid[counter1];  	
-
-                            /*
-                            cout<<"counter1 = "<<counter1<<endl;
-                            cout<<"S_i_grid[counter1] = "<<S_i_grid[counter1]<<endl;
-                            cout<<"S_iLo_grid[counter1] = "<<S_iLO_grid[counter1]<<endl;
-                            cout<<"S_i_th_grid[counter1] =    "<<S_i_th_grid[counter1]<<endl;
-                            cout<<"S_iLO_th_grid[counter1] =   "<<S_iLO_th_grid[counter1]<<endl;
-			     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-			     cout<<"f_dist[minus_index_pop[counter1]]   "<<f_dist[minus_index_pop[counter1]]<<endl;
-			     cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
-			     cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
-			     getchar();
-			     //*/	                            
-                    }
-
-                }
-         
-
-                for (int counter1=0;counter1<points;counter1++)
-                {
-                    g[counter1] = (S_i_grid[counter1]+electric_driving_force[counter1])/(denom[counter1]);
-                    g_th[counter1] = (S_i_th_grid[counter1] + thermal_driving_force[counter1])/(denom[counter1]);
-                }
-
-                // If POP scattering is included
-                if (scattering_mechanisms[1] == 1)
-                {
-                    for (int counter1=0;counter1<points;counter1++)
-                        g_LO[counter1] = (S_iLO_grid[counter1] + electric_driving_force[counter1])/S_o_grid_total[counter1];
-                }
-
-                for (int counter1=0;counter1<points;counter1++)
-                {
-                    result_g[counter1][iteration+1] = g[counter1];
-
-                    result_g_th[counter1][iteration+1] = g_th[counter1];
-
-                //fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
-
-                    g_old[counter1] = g[counter1];
-                    g_th_old[counter1] = g_th[counter1];
-
-                    if (iteration==0)
-                       g_rta[counter1] = g[counter1] ;
-		     
-		     /*
-		     if(iteration == iterations-1)
-		     {	
-			     cout<<"counter1 =   "<<counter1<<endl;	
-			     cout<<"g[counter1] =   "<<g[counter1]<<endl;
-			     cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
-			     cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
-			     getchar();
-		     }
-		     //*/
-                }
-            }   // iteration loop end here
-		
-		/*
-		FILE *fid1;
-
-		fid1 = fopen("electric_driving_force_n.txt","w");
-		for (int i = 0; i < points; i++)
-			fprintf(fid1,"%e \n", electric_driving_force[i]);	
-		fclose(fid1);
-
-		fid1 = fopen("g_all_n.txt","w");
-
-
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e ", result_g[i][j]);
-			fprintf(fid1," \n");
-		}
-
-		fclose(fid1);
-		
-		fid1 = fopen("Si_all_n.txt","w");
-
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e ", S_i_grid_all[i][j]);
-			fprintf(fid1," \n");
-		}
-
-		fclose(fid1);
-		*/
-		
-		/*
-		for (int counter1=0;counter1<points;counter1++)
-		{
-			     cout<<"counter1 =   "<<counter1<<endl;	
-			     cout<<"g[counter1] =   "<<g[counter1]<<endl;
-			     cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
-			     cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
-			     getchar();
-		}
-		*/
-		
-//---------------------------------------- solve BTE for g finished----------------------------------------------------------
-
-
-//---------------------------------------- Solve BTE for g and h for hall mobility---------------------------------------------
-
-
-		if(Bfield!=0)
-		{
-		    for (int iteration = 0;iteration<iterations;iteration++)
+	//---------------------------------------- solve BTE for g ----------------------------------------------------------
+		if(type =="n")
+		{	
+		    for (int i=0;i<points;i++)
 		    {
-
-		        double beta1_LO[points];
-		     		
-	            // If POP scattering is included
-	            if (scattering_mechanisms[1] == 1)
-	            {
-		        for (int counter1 = 0;counter1 < points;counter1++)
-		        {
-
-		                S_i_grid_g[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*gH[minus_index_pop[counter1]] +
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH[plus_index_pop[counter1]];
-
-		                S_iLO_grid_g[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*gH_LO[minus_index_pop[counter1]]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*gH_LO[plus_index_pop[counter1]];
-
-		                S_i_grid_h[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*hH[minus_index_pop[counter1]]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH[plus_index_pop[counter1]];
-
-		                S_iLO_grid_h[counter1] = (N_poph_atT+f_dist[counter1])*lambda_i_minus_grid[counter1]*hH_LO[minus_index_pop[counter1]]+
-		                (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*hH_LO[plus_index_pop[counter1]];
-
-
-		                    /*		
-		                    cout<<"counter1 = "<<counter1<<endl;
-		                    cout<<"S_i_grid_g[counter1] = "<<S_i_grid_g[counter1]<<endl;
-		                    cout<<"S_iLo_grid_g[counter1] = "<<S_iLO_grid_g[counter1]<<endl;
-		                    cout<<"S_i_grid_h[counter1] = "<<S_i_grid_h[counter1]<<endl;
-		                    cout<<"S_iLo_grid_h[counter1] = "<<S_iLO_grid_h[counter1]<<endl;
-				     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-				     cout<<"f_dist[minus_index_pop[counter1]]   "<<f_dist[minus_index_pop[counter1]]<<endl;
-				     cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
-				     cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
-				     getchar();
-				     //*/	                            
-
-
-		            }
-		        }
-		        
-
-
-		        for (int counter1=0;counter1<points;counter1++)
-		        {
-
-		        	beta1[counter1] = e*(v_n[counter1]*0.01)*Bfield/((h_bar*e)*(k_grid[counter1]*pow(10,9)) * 				(denom[counter1]));
-		        	
-		        	beta1_LO[counter1] = e*(v_n[counter1]*0.01)*Bfield/((h_bar*e)*(k_grid[counter1]*pow(10,9)) * 				(S_o_grid_total[counter1]));
-
-		            	gH[counter1] = (S_i_grid_g[counter1] + electric_driving_force[counter1] + beta1[counter1] * 			S_i_grid_h[counter1])/((denom[counter1])*(1 + beta1[counter1]*beta1[counter1]));
-		            	
-		            	hH[counter1] = (S_i_grid_h[counter1] - beta1[counter1] * electric_driving_force[counter1] -                    	 			beta1[counter1] * S_i_grid_g[counter1])/((denom[counter1]) * (1 + 				beta1[counter1]*beta1[counter1]));
-
-		            	gH_LO[counter1] = (S_iLO_grid_g[counter1] + electric_driving_force[counter1] + beta1_LO[counter1] * 			S_iLO_grid_h[counter1])/((S_o_grid_total[counter1] )*(1 + beta1_LO[counter1]*beta1_LO[counter1]));
-		            	
-		            	hH_LO[counter1] = (S_iLO_grid_h[counter1] - beta1_LO[counter1] * electric_driving_force[counter1] 				- beta1_LO[counter1] * S_iLO_grid_g[counter1])/((S_o_grid_total[counter1]) * (1 + 				       beta1_LO[counter1]*beta1_LO[counter1]));
-		        }
-		        
-		        if (iteration==0)
-			{
-				for (int counter1=0;counter1<points;counter1++)
-				{
-					gH_rta[counter1] = gH[counter1] ;
-					hH_rta[counter1] = hH[counter1] ;
-				}	        	
-			}
-
-		    }
-		    	
-	 	}  // if condition !Bfield terminated
-
-		//----------------------- Solve BTE for g and h for hall mobility finished-------------
-
-		//------------- save data ---------------------------------------------------	    
-		    /*		
-		    FILE *fid1;
-		    fid1 = fopen("g_original.txt","w");
-		    for (int i = 0; i < points; i++)
-			fprintf(fid1,"%d    %e\n", i+1, g[i]);
-		fclose(fid1);
-			 
-			 /* 
-		    fid1 = fopen("g_th.txt","w");
-		    for (int i = 0; i < points; i++)
-			fprintf(fid1,"%d    %e\n", i+1, g_th[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("g_LO.txt","w");
-		    for (int i = 0; i < points; i++)
-			fprintf(fid1,"%d    %e\n", i+1, g_LO[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("g_iv.txt","w");
-		    for (int i = 0; i < points; i++)
-			fprintf(fid1,"%d    %e\n", i+1, g_iv[i]);
-		fclose(fid1);
-
-		    fid1 = fopen("g_rta.txt","w");
-		    for (int i = 0; i < points; i++)
-			fprintf(fid1,"%d    %e\n", i+1, g_rta[i]);
-		fclose(fid1);
-		    */
-		    //cout<<"saved result check here";
-		    //getchar();
-		    //getchar();
-			//----------------------------------------------------------------------------------
-	}
-	else    // for p type
-	{
-		
-		for (int i=0;i<points;i++)
-		{
 			g[i]=0;
 
 			g_rta[i]=0;
 
 			g_old[i]=0;
-			g_LO[i]=0;
-			g_iv[i]=0;
+			g_pop[i]=0;
 
 			g_th[i]=0;
 			g_th_old[i]=0;
-			g_LO_th[i]=0;
-						
-			S_i_grid[i]=0;
-			S_iLO_grid[i]=0;
-			S_i_th_grid[i]=0;
-			S_iLO_th_grid[i]=0;
+			g_pop_th[i]=0;
 
-			/*		
-			// for magnetic field
+
+			Si_grid[i]=0;
+			Si_pop_grid[i]=0;
+			Si_th_grid[i]=0;
+			Si_pop_th_grid[i]=0;
+
 			beta1[i]=0;
 			gH[i]=0;
 			hH[i]=0;
@@ -344,205 +39,652 @@ void solve_g(double T)
 			gH_rta[i]=0;
 			hH_rta[i]=0;
 
-			gH_LO[i]=0;
-			hH_LO[i]=0;
+			gH_pop[i]=0;
+			hH_pop[i]=0;
 
-			S_i_grid_g[i]=0;
-			S_i_grid_h[i]=0;
+			Si_grid_g[i]=0;
+			Si_grid_h[i]=0;
 
-			S_iLO_grid_g[i]=0;
-			S_iLO_grid_h[i]=0;
-			*/	
-		}
-	     	
-		for(int counter=0;counter<points;counter++)
-		{	
-	 		gplus[counter][0] = k_grid[counter]; 
-	 		gminus[counter][0] = k_grid[counter];  	
-			S_i_grid_all[counter][0] = k_grid[counter]; 
-			result_g[counter][0] = k_grid[counter];
-			result_g_LO[counter][0] = k_grid[counter];
-			result_g_th[counter][0] = k_grid[counter];
-		}
+			Si_pop_grid_g[i]=0;
+			Si_pop_grid_h[i]=0;
 
-		
-		for (int iteration = 0;iteration<iterations;iteration++)
-		{
+		     }
+		     	
+		    for(int i=0;i<points;i++)
+		    {
+			 Si_grid_all[i][0] = k_grid[i];  	
+		        result_g[i][0] = k_grid[i];
+		        result_g_pop[i][0] = k_grid[i];
+		        result_g_th[i][0] = k_grid[i];
+		    }
+
+
+		    for (int iteration = 0;iteration<iterations;iteration++)
+		    {
 			
-			//cout<<"iteration = "<<iteration<<endl<<endl;
-			//getchar();
-			//getchar();
-			//getchar();
 			/*
-			for (int counter1=0;counter1<points;counter1++)
-			{
-			//cout<<"energy_p[counter1] = "<<energy_p[counter1]<<endl;
-			//cout<<"g[counter1] = "<<g[counter1]<<endl;
-			//getchar();
-			}
+		        for (int i=0;i<points;i++)
+		        {
+		            //cout<<"energy_n[i] = "<<energy_n[i]<<endl;
+		            //cout<<"g[i] = "<<g[i]<<endl;
+		            //getchar();
+		        }
 			*/
 
-			// If POP scattering is included
-			if (scattering_mechanisms[1] == 1)
+		            // If POP scattering is included
+		            if (scattering_mechanisms[1] == 1)
+		            {
+				for (int i = 0;i < points;i++)
+				{
+
+		                Si_grid[i] = Sa_pop[0][i]*g[minus_index_pop[0][i]] +
+		                Se_pop[0][i]*g[plus_index_pop[0][i]];
+
+		                Si_pop_grid[i] = Sa_pop[0][i]*g_pop[minus_index_pop[0][i]] +
+		                Se_pop[0][i]*g_pop[plus_index_pop[0][i]];
+
+				
+		                Si_th_grid[i] = Sa_pop[0][i]*g_th[minus_index_pop[0][i]] +
+		                Se_pop[0][i]*g_th[plus_index_pop[0][i]];
+
+
+		                Si_pop_th_grid[i] = Sa_pop[0][i]*g_pop_th[minus_index_pop[0][i]] +
+		                Sa_pop[0][i]*g_pop_th[plus_index_pop[0][i]];
+
+		                    
+				 Si_grid_all[i][iteration+1] = Si_grid[i];  	
+
+		                    /*
+		                    cout<<"i = "<<i<<endl;
+		                    cout<<"Si_grid[i] = "<<Si_grid[i]<<endl;
+		                    cout<<"SiLo_grid[i] = "<<Si_pop_grid[i]<<endl;
+		                    cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
+		                    cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
+				     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
+				     cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
+				     cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
+				     cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
+				     getchar();
+				     //*/	                            
+		            }
+
+		        }
+		 
+
+		        for (int i=0;i<points;i++)
+		        {
+		            g[i] = (Si_grid[i]+electric_driving_force[i])/(denom[i]);
+		            g_th[i] = (Si_th_grid[i] + thermal_driving_force[i])/(denom[i]);
+		        }
+
+		        // If POP scattering is included
+		        if (scattering_mechanisms[1] == 1)
+		        {
+		            for (int i=0;i<points;i++)
+		                g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_pop_total[i];
+		        }
+
+		        for (int i=0;i<points;i++)
+		        {
+		            result_g[i][iteration+1] = g[i];
+
+		            result_g_th[i][iteration+1] = g_th[i];
+
+		        //fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
+
+		            g_old[i] = g[i];
+		            g_th_old[i] = g_th[i];
+
+		            if (iteration==0)
+		               g_rta[i] = g[i] ;
+			     
+			     /*
+			     if(iteration == iterations-1)
+			     {	
+				     cout<<"i =   "<<i<<endl;	
+				     cout<<"g[i] =   "<<g[i]<<endl;
+				     cout<<"g_th[i] =   "<<g_th[i]<<endl;
+				     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+				     getchar();
+			     }
+			     //*/
+		        }
+		    }   // iteration loop end here
+			
+			/*
+			FILE *fid1;
+
+			fid1 = fopen("electric_driving_force_n.txt","w");
+			for (int i = 0; i < points; i++)
+				fprintf(fid1,"%e \n", electric_driving_force[i]);	
+			fclose(fid1);
+
+			fid1 = fopen("g_all_n.txt","w");
+
+
+			for (int i = 0; i < points; i++)
 			{
-				for (int counter1 = 0;counter1 < points;counter1++)
-				{        
-					gplus[counter1][iteration+1] = g[plus_index_pop[counter1]];
-					gminus[counter1][iteration+1] = g[minus_index_pop[counter1]];
-					
-					/*
-					if(iteration!=0 && (counter1 == 0 || counter1 == 4 || counter1 == 100 || counter1 == 200
-					|| counter1 == 300   || counter1 == 400))
-					{
-						
-					cout<<"counter1   =  "<<counter1<<endl;
-					cout<<"g[plus_index_pop[counter1]]  =   "<<g[plus_index_pop[counter1]]<<endl;
-					cout<<"g[minus_index_pop[counter1]]  =   "<<g[minus_index_pop[counter1]]<<endl;
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", result_g[i][j]);
+				fprintf(fid1," \n");
+			}
 
-					cout<<"lambda_plus = "<<lambda_i_plus_grid[counter1]<<endl;
-					cout<<"lambda_minus = "<<lambda_i_minus_grid[counter1]<<endl;
+			fclose(fid1);
+			
+			fid1 = fopen("Si_all_n.txt","w");
 
-					cout<<"plus_index_pop[counter1] = "<<plus_index_pop[counter1]<<endl;
-					cout<<"minus_index_pop[counter1] = "<<minus_index_pop[counter1]<<endl;
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", Si_grid_all[i][j]);
+				fprintf(fid1," \n");
+			}
 
-					cout<<"In plus = "<<lambda_i_plus_grid[counter1]*g[plus_index_pop[counter1]]<<endl;
-					cout<<"In minus = "<<lambda_i_minus_grid[counter1]*g[minus_index_pop[counter1]]<<endl;
-
-					getchar();
-					}
-					*/
-							
-				        S_i_grid[counter1] = lambda_i_minus_grid[counter1]*g[minus_index_pop[counter1]] +
-				        lambda_i_plus_grid[counter1]*g[plus_index_pop[counter1]];
-
-				        S_iLO_grid[counter1] = lambda_i_minus_grid[counter1]*g_LO[minus_index_pop[counter1]] +
-				        lambda_i_plus_grid[counter1]*g_LO[plus_index_pop[counter1]];
-
-
-				        S_i_th_grid[counter1] = lambda_i_minus_grid[counter1]*g_th[minus_index_pop[counter1]] +
-				        lambda_i_plus_grid[counter1]*g_th[plus_index_pop[counter1]];
+			fclose(fid1);
+			*/
+			
+			/*
+			for (int i=0;i<points;i++)
+			{
+				     cout<<"i =   "<<i<<endl;	
+				     cout<<"g[i] =   "<<g[i]<<endl;
+				     cout<<"g_th[i] =   "<<g_th[i]<<endl;
+				     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+				     getchar();
+			}
+			*/
+			
+	//---------------------------------------- solve BTE for g finished----------------------------------------------------------
 
 
-				        S_iLO_th_grid[counter1] = lambda_i_minus_grid[counter1]*g_LO_th[minus_index_pop[counter1]] +
-				        lambda_i_plus_grid[counter1]*g_LO_th[plus_index_pop[counter1]];
-					 
-					 S_i_grid_all[counter1][iteration+1] = S_i_grid[counter1];  	
+	//---------------------------------------- Solve BTE for g and h for hall mobility---------------------------------------------
+
+
+			if(Bfield!=0)
+			{
+			    for (int iteration = 0;iteration<iterations;iteration++)
+			    {
+
+				double beta1_pop[points];
+			     		
+			    // If POP scattering is included
+			    if (scattering_mechanisms[1] == 1)
+			    {
+				for (int i = 0;i < points;i++)
+				{
+
+				        Si_grid_g[i] = Sa_pop[0][i]*gH[minus_index_pop[0][i]] +
+				        Se_pop[0][i]*gH[plus_index_pop[0][i]];
+
+				        Si_pop_grid_g[i] = Sa_pop[0][i]*gH_pop[minus_index_pop[0][i]] +
+				        Se_pop[0][i]*gH_pop[plus_index_pop[0][i]];
+
+				        Si_grid_h[i] = Sa_pop[0][i]*hH[minus_index_pop[0][i]] +
+				        Se_pop[0][i]*hH[plus_index_pop[0][i]];
+
+				        Si_pop_grid_h[i] = Sa_pop[0][i]*hH_pop[minus_index_pop[0][i]] +
+				        Se_pop[0][i]*hH_pop[plus_index_pop[0][i]];
+
+
+				            /*		
+				            cout<<"i = "<<i<<endl;
+				            cout<<"Si_grid_g[i] = "<<Si_grid_g[i]<<endl;
+				            cout<<"SiLo_grid_g[i] = "<<Si_pop_grid_g[i]<<endl;
+				            cout<<"Si_grid_h[i] = "<<Si_grid_h[i]<<endl;
+				            cout<<"SiLo_grid_h[i] = "<<Si_pop_grid_h[i]<<endl;
+					     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
+					     cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
+					     cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
+					     cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
+					     getchar();
+					     //*/	                            
+
+
+				    }
+				}
 				
 
-					/*
-					cout<<"counter1 = "<<counter1<<endl;
-					cout<<"S_i_grid[counter1] = "<<S_i_grid[counter1]<<endl;
-					cout<<"S_iLo_grid[counter1] = "<<S_iLO_grid[counter1]<<endl;
-					cout<<"S_i_th_grid[counter1] =    "<<S_i_th_grid[counter1]<<endl;
-					cout<<"S_iLO_th_grid[counter1] =   "<<S_iLO_th_grid[counter1]<<endl;
-					cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
-					cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
-					getchar();
-					//*/	                            
+
+				for (int i=0;i<points;i++)
+				{
+
+					beta1[i] = e*(v_n[i]*0.01)*Bfield/((h_bar*e)*(k_grid[i]*pow(10,9)) * 				(denom[i]));
+					
+					beta1_pop[i] = e*(v_n[i]*0.01)*Bfield/((h_bar*e)*(k_grid[i]*pow(10,9)) * 				(nu_pop_total[i]));
+
+				    	gH[i] = (Si_grid_g[i] + electric_driving_force[i] + beta1[i] * 			Si_grid_h[i])/((denom[i])*(1 + beta1[i]*beta1[i]));
+				    	
+				    	hH[i] = (Si_grid_h[i] - beta1[i] * electric_driving_force[i] -                    	 			beta1[i] * Si_grid_g[i])/((denom[i]) * (1 + 				beta1[i]*beta1[i]));
+
+				    	gH_pop[i] = (Si_pop_grid_g[i] + electric_driving_force[i] + beta1_pop[i] * 			Si_pop_grid_h[i])/((nu_pop_total[i] )*(1 + beta1_pop[i]*beta1_pop[i]));
+				    	
+				    	hH_pop[i] = (Si_pop_grid_h[i] - beta1_pop[i] * electric_driving_force[i] 				- beta1_pop[i] * Si_pop_grid_g[i])/((nu_pop_total[i]) * (1 + 				       beta1_pop[i]*beta1_pop[i]));
 				}
-
-			}
-
-
-			for (int counter1=0;counter1<points;counter1++)
-			{
-				g[counter1] = (S_i_grid[counter1]+electric_driving_force[counter1])/(denom[counter1]);
-				g_th[counter1] = (S_i_th_grid[counter1] + thermal_driving_force[counter1])/(denom[counter1]);
-			}
-
-			// If POP scattering is included
-			if (scattering_mechanisms[1] == 1)
-			{
-				for (int counter1=0;counter1<points;counter1++)
-				g_LO[counter1] = (S_iLO_grid[counter1] + electric_driving_force[counter1])/nu_So_p[counter1][0][0];
-			}
-
-			for (int counter1=0;counter1<points;counter1++)
-			{
-				result_g[counter1][iteration+1] = g[counter1];
-
-				result_g_th[counter1][iteration+1] = g_th[counter1];
-
-				//fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
-
-				g_old[counter1] = g[counter1];
-				g_th_old[counter1] = g_th[counter1];
-
+				
 				if (iteration==0)
-					g_rta[counter1] = g[counter1] ;
-
-				/*
-				if(iteration == iterations-1)
-				{	
-				cout<<"counter1 =   "<<counter1<<endl;	
-				cout<<"g[counter1] =   "<<g[counter1]<<endl;
-				cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
-				cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
-				getchar();
+				{
+					for (int i=0;i<points;i++)
+					{
+						gH_rta[i] = gH[i] ;
+						hH_rta[i] = hH[i] ;
+					}	        	
 				}
-				//*/
+
+			    }
+			    	
+		 	}  // if condition !Bfield terminated
+
+			//----------------------- Solve BTE for g and h for hall mobility finished-------------
+
+			//------------- save data ---------------------------------------------------	    
+			    /*		
+			    FILE *fid1;
+			    fid1 = fopen("g_original.txt","w");
+			    for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d    %e\n", i+1, g[i]);
+			fclose(fid1);
+				 
+				 /* 
+			    fid1 = fopen("g_th.txt","w");
+			    for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d    %e\n", i+1, g_th[i]);
+			fclose(fid1);
+
+			    fid1 = fopen("g_pop.txt","w");
+			    for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d    %e\n", i+1, g_pop[i]);
+			fclose(fid1);
+
+
+			    fid1 = fopen("g_rta.txt","w");
+			    for (int i = 0; i < points; i++)
+				fprintf(fid1,"%d    %e\n", i+1, g_rta[i]);
+			fclose(fid1);
+			    */
+			    //cout<<"saved result check here";
+			    //getchar();
+			    //getchar();
+				//----------------------------------------------------------------------------------
+		}
+		else    // for p type
+		{
+			
+			for (int i=0;i<points;i++)
+			{
+				g[i]=0;
+
+				g_rta[i]=0;
+
+				g_old[i]=0;
+				g_pop[i]=0;
+
+				g_th[i]=0;
+				g_th_old[i]=0;
+				g_pop_th[i]=0;
+							
+				Si_grid[i]=0;
+				Si_pop_grid[i]=0;
+				Si_th_grid[i]=0;
+				Si_pop_th_grid[i]=0;
+
+				/*		
+				// for magnetic field
+				beta1[i]=0;
+				gH[i]=0;
+				hH[i]=0;
+
+				gH_rta[i]=0;
+				hH_rta[i]=0;
+
+				gH_pop[i]=0;
+				hH_pop[i]=0;
+
+				Si_grid_g[i]=0;
+				Si_grid_h[i]=0;
+
+				Si_pop_grid_g[i]=0;
+				Si_pop_grid_h[i]=0;
+				*/	
 			}
-		}   // iteration loop end here
+		     	
+			for(int i=0;i<points;i++)
+			{	
+				Si_grid_all[i][0] = k_grid[i]; 
+				result_g[i][0] = k_grid[i];
+				result_g_pop[i][0] = k_grid[i];
+				result_g_th[i][0] = k_grid[i];
+			}
 
-		/*
-		FILE *fid1;
+			
+			for (int iteration = 0;iteration<iterations;iteration++)
+			{
+				
+				//cout<<"iteration = "<<iteration<<endl<<endl;
+				//getchar();
+				//getchar();
+				//getchar();
+				/*
+				for (int i=0;i<points;i++)
+				{
+				//cout<<"energy_p[i] = "<<energy_p[i]<<endl;
+				//cout<<"g[i] = "<<g[i]<<endl;
+				//getchar();
+				}
+				*/
+
+				// If POP scattering is included
+				if (scattering_mechanisms[1] == 1)
+				{
+					for (int i = 0;i < points;i++)
+					{        
+						
+						/*
+						if(iteration!=0 && (i == 0 || i == 4 || i == 100 || i == 200
+						|| i == 300   || i == 400))
+						{
+							
+						cout<<"i   =  "<<i<<endl;
+						cout<<"g[plus_index_pop[0][i]]  =   "<<g[plus_index_pop[0][i]]<<endl;
+						cout<<"g[minus_index_pop[0][i]]  =   "<<g[minus_index_pop[0][i]]<<endl;
+
+						cout<<"lambda_plus = "<<lambda_i_plus_grid[i]<<endl;
+						cout<<"lambda_minus = "<<lambda_i_minus_grid[i]<<endl;
+
+						cout<<"plus_index_pop[0][i] = "<<plus_index_pop[0][i]<<endl;
+						cout<<"minus_index_pop[0][i] = "<<minus_index_pop[0][i]<<endl;
+
+						cout<<"In plus = "<<lambda_i_plus_grid[i]*g[plus_index_pop[0][i]]<<endl;
+						cout<<"In minus = "<<lambda_i_minus_grid[i]*g[minus_index_pop[0][i]]<<endl;
+
+						getchar();
+						}
+						*/
+								
+						Si_grid[i] = lambda_i_minus_grid[i]*g[minus_index_pop[0][i]] +
+						lambda_i_plus_grid[i]*g[plus_index_pop[0][i]];
+
+						Si_pop_grid[i] = lambda_i_minus_grid[i]*g_pop[minus_index_pop[0][i]] +
+						lambda_i_plus_grid[i]*g_pop[plus_index_pop[0][i]];
+
+
+						Si_th_grid[i] = lambda_i_minus_grid[i]*g_th[minus_index_pop[0][i]] +
+						lambda_i_plus_grid[i]*g_th[plus_index_pop[0][i]];
+
+
+						Si_pop_th_grid[i] = lambda_i_minus_grid[i]*g_pop_th[minus_index_pop[0][i]] +
+						lambda_i_plus_grid[i]*g_pop_th[plus_index_pop[0][i]];
+						 
+						 Si_grid_all[i][iteration+1] = Si_grid[i];  	
+					
+
+						/*
+						cout<<"i = "<<i<<endl;
+						cout<<"Si_grid[i] = "<<Si_grid[i]<<endl;
+						cout<<"SiLo_grid[i] = "<<Si_pop_grid[i]<<endl;
+						cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
+						cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
+						cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
+						cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
+						getchar();
+						//*/	                            
+					}
+
+				}
+
+
+				for (int i=0;i<points;i++)
+				{
+					g[i] = (Si_grid[i]+electric_driving_force[i])/(denom[i]);
+					g_th[i] = (Si_th_grid[i] + thermal_driving_force[i])/(denom[i]);
+				}
+
+				// If POP scattering is included
+				if (scattering_mechanisms[1] == 1)
+				{
+					for (int i=0;i<points;i++)
+					g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_So_p[i][0][0];
+				}
+
+				for (int i=0;i<points;i++)
+				{
+					result_g[i][iteration+1] = g[i];
+
+					result_g_th[i][iteration+1] = g_th[i];
+
+					//fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
+
+					g_old[i] = g[i];
+					g_th_old[i] = g_th[i];
+
+					if (iteration==0)
+						g_rta[i] = g[i] ;
+
+					/*
+					if(iteration == iterations-1)
+					{	
+					cout<<"i =   "<<i<<endl;	
+					cout<<"g[i] =   "<<g[i]<<endl;
+					cout<<"g_th[i] =   "<<g_th[i]<<endl;
+					cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+					getchar();
+					}
+					//*/
+				}
+			}   // iteration loop end here
+
+			/*
+			FILE *fid1;
+			
+			fid1 = fopen("g_all_p.txt","w");		
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e\t", result_g[i][j]);
+				fprintf(fid1," \n");
+			}	
+			fclose(fid1);
+			/*
+
+			fid1 = fopen("Si_all_p.txt","w");		
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e\t", Si_grid_all[i][j]);
+				fprintf(fid1," \n");
+			}
 		
-		fid1 = fopen("g_all_p.txt","w");		
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e\t", result_g[i][j]);
-			fprintf(fid1," \n");
-		}	
-		fclose(fid1);
-		/*
+			fclose(fid1);
 
-		fid1 = fopen("Si_all_p.txt","w");		
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e\t", S_i_grid_all[i][j]);
-			fprintf(fid1," \n");
-		}
-	
-		fclose(fid1);
-
-		fid1 = fopen("gplus.txt","w");		
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e\t", gplus[i][j]);
-			fprintf(fid1," \n");
-		}
-		fclose(fid1);
+			
+			//*/
 		
-		fid1 = fopen("gminus.txt","w");		
-		for (int i = 0; i < points; i++)
-		{
-			fprintf(fid1,"%d \t", i+1);
-			for(int j=0;j<iterations+1;j++)
-				fprintf(fid1,"%e\t", gminus[i][j]);
-			fprintf(fid1," \n");
-		}
-		fclose(fid1);
-
-		//*/
-	
-		/*
-		for (int counter1=0;counter1<points;counter1++)
-		{
-			     cout<<"counter1 =   "<<counter1<<endl;	
-			     cout<<"g[counter1] =   "<<g[counter1]<<endl;
-			     cout<<"g_th[counter1] =   "<<g_th[counter1]<<endl;
-			     cout<<"g_LO[counter1] =   "<<g_LO[counter1]<<endl;
-			     getchar();
-		}
-		*/
+			/*
+			for (int i=0;i<points;i++)
+			{
+				     cout<<"i =   "<<i<<endl;	
+				     cout<<"g[i] =   "<<g[i]<<endl;
+				     cout<<"g_th[i] =   "<<g_th[i]<<endl;
+				     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+				     getchar();
+			}
+			*/
+			
+	//---------------------------------------- solve BTE for g finished----------------------------------------------------------
 		
-//---------------------------------------- solve BTE for g finished----------------------------------------------------------
-	
+		}
 	}
+	
+	
+	else if(geometry==2)
+	{
+		double Si_grid_all[points][iterations+1]={0};
+
+	//---------------------------------------- solve BTE for g ----------------------------------------------------------
+	    for (int i=0;i<points;i++)
+	    {
+		g[i]=0;
+
+		g_rta[i]=0;
+
+		g_old[i]=0;
+		g_pop[i]=0;
+		g_so_pop[i]=0;
+
+		//g_th[i]=0;
+		//g_th_old[i]=0;
+		//g_pop_th[i]=0;
+
+		Si_grid[i]=0;
+		Si_pop_grid[i]=0;
+		Si_so_pop_grid[i]=0;
+		
+		//Si_th_grid[i]=0;
+		//Si_pop_th_grid[i]=0;
+
+	     }
+	     	
+	    for(int i=0;i<points;i++)
+	    {
+		Si_grid_all[i][0] = k_grid[i];  	
+		result_g[i][0] = k_grid[i];
+		result_g_pop[i][0] = k_grid[i];
+		result_g_so_pop[i][0] = k_grid[i];
+		result_g_th[i][0] = k_grid[i];
+	    }
+
+
+	    for (int iteration = 0;iteration<iterations;iteration++)
+	    {
+		
+		/*
+	        for (int i=0;i<points;i++)
+	        {
+	            cout<<"energy_n[i] = "<<energy_n[i]<<endl;
+	            cout<<"g[i] = "<<g[i]<<endl;
+	            getchar();
+	        }
+		//*/
+				
+	            // If POP scattering is included
+	            if (scattering_mechanisms[1] == 1)
+	            {
+			for (int i = 0;i < points;i++)
+			{
+				for (int m = 0;m < pop_number;m++)
+				{	            
+
+					Si_grid[i] = Si_grid[i] + Sa_pop[m][i]*g[minus_index_pop[m][i]]+
+					Se_pop[m][i]*g[plus_index_pop[m][i]];
+
+					Si_pop_grid[i] = Si_pop_grid[i] + Sa_pop[m][i]*g_pop[minus_index_pop[m][i]]+
+					Se_pop[m][i]*g_pop[plus_index_pop[m][i]];
+				}
+					                    
+				/*
+				cout<<"i = "<<i<<endl;
+				cout<<"Si_grid[i] = "<<Si_grid[i]<<endl;
+				cout<<"Si_pop_grid[i] = "<<Si_pop_grid[i]<<endl;
+				cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
+				cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
+				cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
+				cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
+				cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
+				cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
+				getchar();
+				//*/	                        
+			     			         
+	            }  // end of i loop for points
+		}  // end of pop condition
+
+		// If SO POP scattering is included
+		if (scattering_mechanisms[10] == 1)
+		{
+			for (int i = 0;i < points;i++)
+			{							
+				for (int m = 0;m < so_pop_number;m++)
+				{	            
+
+					Si_grid[i] = Si_grid[i] + Sa_so_pop[m][i]*g[minus_index_so_pop[m][i]] +
+					Se_so_pop[m][i]*g[plus_index_so_pop[m][i]];
+
+					Si_so_pop_grid[i] = Si_so_pop_grid[i] + 
+					Sa_so_pop[m][i]*g_so_pop[minus_index_so_pop[m][i]] +
+					Se_so_pop[m][i]*g_so_pop[plus_index_so_pop[m][i]];
+				}
+				/*
+				cout<<"i = "<<i<<endl;
+				cout<<"Si_grid[i] = "<<Si_grid[i]<<endl;
+				cout<<"Si_pop_grid[i] = "<<Si_pop_grid[i]<<endl;
+				cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
+				cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
+				cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
+				cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
+				cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
+				cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
+				getchar();
+				//*/	                        
+
+			}  // end of i loop for points
+
+		} // end of SO pop condiction 
+	 	
+		for (int i = 0;i < points;i++)
+			Si_grid_all[i][iteration+1] = Si_grid[i];  	
+
+	 	//---------------------done upto here---------------------------
+	 			
+	        for (int i=0;i<points;i++)
+	        {
+	            g[i] = (Si_grid[i]+electric_driving_force[i])/(denom[i]);
+	            //g_th[i] = (Si_th_grid[i] + thermal_driving_force[i])/(denom[i]);
+	        }
+
+	        // If POP scattering is included
+	        if (scattering_mechanisms[1] == 1)
+	        {
+	            for (int i=0;i<points;i++)
+	                g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_pop_total[i];
+	        }
+
+	        // If So POP scattering is included
+	        if (scattering_mechanisms[10] == 1)
+	        {
+	            for (int i=0;i<points;i++)
+	                g_so_pop[i] = (Si_so_pop_grid[i] + electric_driving_force[i])/nu_so_pop_total[i];
+	        }
+
+
+	        for (int i=0;i<points;i++)
+	        {
+	            result_g[i][iteration+1] = g[i];
+
+	            //result_g_th[i][iteration+1] = g_th[i];
+
+	        //fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
+
+	            g_old[i] = g[i];
+	            //g_th_old[i] = g_th[i];
+
+	            if (iteration==0)
+	               g_rta[i] = g[i] ;
+		     
+		     //*/
+		     /*
+		     if(iteration == iterations-1)
+		     {	
+			     cout<<"i =   "<<i<<endl;	
+			     cout<<"g[i] =   "<<g[i]<<endl;
+			     cout<<"g_th[i] =   "<<g_th[i]<<endl;
+			     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+			     cout<<"g_so_pop[i] =   "<<g_so_pop[i]<<endl;
+			     getchar();
+		     }
+		     */
+	        }
+	    }   // iteration loop end here	
+	}  // end of else if condition geometry==2	    
 }

@@ -17,4 +17,11 @@ void nu_alloy1()
 		//cout<<"nu_alloy[counter] =  "<<nu_alloy[counter]<<endl;
     }
 
+	/*
+	fid1 = fopen("nu_alloy.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_alloy[i]);
+	fclose(fid1);
+	*/
+	
 }

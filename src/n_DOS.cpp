@@ -90,19 +90,7 @@ void n_DOS()
 			    states[i]=0;
 		    
 		}
-		fclose(fid);
-		
-		/*
-		//--------------------- saving DOS --------------------------------------------------------------------
-		fid2 = fopen("DOS.dat","w");
-		fprintf(fid2,"# energy    states \n");
-		for (int i = 0; i < num_points; i++)
-			fprintf(fid2,"%e     %e \n", energy[i], states[i]/volume1);
-		
-		fclose(fid2);
-		//--------------------- saving DOS completed  --------------------------------------------------------		
-		*/
-		
+		fclose(fid);		
 		
 	}
 	else
@@ -112,7 +100,7 @@ void n_DOS()
 		//fermi = 2.952756400000000e+00;
 		fermi = VBM;
 		cout<<"fermi = "<<fermi<<endl;
-		getchar();
+		//getchar();
 		//fermi = 1.301916870000000e+00;
 		volume1 = 1/(1e24);
 				

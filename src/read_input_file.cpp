@@ -4,7 +4,7 @@ int flag[50]={0};
 
 //---------------------------------------------------------------------------------------------------------------
 double vf, vf_cb, vf_vb;
-int linear_fit=0, SORT=0;
+int linear_fit=0, SORT=0, save_data=0;
 //---------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------
@@ -20,6 +20,19 @@ double mobility_freqr2[30]={0}, mobility_freqi2[30]={0}, sigma_freqr2[30]={0}, s
 double mobility_drude_freqr2[30]={0}, mobility_drude_freqi2[30]={0}, sigma_drude_freqr2[30]={0}, sigma_drude_freqi2[30]={0};
 int freq_variation=0;
 double tau;
+
+//-------------------------------- 2D variables -------------------------------------------------------------
+double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1];
+double So_ab_npop[limit5][limit2], So_em_npop[limit5][limit2], Se_npop[limit5][limit2], Sa_npop[limit5][limit2];
+double So_ab_pop[limit5][limit2], So_em_pop[limit5][limit2], Se_pop[limit5][limit2], Sa_pop[limit5][limit2];
+double So_ab_so_pop[limit5][limit2], So_em_so_pop[limit5][limit2], Se_so_pop[limit5][limit2], Sa_so_pop[limit5][limit2];
+double So_npop[limit5][limit2], So_pop[limit5][limit2], So_so_pop[limit5][limit2];
+int gd[limit5];
+double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening=0;
+int pop_number, so_pop_number;
+double we_pop[limit5], we_to[limit5];
+double nu_pop_total[limit2], dist, nu_so_pop_total[limit2];
+double rimp, Si_so_pop_grid[limit2];
 
 //---------------------------------------------------------------------------------------------------------------
 
@@ -37,8 +50,8 @@ double nu_neutralimpurity[limit2]={0}, nu_npop[limit2][limit5]={0}, nu_npop_tota
 string  type="n";
 
 double n0, Nd1,Na1, efef_n, efef_p, N_ii;
-int cc=-1, count_d, count_t, VASP=1;
-double mobility_ii, mobility_po, mobility_to, mobility_de, mobility_pe, mobility_dis;
+int cc=-1, count_d, count_t, VASP=1, geometry=1;
+double mobility_ii, mobility_po, mobility_to, mobility_de, mobility_pe, mobility_dis, mobility_so_pop;
 double mobility_alloy, mobility_iv, mobility_neutral, mobility_npop, mobility_avg, mobility, mobility_rta;
 double mobility_hall_ii, mobility_hall_po, mobility_hall_to, mobility_hall_de;
 double mobility_hall_pe, mobility_hall_dis, mobility_hall_alloy, mobility_hall_iv;
@@ -46,10 +59,12 @@ double mobility_hall_neutral, mobility_hall_npop, mobility_hall_avg, mobility_ha
 double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta;
 
 double denom[limit2];
-int plus_index_pop[limit2], minus_index_pop[limit2];
-double g[limit2], g_rta[limit2], g_old[limit2], g_LO[limit2], g_iv[limit2], g_th[limit2], g_th_old[limit2], g_LO_th[limit2];
-double S_o_grid[limit2]={0}, S_o_grid_total[limit2]={0}, S_i_grid[limit2], S_iLO_grid[limit2], S_i_th_grid[limit2], S_iLO_th_grid[limit2];
-double result_g[limit2][15+1], result_g_LO[limit2][15+1], result_g_th[limit2][15+1];
+int plus_index_pop[limit5][limit2], minus_index_pop[limit5][limit2];
+int plus_index_so_pop[limit5][limit2], minus_index_so_pop[limit5][limit2];
+double g[limit2], g_rta[limit2], g_old[limit2], g_pop[limit2], g_iv[limit2], g_th[limit2];
+double g_so_pop[limit2], g_th_old[limit2], g_pop_th[limit2];
+double S_o_grid[limit2]={0}, S_o_grid_total[limit2]={0}, Si_grid[limit2], Si_pop_grid[limit2], Si_th_grid[limit2], Si_pop_th_grid[limit2];
+double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1], result_g_th[limit2][limit8+1];
 
 double N_poph_atT, df0dz_integral, N_e[limit4], beta_constant; 
 
@@ -71,15 +86,15 @@ int count1,count2;
 int count_orbital, count_orbital_p;
 
 double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
-double gH_LO[limit2], hH_LO[limit2], S_i_grid_g[limit2], S_i_grid_h[limit2];
-double S_iLO_grid_g[limit2], S_iLO_grid_h[limit2], S_o_gridH[limit2]={0}, S_o_grid_totalH[limit2]={0};
+double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2], S_o_gridH[limit2]={0}, S_o_grid_totalH[limit2]={0};
 
-double mobility_all[10]={0} , calc_mobility[30][2] = {0}, calc_mobility_rta[30][2] = {0};
+double mobility_all[11]={0} , calc_mobility[30][2] = {0}, calc_mobility_rta[30][2] = {0};
 double calc_thermopower[30][2] = {0}, calc_sigma[30][2] = {0}, calc_sigma_rta[30][2] = {0};
 
 double calc_mobility_pe[30][1] = {0}, calc_mobility_de[30][1] = {0}, calc_mobility_dis[30][1] = {0}, calc_mobility_ii[30][1] = {0};
 double calc_mobility_po[30][1] = {0}, calc_mobility_to[30][1] = {0}, calc_mobility_alloy[30][1] = {0}, calc_mobility_iv[30][1] = {0};
-double calc_mobility_neutral[30][1] = {0}, calc_mobility_npop[30][1] = {0};
+double calc_mobility_neutral[30][1] = {0}, calc_mobility_npop[30][1] = {0}, calc_mobility_so_pop[30][1] = {0};
 
 double mobility_hall_all[10]={0}, calc_mobility_hall[30][2] = {0}, calc_mobility_hall_rta[30][2] = {0};
 double calc_sigma_hall[30][2] = {0}, calc_sigma_hall_rta[30][2] = {0}, hall_factor[30][2] = {0}, hall_factor_rta[30][2] = {0};
@@ -100,7 +115,7 @@ double N_im_de, Nd_plus,N_im_modified;
 
 int kk, ispin=1, TBS=0;
 
-double T_array[30],epsilon_s[30],epsilon_inf[30],Bgap[30],P_piezo[30],C_piezo_h14[30],n_array[30],Nd[30],Na[30],N_im[30];
+double T_array[30],epsilon_s[30],epsilon_inf[30],Bgap[30],P_piezo[30],C_piezo_h14[30],n_array[30],Nd[30]={0},Na[30]={0},N_im[30]={0};
 
 double fermi;
 double we[limit4],De[limit4];
@@ -112,7 +127,7 @@ int degree1;
 double fraction[4];
 int length_fraction;
 
-int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[10]={0}, iv_number, de_number;
+int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[11]={0}, iv_number, de_number;
 int fitting_1, fitting_2, fitting_3;
 
 double rho=0, k_max, N_dis, omega_LO, omega_TO, E_deformation[3]={0}, C_long, C_trans, C_za=0, c_bar, C_11, C_12, C_44,
@@ -220,6 +235,34 @@ void read_input_file()
 			//cout<< "VASP-INPUT  " <<VASP<<endl;
 		}
 
+		if(str=="SAVEDATA")
+		{
+			save_data = 1;
+		}
+
+		if(str=="GEOMETRY")
+		{
+			getline(in,ss);
+			stringstream tmp(ss);
+
+			tmp>>ss;
+			if(ss=="3D")
+				geometry = 1;
+			else if(ss=="2D")
+				geometry = 2;
+			else
+			{
+				cout<<"Proper input are not given for GEOMETRY. Exit from program"<<endl;
+				exit(EXIT_FAILURE);	
+			}			  
+			//cout<< "VASP-INPUT  " <<VASP<<endl;
+		}
+
+		if(str=="SCREENING")
+		{
+			screening = 1;
+		}
+		
 		if(str=="TEMPERATURE")
 		{
 		  flag[0] = 1;  	
@@ -316,7 +359,15 @@ void read_input_file()
 		  cout <<epsilon_s[0];
 
 		  cout<<endl<<endl;
-		  //cout<< "LOW FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		  //cout<< "popW FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		}
+
+		if(str=="REMOTE_IMPURITY_CONCENTRATION")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp>> rimp;
+		  cout<< " REMOTE_IMPURITY_CONCENTRATION =  " <<rimp<<"  cm^-2 "<<endl;
 		}
 		
 		if(str=="DIELECTRIC-CONST-HF")
@@ -334,6 +385,64 @@ void read_input_file()
 		 // cout<< "HIGH FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
 		}
 		
+		if(str=="SUBSTRATE-DIELECTRIC-CONST-LF")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp >> eps_sub_low; 
+			  
+		  // To display low frequency dielectric constant
+		  cout<<"low frequency dielectric constant of substrate = "<<endl;
+		  cout <<eps_sub_low;
+
+		  cout<<endl<<endl;
+		  //cout<< "popW FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		}
+		
+		if(str=="SUBSTRATE-DIELECTRIC-CONST-HF")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp >> eps_sub_low; 
+			  
+		  // To display low frequency dielectric constant
+		  cout<<"low frequency dielectric constant of substrate = "<<endl;
+		  cout <<eps_sub_low;
+
+		  cout<<endl<<endl;
+		  //cout<< "popW FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		}
+
+		
+		if(str=="TOPOXIDE-DIELECTRIC-CONST-LF")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp >> eps_up_low; 
+			  
+		  // To display low frequency dielectric constant
+		  cout<<"low frequency dielectric constant of top oxide = "<<endl;
+		  cout <<eps_up_low;
+
+		  cout<<endl<<endl;
+		  //cout<< "popW FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		}
+		
+		if(str=="TOPOXIDE-DIELECTRIC-CONST-HF")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp >> eps_up_high; 
+			  
+		  // To display low frequency dielectric constant
+		  cout<<"High frequency dielectric constant of top oxide = "<<endl;
+		  cout <<eps_up_high;
+
+		  cout<<endl<<endl;
+		  //cout<< "High FREQUENCY DIELECTRIC CONSTANT " <<ss<<endl;
+		}
+
+
 		if(str=="BANDGAP")
 		{
 		  getline(in,ss);
@@ -377,21 +486,18 @@ void read_input_file()
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
-		  tmp>> rho;
-		  cout<< "DENSITY OF SEMICONDUCTOR " <<rho<< " gm/cm3 "<<endl;
-    		  rho = rho*1000; 
-		  //converted from g/cm^3 to kg/m^3
+		  tmp>> rho;		  
 		}
 
-		if(str=="DISLOCATIONDENSITY")
+		if(str=="DISpopCATIONDENSITY")
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> N_dis;
-		  cout<< "DISLOCATION DENSITY " <<N_dis<< " /CM^2 "<<endl;
+		  cout<< "DISpopCATION DENSITY " <<N_dis<< " /CM^2 "<<endl;
 		}
 
-		if(str=="LPOPFREQUENCY")
+		if(str=="LPOPFREQUENCY") // for 3D
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
@@ -399,6 +505,51 @@ void read_input_file()
 		  cout<< "LONGITUDINAL POP FREQUENCY " <<omega_LO<< " THz " <<endl;
 	          omega_LO = omega_LO*2*pi*1e12;
 		}
+
+
+		if(str=="POPFREQUENCY")   // for 2D
+		{
+			getline(in,ss);
+			stringstream tmp(ss);
+
+			int count = 0;
+			int i=0; 
+			while (tmp >> we_pop[i]) 
+			{ count++; i++; } 
+		
+			pop_number = count;
+
+			cout<< "PHONON-FREQUENCY for POP  "<<endl;
+			for(int i=0;i<pop_number;i++)
+			{
+				cout<<"frequency["<<i<<"] = "<<we_pop[i]<<"THz  "<<endl;
+				we_pop[i] = we_pop[i]*2*pi*1e12;
+			}
+			cout<<endl;
+		}
+
+
+		if(str=="TO_POPFREQUENCY_SUBSTRATE")
+		{
+			getline(in,ss);
+			stringstream tmp(ss);
+
+			int count = 0;
+			int i=0; 
+			while (tmp >> we_to[i]) 
+			{ count++; i++; } 
+		
+			so_pop_number = count;
+
+			cout<< "TRANSVERSE OPTICAL PHONON-FREQUENCY for POP  "<<endl;
+			for(int i=0;i<so_pop_number;i++)
+			{
+				cout<<"frequency["<<i<<"] = "<<we_to[i]<<"THz  "<<endl;
+				we_to[i] = we_to[i]*2*pi*1e12;
+			}
+			cout<<endl;
+		}
+
 
 		if(str=="ADP")
 		{
@@ -423,7 +574,9 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>>P_piezo[0];		  
-		  cout<< "PIEZOELECTRIC COEFFICIENTS " <<P_piezo[0]<<endl;
+		  cout<< "PIEZOELECTRIC COEFFICIENT " <<P_piezo[0]<<endl;
+		  // unitless if 3D or C/cm if 2D
+		  
 		}
 
 		if(str=="CL")
@@ -431,7 +584,6 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> C_long;
-		  cout<< "ELASTIC CONSTANT FOR LONGITUDINAL MODE " <<C_long<<" dyne/cm^2 "<<endl;
 		}
 
 		if(str=="CT")
@@ -439,7 +591,6 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>>C_trans;
-		  cout<< "ELASTIC CONSTANT FOR TRANSVERSE MODE " <<C_trans<<" dyne/cm^2 "<<endl;
 		}
 
 		if(str=="CZA")
@@ -447,15 +598,14 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>>C_za;
-		  cout<< "ELASTIC CONSTANT FOR ZA MODE " <<C_za<<" dyne/cm^2 "<<endl;
 		}
 
-		if(str=="ALLOYPOTENTIAL")
+		if(str=="ALpopYPOTENTIAL")
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> Uall;
-		  cout<< "ALLOY POTENTIAL " <<Uall<< "eV"<<endl;
+		  cout<< "ALpopY POTENTIAL " <<Uall<< "eV"<<endl;
 		}
 
 		if(str=="VOLUME-PRIMITIVECELL")
@@ -463,7 +613,7 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> V0;
-		  cout<< "VOLUME OF PRIMITIVE CELL OF ALLOY  " <<V0<< " (nm)^3 "<<endl;
+		  cout<< "VOLUME OF PRIMITIVE CELL OF ALpopY  " <<V0<< " (nm)^3 "<<endl;
 		}
 
 		if(str=="FRACTIONOFATOM")
@@ -471,7 +621,7 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>>xx;
-		  cout<< "FRACTION OF ATOM FOR ALLOY " <<xx<<endl;
+		  cout<< "FRACTION OF ATOM FOR ALpopY " <<xx<<endl;
 		}
 
 		if(str=="INTRAVALLEYPHONONFREQUENCY")
@@ -558,7 +708,7 @@ void read_input_file()
 
 			for(int i=0;i<iv_number;i++)
 			{
-				cout<<"number of final valleys["<<i<<"] = "<<nfv[i]<<endl;
+				cout<<"number of final valleys ["<<i<<"] = "<<nfv[i]<<endl;
 			}
 			
 		}
@@ -582,8 +732,8 @@ void read_input_file()
 		  flag[4] = 1;	
 		  getline(in,ss);
 		  stringstream smc(ss);
-		  int a1[9];
-		  for(int i=0;i<9;i++)
+		  int a1[10];
+		  for(int i=0;i<10;i++)
 		    smc >> a1[i];
 
 		  scattering_mechanisms[0] = a1[0];       // Ionized imourity 
@@ -596,6 +746,7 @@ void read_input_file()
 		  scattering_mechanisms[7] = a1[6];	// Alloy scattering
 		  scattering_mechanisms[8] = a1[7];	// Intra-valley scattering
 		  scattering_mechanisms[9] = a1[8];	// Neutral impurity scattering
+		  scattering_mechanisms[10] = a1[9];	// so pop scattering
 		  cout<< "-SCATTERING MECHANISM CONTROL " <<ss<<endl;
 
 
@@ -609,6 +760,16 @@ void read_input_file()
 		  tmp>> iterations;
 		  cout<< "NUMBER OF ITERARTIONS " <<iterations<<endl;
 		}
+
+		if(str=="DISTANCE_FROM_SUBSTRATE")
+		{
+		  getline(in,ss);
+		  stringstream tmp(ss);
+		  tmp>> dist;
+		  cout<< " DISTANCE FROM SUBSTRATE =  " <<dist<<"  nm "<<endl;
+		  dist = dist*1e-9;  // converted from nm to m
+		}
+
 
 		if(str=="FITTING-DOP")
 		{
@@ -741,7 +902,35 @@ void read_input_file()
 				cout<<"Coupling constant["<<i<<"] = "<<De_npop[i]<<"e8 eV/cm  "<<endl;			
 		}
 
-				
+		if(str=="NUMBEROFVALLEY_NPOP")
+		{
+			getline(in,ss);
+			stringstream tmp(ss);
+			int count = 0; 
+			int i=0;
+			while (tmp >> gd[i]) 
+			{  count++;   i++;   }
+
+			if(npop_number!=0)
+			{
+				if(npop_number!=count)
+				{
+					cout<<"Error same number of npop constants are required"<<endl;
+					exit (EXIT_FAILURE);			
+				}
+			}
+			else
+				npop_number = count;
+
+			for(int i=0;i<npop_number;i++)
+			{
+				cout<<"number of final valleys for npop scatttering ["<<i<<"] = "<<gd[i]<<endl;
+			}
+			
+		}
+
+		
+		//---------------------time variation input read part ---------------------------------------------------		
 		if(str=="TIME-VARIATION")
 		{
 			getline(in,ss);
@@ -811,8 +1000,52 @@ void read_input_file()
 			tmp>>tau;
 			cout<< " TAU =   " <<tau<<endl;		  
 		}
+		
 
         } // end of while loop 
+
+	//eps_sub_low = eps_sub_low*epsilon_0;
+	//eps_sub_high = eps_sub_high*epsilon_0; 
+	//eps_up_low = eps_up_low*epsilon_0;
+	//eps_up_high = eps_up_high*epsilon_0;
+	eps_avg_low = (eps_sub_low + eps_up_low)/2.0;
+
+	  if(geometry==1)  // 3D
+	  {
+	  	cout<< "DENSITY OF SEMICONDUCTOR " <<rho<< " gm/cm3 "<<endl;
+	  	rho = rho*1000;
+		  //converted from g/cm^3 to kg/m^3
+	  }
+	  else if(geometry==2) // 2D
+	  {
+	  	cout<< "DENSITY OF SEMICONDUCTOR " <<rho<< " gm/cm2 "<<endl;
+	  	rho = rho*10000;
+		  //converted from g/cm^2 to kg/m^2
+	  }
+
+
+	if(geometry==1)	
+	{
+		cout<< "ELASTIC CONSTANT FOR LONGITUDINAL MODE " <<C_long<<" dyne/cm^2 "<<endl;
+		cout<< "ELASTIC CONSTANT FOR TRANSVERSE MODE " <<C_trans<<" dyne/cm^2 "<<endl;
+
+		if(de_number==3)		
+			cout<< "ELASTIC CONSTANT FOR ZA MODE " <<C_za<<" dyne/cm^2 "<<endl;
+	}
+	else
+	{
+		cout<< "ELASTIC CONSTANT FOR LONGITUDINAL MODE " <<C_long<<" dyne/cm "<<endl;
+		
+		if(de_number==2)
+			cout<< "ELASTIC CONSTANT FOR TRANSVERSE MODE " <<C_trans<<" dyne/cm "<<endl;
+
+		if(de_number==3)		
+		{
+			cout<< "ELASTIC CONSTANT FOR TRANSVERSE MODE " <<C_trans<<" dyne/cm "<<endl;
+			cout<< "ELASTIC CONSTANT FOR ZA MODE " <<C_za<<" dyne/cm "<<endl;
+		}	
+	}
+	
 	
 	if(flag[0]==0)
 	{
@@ -825,6 +1058,7 @@ void read_input_file()
 		exit(EXIT_FAILURE);
 	
 	}
+	/*
 	else if(flag[2]==0)
 	{
 		cout<<"Low frequency dielectric constant is not given as input. Exit from program"<<endl;
@@ -835,6 +1069,8 @@ void read_input_file()
 		cout<<"High frequency dielectric constant is not given as input. Exit from program"<<endl;
 		exit(EXIT_FAILURE);
 	}
+	*/
+	
 	else if(flag[4]==0)
 	{
 		cout<<"Scattering Mechanism control is not given as input. Exit from program"<<endl;

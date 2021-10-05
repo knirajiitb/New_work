@@ -20,4 +20,11 @@ void nu_im(double epsilon_s,double N_im)
 // v(counter) is divided with 100 to convert cm/s to m/s
 // 1e9 with k_dum to convert 1/nm to 1/m
 
+	/*
+	fid1 = fopen("nu_neutralimpurity.txt","w");
+	for (int i = 0; i < points; i++)
+	fprintf(fid1,"%d    %e\n", i+1, nu_neutralimpurity[i]);
+	fclose(fid1);
+	*/
+	
 }

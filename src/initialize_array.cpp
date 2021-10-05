@@ -23,6 +23,7 @@ void initialize_array()
 		    calc_mobility_alloy[i][0] = n_array[i];
 		    calc_mobility_iv[i][0] = n_array[i];
 		    calc_mobility_neutral[i][0] = n_array[i];
+		    calc_mobility_so_pop[i][0] = n_array[i];
 
 
 		    calc_mobility_hall[i][0] = n_array[i];
@@ -63,6 +64,7 @@ void initialize_array()
 		    calc_mobility_alloy[i][0] = T_array[i];
 		    calc_mobility_iv[i][0] = T_array[i];
 		    calc_mobility_neutral[i][0] = T_array[i];
+		    calc_mobility_so_pop[i][0] = T_array[i];
 
 
 		    calc_mobility_hall[i][0] = T_array[i];
