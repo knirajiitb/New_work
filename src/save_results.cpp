@@ -119,11 +119,30 @@ void save_results()
 	    	if (ispin == 2 && kk == 1)
 			fid1 = fopen("mobility_down_spin.dat","a");
 
+		//cout<<"count = "<<count<<endl;
+
 		for (int i = 0; i <count ; i++)
+		{
+		
 		fprintf(fid1,"%e     %e          %e          %e     %e    %e    %e    %e    %e  \n",
 		calc_mobility[i][0], calc_mobility[i][1], calc_mobility_rta[i][1], calc_mobility_ii[i][1], calc_mobility_po[i][1],
 		calc_mobility_npop[i][1], calc_mobility_de[i][1], calc_mobility_pe[i][1], calc_mobility_so_pop[i][1]);
-
+		/*
+		cout<<"Save results"<<endl;
+		cout<<"i =  "<<i<<endl;
+		cout<<"calc_mobility[i][0] = "<<calc_mobility[i][0]<<endl;
+		cout<<"calc_mobility[i][1] =  "<<calc_mobility[i][1]<<endl;
+		cout<<"calc_mobility_rta[i][1] =  "<<calc_mobility_rta[i][1]<<endl;
+		cout<<"calc_mobility_ii[i][1] =  "<<calc_mobility_ii[i][1]<<endl;
+		cout<<"calc_mobility_po[i][1] =  "<<calc_mobility_po[i][1]<<endl;
+		cout<<"calc_mobility_npop[i][1] =  "<<calc_mobility_npop[i][1]<<endl;
+		cout<<"calc_mobility_de[i][1] =  "<<calc_mobility_de[i][1]<<endl;
+		cout<<"calc_mobility_pe[i][1] =  "<<calc_mobility_pe[i][1]<<endl;
+		cout<<"calc_mobility_so_pop[i][1] =  "<<calc_mobility_so_pop[i][1]<<endl;
+		getchar();
+		*/
+		
+		}
 		fclose(fid1);
 			
 	    	if (ispin == 1)

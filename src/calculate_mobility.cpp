@@ -723,6 +723,20 @@ void calculate_mobility(double T, int ii)
 		calc_mobility_de[cc][1] = mobility_de;
 		calc_mobility_pe[cc][1] = mobility_pe;
 		calc_mobility_so_pop[cc][1] = mobility_so_pop;
+		
+		/*
+		cout<<"cc = "<<cc<<endl;
+		cout<<"calc_mobility[i][0] = "<<calc_mobility[cc][0]<<endl;
+		cout<<"calc_mobility[i][1] =  "<<calc_mobility[cc][1]<<endl;
+		cout<<"calc_mobility_rta[i][1] =  "<<calc_mobility_rta[cc][1]<<endl;
+		cout<<"calc_mobility_ii[i][1] =  "<<calc_mobility_ii[cc][1]<<endl;
+		cout<<"calc_mobility_po[i][1] =  "<<calc_mobility_po[cc][1]<<endl;
+		cout<<"calc_mobility_npop[i][1] =  "<<calc_mobility_npop[cc][1]<<endl;
+		cout<<"calc_mobility_de[i][1] =  "<<calc_mobility_de[cc][1]<<endl;
+		cout<<"calc_mobility_pe[i][1] =  "<<calc_mobility_pe[cc][1]<<endl;
+		cout<<"calc_mobility_so_pop[i][1] =  "<<calc_mobility_so_pop[cc][1]<<endl;
+		getchar();
+		//*/
 
 		cout.setf(ios::scientific);
 		cout<<endl<<"Drift mobility results"<<endl;
