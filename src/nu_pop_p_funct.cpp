@@ -2,7 +2,7 @@
 
 
 // POP scattering calculation
-void nu_So_p_funct(double T, int T_loop,double omega_LO)
+void nu_pop_p_funct(double T, int T_loop,double omega_LO)
 {	
 	double k_pp;
 	double k_mm;
@@ -26,15 +26,15 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		
 	for (int counter = 0;counter < points;counter++)
 	{
-		kplus_grid_pop[counter] = kplus(counter,omega_LO,points,energy_p);
-		kminus_grid_pop[counter] = kminus(counter,omega_LO,points,energy_p);
+		kplus_grid_pop[0][counter] = kplus(counter,omega_LO,points,energy_p);
+		kminus_grid_pop[0][counter] = kminus(counter,omega_LO,points,energy_p);
 
 		for (int i=0;i<points;i++)
-		arr[i] = abs(k_grid[i] - kminus_grid_pop[counter]);
+		arr[i] = abs(k_grid[i] - kminus_grid_pop[0][counter]);
 		minus_index =FindMinInd(arr,points);
 
 		for (int i=0;i<points;i++)
-		arr[i] = abs(k_grid[i] - kplus_grid_pop[counter]);
+		arr[i] = abs(k_grid[i] - kplus_grid_pop[0][counter]);
 		plus_index =FindMinInd(arr,points);
 
 		plus_index_pop[0][counter] = plus_index;
@@ -43,8 +43,8 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		//cout<<"counter = "<<counter<<endl;
 		//cout<<"plus_index_pop[0][counter1] = "<<plus_index_pop[0][counter1]<<endl;
 		//cout<<"minus_index_pop[0][counter1] = "<<minus_index_pop[0][counter1]<<endl;	
-		//cout<<"kplus_grid_pop[counter1] = "<<kplus_grid_pop[counter1]<<endl;
-		//cout<<"kminus_grid_pop[counter1] = "<<kminus_grid_pop[counter1]<<endl;
+		//cout<<"kplus_grid_pop[0][counter1] = "<<kplus_grid_pop[0][counter1]<<endl;
+		//cout<<"kminus_grid_pop[0][counter1] = "<<kminus_grid_pop[0][counter1]<<endl;
 		//getchar();	
 	}
 		
@@ -52,8 +52,8 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	{	
 		k_dum=k_grid[counter];   // unit is 1/nm
 		v=v_p[counter]*1e-2;    // conveterd from unit  cm/s to m/s
-		k_mm= kminus_grid_pop[counter];  // unit is 1/nm
-		k_pp= kplus_grid_pop[counter];   // unit is 1/nm
+		k_mm= kminus_grid_pop[0][counter];  // unit is 1/nm
+		k_pp= kplus_grid_pop[0][counter];   // unit is 1/nm
 		c_minus[counter]= (k_dum*k_dum+k_mm*k_mm)/(2*k_mm*k_dum);	// c_minus[counter] from equation 3.22 of ramu thesis
  		c_plus[counter]= (k_dum*k_dum+k_pp*k_pp)/(2*k_pp*k_dum);	// c_minus[counter] from equation 3.22 of ramu thesis	
 	 	
@@ -61,14 +61,14 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		if((energy_p[counter] < h_bar*omega_LO)||(k_mm==k_dum))
         		B_minus[counter] = 0;
         	else
-        	*/	 	 		
+        	//*/	 	 		
 			B_minus[counter]= abs(((1+3.0*c_minus[counter]*c_minus[counter])/2.0)*log(abs((1+c_minus[counter])/(1.0-c_minus[counter]))) - 3.0*c_minus[counter]);		
 		//from equation 3.22 of ramu thesis
 		/*
 		if ((k_pp == k_dum))
 			B_plus[counter] = 0;
 		else
-		*/
+		//*/
 			B_plus[counter] = abs(((1+3.0*c_plus[counter]*c_plus[counter])/2.0)*log(abs((1+c_plus[counter])/(1-c_plus[counter]))) - 3*c_plus[counter]);		
 		//from equation 3.22 of ramu thesis
 		 
@@ -77,7 +77,10 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 		pop2[counter]= B_plus[counter]*(N_op*(1-f0(energy_p[plus_index_pop[0][counter]],efef_p,T)) + (N_op+1)*f0(energy_p[plus_index_pop[0][counter]],efef_p,T));
 		pop3[counter]= B_minus[counter]*(N_op*f0(energy_p[minus_index_pop[0][counter]],efef_p,T) + (N_op+1)*(1-f0(energy_p[minus_index_pop[0][counter]],efef_p,T)));
 		
-		nu_So_p[counter][0][0] = pop1[counter]*(pop2[counter] + pop3[counter]);
+		So_ab_pop[0][counter] = pop1[counter]*(pop2[counter]);
+		So_em_pop[0][counter] = pop1[counter]*(pop3[counter]);
+		
+		nu_So_p[counter][0][0] = So_ab_pop[0][counter] + So_em_pop[0][counter];
 		
 		// Just to avoid instability since S_o is the only denominator in g_LO and cannot be zero
 		if(nu_So_p[counter][0][0] == 0)  
@@ -91,6 +94,8 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	}
 	
 	FILE *fid1;
+	
+		
 	/*	
 
 	fid1 = fopen("B_plus.dat","w");
@@ -194,6 +199,8 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	    lambda_i_minus_grid[counter] = abs(const3*C_minus[counter]*((N_poph_atT)*(1 - f0(energy_p[counter],efef_p,T))
 	    + (N_poph_atT+1)*f0(energy_p[counter],efef_p,T)));
 
+	    Sa_pop[0][counter] = lambda_i_minus_grid[counter];
+	    Se_pop[0][counter] = lambda_i_plus_grid[counter];	
 		//---------------------------- code to debug -------------------------------------------------------------
 		//cout<<"counter = "<<counter<<endl;
 
@@ -203,7 +210,31 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 	}
 	//------------------------- In scattering term for POP scattering rate calculated  --------------------------------
 
+	/*
+	fid1 = fopen("pop_scattering_rate.dat","w");	
+	
+	fprintf(fid1,"Energy (eV)   ab   em   total   \n ");
+	for (int i = 0; i < points; i++)		
+	{
+		fprintf(fid1,"  %e \t", energy_n[i]);
+		fprintf(fid1,"  %e	%e	%e  \n", So_ab_pop[0][i], So_em_pop[0][i], nu_So_p[i][0][0] );
+	}		
+	fclose(fid1);
+	
+	
+	fid1 = fopen("pop_in_scattering_rate.dat","w");
 
+	fprintf(fid1,"Energy (eV)   ab1   em1   \n");	
+	for (int i = 0; i < points; i++)		
+	{
+		fprintf(fid1,"  %e \t", energy_n[i]);
+		fprintf(fid1,"  %e   %e    \n", Sa_pop[0][i], Se_pop[0][i] );
+	}
+		
+	fclose(fid1);
+	
+	
+	//*/
 	/*		
 	fid1 = fopen("const2.txt","w");		
 	for (int i = 0; i < points; i++)
@@ -232,12 +263,12 @@ void nu_So_p_funct(double T, int T_loop,double omega_LO)
 
 	fid1 = fopen("k_minus.txt","w");		
 	for (int i = 0; i < points; i++)
-		fprintf(fid1,"%e \n", kminus_grid_pop[i]);	
+		fprintf(fid1,"%e \n", kminus_grid_pop[0][i]);	
 	fclose(fid1);
 
 	fid1 = fopen("k_plus.txt","w");		
 	for (int i = 0; i < points; i++)
-		fprintf(fid1,"%e \n", kplus_grid_pop[i]);	
+		fprintf(fid1,"%e \n", kplus_grid_pop[0][i]);	
 	fclose(fid1);
 
 	fid1 = fopen("plus_index.txt","w");		

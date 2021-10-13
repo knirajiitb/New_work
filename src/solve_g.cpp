@@ -89,21 +89,13 @@ void solve_g(double T)
 
 
 		                Si_pop_th_grid[i] = Sa_pop[0][i]*g_pop_th[minus_index_pop[0][i]] +
-		                Sa_pop[0][i]*g_pop_th[plus_index_pop[0][i]];
+		                Se_pop[0][i]*g_pop_th[plus_index_pop[0][i]];
 
 		                    
 				 Si_grid_all[i][iteration+1] = Si_grid[i];  	
 
 		                    /*
 		                    cout<<"i = "<<i<<endl;
-		                    cout<<"Si_grid[i] = "<<Si_grid[i]<<endl;
-		                    cout<<"SiLo_grid[i] = "<<Si_pop_grid[i]<<endl;
-		                    cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
-		                    cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
-				     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-				     cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
-				     cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
-				     cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
 				     getchar();
 				     //*/	                            
 		            }
@@ -122,6 +114,9 @@ void solve_g(double T)
 		        {
 		            for (int i=0;i<points;i++)
 		                g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_pop_total[i];
+
+				for (int i=0;i<points;i++)
+					result_g_pop[i][iteration+1] = g_pop[i];
 		        }
 
 		        for (int i=0;i<points;i++)
@@ -151,7 +146,7 @@ void solve_g(double T)
 		        }
 		    }   // iteration loop end here
 			
-			/*
+			/*			
 			FILE *fid1;
 
 			fid1 = fopen("electric_driving_force_n.txt","w");
@@ -159,9 +154,8 @@ void solve_g(double T)
 				fprintf(fid1,"%e \n", electric_driving_force[i]);	
 			fclose(fid1);
 
+
 			fid1 = fopen("g_all_n.txt","w");
-
-
 			for (int i = 0; i < points; i++)
 			{
 				fprintf(fid1,"%d \t", i+1);
@@ -169,11 +163,23 @@ void solve_g(double T)
 					fprintf(fid1,"%e ", result_g[i][j]);
 				fprintf(fid1," \n");
 			}
-
 			fclose(fid1);
 			
-			fid1 = fopen("Si_all_n.txt","w");
+			// pop scattering 
+		        if (scattering_mechanisms[1] == 1)
+		        {
+				fid1 = fopen("g_all_pop_n.txt","w");
+				for (int i = 0; i < points; i++)
+				{
+					fprintf(fid1,"%d \t", i+1);
+					for(int j=0;j<iterations+1;j++)
+						fprintf(fid1,"%e ", result_g_pop[i][j]);
+					fprintf(fid1," \n");
+				}
+				fclose(fid1);
+			}
 
+			fid1 = fopen("Si_all_n.txt","w");
 			for (int i = 0; i < points; i++)
 			{
 				fprintf(fid1,"%d \t", i+1);
@@ -181,9 +187,9 @@ void solve_g(double T)
 					fprintf(fid1,"%e ", Si_grid_all[i][j]);
 				fprintf(fid1," \n");
 			}
-
 			fclose(fid1);
-			*/
+			
+			//*/
 			
 			/*
 			for (int i=0;i<points;i++)
@@ -230,14 +236,6 @@ void solve_g(double T)
 
 				            /*		
 				            cout<<"i = "<<i<<endl;
-				            cout<<"Si_grid_g[i] = "<<Si_grid_g[i]<<endl;
-				            cout<<"SiLo_grid_g[i] = "<<Si_pop_grid_g[i]<<endl;
-				            cout<<"Si_grid_h[i] = "<<Si_grid_h[i]<<endl;
-				            cout<<"SiLo_grid_h[i] = "<<Si_pop_grid_h[i]<<endl;
-					     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-					     cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
-					     cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
-					     cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
 					     getchar();
 					     //*/	                            
 
@@ -379,44 +377,22 @@ void solve_g(double T)
 				{
 					for (int i = 0;i < points;i++)
 					{        
-						
-						/*
-						if(iteration!=0 && (i == 0 || i == 4 || i == 100 || i == 200
-						|| i == 300   || i == 400))
-						{
-							
-						cout<<"i   =  "<<i<<endl;
-						cout<<"g[plus_index_pop[0][i]]  =   "<<g[plus_index_pop[0][i]]<<endl;
-						cout<<"g[minus_index_pop[0][i]]  =   "<<g[minus_index_pop[0][i]]<<endl;
+														
+						Si_grid[i] = Sa_pop[0][i]*g[minus_index_pop[0][i]] +
+						Se_pop[0][i]*g[plus_index_pop[0][i]];
 
-						cout<<"lambda_plus = "<<lambda_i_plus_grid[i]<<endl;
-						cout<<"lambda_minus = "<<lambda_i_minus_grid[i]<<endl;
-
-						cout<<"plus_index_pop[0][i] = "<<plus_index_pop[0][i]<<endl;
-						cout<<"minus_index_pop[0][i] = "<<minus_index_pop[0][i]<<endl;
-
-						cout<<"In plus = "<<lambda_i_plus_grid[i]*g[plus_index_pop[0][i]]<<endl;
-						cout<<"In minus = "<<lambda_i_minus_grid[i]*g[minus_index_pop[0][i]]<<endl;
-
-						getchar();
-						}
-						*/
-								
-						Si_grid[i] = lambda_i_minus_grid[i]*g[minus_index_pop[0][i]] +
-						lambda_i_plus_grid[i]*g[plus_index_pop[0][i]];
-
-						Si_pop_grid[i] = lambda_i_minus_grid[i]*g_pop[minus_index_pop[0][i]] +
-						lambda_i_plus_grid[i]*g_pop[plus_index_pop[0][i]];
+						Si_pop_grid[i] = Sa_pop[0][i]*g_pop[minus_index_pop[0][i]] +
+						Se_pop[0][i]*g_pop[plus_index_pop[0][i]];
 
 
-						Si_th_grid[i] = lambda_i_minus_grid[i]*g_th[minus_index_pop[0][i]] +
-						lambda_i_plus_grid[i]*g_th[plus_index_pop[0][i]];
+						Si_th_grid[i] = Sa_pop[0][i]*g_th[minus_index_pop[0][i]] +
+						Se_pop[0][i]*g_th[plus_index_pop[0][i]];
 
 
-						Si_pop_th_grid[i] = lambda_i_minus_grid[i]*g_pop_th[minus_index_pop[0][i]] +
-						lambda_i_plus_grid[i]*g_pop_th[plus_index_pop[0][i]];
+						Si_pop_th_grid[i] = Sa_pop[0][i]*g_pop_th[minus_index_pop[0][i]] +
+						Se_pop[0][i]*g_pop_th[plus_index_pop[0][i]];
 						 
-						 Si_grid_all[i][iteration+1] = Si_grid[i];  	
+						Si_grid_all[i][iteration+1] = Si_grid[i];  	
 					
 
 						/*
@@ -444,7 +420,10 @@ void solve_g(double T)
 				if (scattering_mechanisms[1] == 1)
 				{
 					for (int i=0;i<points;i++)
-					g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_So_p[i][0][0];
+						g_pop[i] = (Si_pop_grid[i] + electric_driving_force[i])/nu_So_p[i][0][0];
+
+					for (int i=0;i<points;i++)
+						result_g_pop[i][iteration+1] = g_pop[i];
 				}
 
 				for (int i=0;i<points;i++)
@@ -474,7 +453,7 @@ void solve_g(double T)
 				}
 			}   // iteration loop end here
 
-			/*
+			/*			
 			FILE *fid1;
 			
 			fid1 = fopen("g_all_p.txt","w");		
@@ -486,7 +465,18 @@ void solve_g(double T)
 				fprintf(fid1," \n");
 			}	
 			fclose(fid1);
-			/*
+			
+
+			fid1 = fopen("g_all_pop_p.txt","w");		
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e\t", result_g_pop[i][j]);
+				fprintf(fid1," \n");
+			}	
+			fclose(fid1);
+
 
 			fid1 = fopen("Si_all_p.txt","w");		
 			for (int i = 0; i < points; i++)
@@ -518,10 +508,14 @@ void solve_g(double T)
 		}
 	}
 	
-	
 	else if(geometry==2)
 	{
+		
 		double Si_grid_all[points][iterations+1]={0};
+		double Si_grid_all_so_pop[points][iterations+1]={0};
+		double Si_grid_all_pop[points][iterations+1]={0};
+		//double result_g_pop[points][iterations+1]={0};
+		//double result_g_so_pop[points][iterations+1]={0};
 
 	//---------------------------------------- solve BTE for g ----------------------------------------------------------
 	    for (int i=0;i<points;i++)
@@ -550,6 +544,9 @@ void solve_g(double T)
 	    for(int i=0;i<points;i++)
 	    {
 		Si_grid_all[i][0] = k_grid[i];  	
+		Si_grid_all_pop[i][0] = k_grid[i];  	
+		Si_grid_all_so_pop[i][0] = k_grid[i];  	
+
 		result_g[i][0] = k_grid[i];
 		result_g_pop[i][0] = k_grid[i];
 		result_g_so_pop[i][0] = k_grid[i];
@@ -559,7 +556,7 @@ void solve_g(double T)
 
 	    for (int iteration = 0;iteration<iterations;iteration++)
 	    {
-		
+				
 		/*
 	        for (int i=0;i<points;i++)
 	        {
@@ -569,6 +566,25 @@ void solve_g(double T)
 	        }
 		//*/
 				
+		for (int i = 0;i < points;i++)
+			Si_grid[i] = 0;
+
+		
+		// If POP scattering is included
+		if (scattering_mechanisms[1] == 1)
+		{
+			for (int i = 0;i < points;i++)
+				Si_pop_grid[i] = 0;
+		}		
+		
+		// If SO POP scattering is included
+		if (scattering_mechanisms[10] == 1)
+		{
+			for (int i = 0;i < points;i++)
+				Si_so_pop_grid[i] = 0;
+		}		
+
+
 	            // If POP scattering is included
 	            if (scattering_mechanisms[1] == 1)
 	            {
@@ -576,7 +592,7 @@ void solve_g(double T)
 			{
 				for (int m = 0;m < pop_number;m++)
 				{	            
-
+										
 					Si_grid[i] = Si_grid[i] + Sa_pop[m][i]*g[minus_index_pop[m][i]]+
 					Se_pop[m][i]*g[plus_index_pop[m][i]];
 
@@ -590,10 +606,6 @@ void solve_g(double T)
 				cout<<"Si_pop_grid[i] = "<<Si_pop_grid[i]<<endl;
 				cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
 				cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
-				cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-				cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
-				cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
-				cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
 				getchar();
 				//*/	                        
 			     			         
@@ -621,10 +633,6 @@ void solve_g(double T)
 				cout<<"Si_pop_grid[i] = "<<Si_pop_grid[i]<<endl;
 				cout<<"Si_th_grid[i] =    "<<Si_th_grid[i]<<endl;
 				cout<<"Si_pop_th_grid[i] =   "<<Si_pop_th_grid[i]<<endl;
-				cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-				cout<<"f_dist[minus_index_pop[0][i]]   "<<f_dist[minus_index_pop[0][i]]<<endl;
-				cout<<"lambda_o_minus_grid[i] =    "<<lambda_o_minus_grid[i]<<endl;
-				cout<<"lambda_o_plus_grid[i]   "<<lambda_o_plus_grid[i]<<endl;
 				getchar();
 				//*/	                        
 
@@ -634,7 +642,21 @@ void solve_g(double T)
 	 	
 		for (int i = 0;i < points;i++)
 			Si_grid_all[i][iteration+1] = Si_grid[i];  	
-
+		
+		
+	        // If POP scattering is included
+	        if (scattering_mechanisms[1] == 1)
+	        {
+			for (int i = 0;i < points;i++)
+				Si_grid_all_pop[i][iteration+1] = Si_pop_grid[i];  	
+		}
+		
+	        // If So POP scattering is included
+	        if (scattering_mechanisms[10] == 1)
+	        {
+			for (int i = 0;i < points;i++)
+				Si_grid_all_so_pop[i][iteration+1] = Si_so_pop_grid[i];  	
+		}
 	 	//---------------------done upto here---------------------------
 	 			
 	        for (int i=0;i<points;i++)
@@ -660,31 +682,131 @@ void solve_g(double T)
 
 	        for (int i=0;i<points;i++)
 	        {
-	            result_g[i][iteration+1] = g[i];
+			result_g[i][iteration+1] = g[i];
+			//result_g_th[i][iteration+1] = g_th[i];
 
-	            //result_g_th[i][iteration+1] = g_th[i];
+			//fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
 
-	        //fprintf('Iteration %d in BTE: at T = %5.2f K. Average change in g = %e \n',iteration,T,sum(g-g_old)/points);
-
-	            g_old[i] = g[i];
-	            //g_th_old[i] = g_th[i];
-
-	            if (iteration==0)
-	               g_rta[i] = g[i] ;
-		     
-		     //*/
-		     /*
-		     if(iteration == iterations-1)
-		     {	
-			     cout<<"i =   "<<i<<endl;	
-			     cout<<"g[i] =   "<<g[i]<<endl;
-			     cout<<"g_th[i] =   "<<g_th[i]<<endl;
-			     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
-			     cout<<"g_so_pop[i] =   "<<g_so_pop[i]<<endl;
-			     getchar();
-		     }
-		     */
+			g_old[i] = g[i];
+			//g_th_old[i] = g_th[i];
+		}
+		
+		// pop result
+	        if (scattering_mechanisms[1] == 1)
+	        {
+	            for (int i=0;i<points;i++)
+			result_g_pop[i][iteration+1] = g_pop[i];
 	        }
-	    }   // iteration loop end here	
+
+		// so pop result
+	        if (scattering_mechanisms[10] == 1)
+	        {
+	            for (int i=0;i<points;i++)
+			result_g_so_pop[i][iteration+1] = g_so_pop[i];
+	        }
+		
+		
+		if (iteration==0)
+		{
+		        for (int i=0;i<points;i++)
+				g_rta[i] = g[i] ;
+		}
+		
+		//*/
+		/*
+		if(iteration == iterations-1)
+		{	
+		     cout<<"i =   "<<i<<endl;	
+		     cout<<"g[i] =   "<<g[i]<<endl;
+		     cout<<"g_th[i] =   "<<g_th[i]<<endl;
+		     cout<<"g_pop[i] =   "<<g_pop[i]<<endl;
+		     cout<<"g_so_pop[i] =   "<<g_so_pop[i]<<endl;
+		     getchar();
+		}
+		*/
+	            
+		}   // iteration loop end here
+
+		
+		FILE *fid1;
+		
+		/*
+		fid1 = fopen("electric_driving_force_n.txt","w");
+		for (int i = 0; i < points; i++)
+			fprintf(fid1,"%e \n", electric_driving_force[i]);	
+		fclose(fid1);
+
+
+		fid1 = fopen("g_all_n_2D.txt","w");
+		for (int i = 0; i < points; i++)
+		{
+			fprintf(fid1,"%d \t", i+1);
+			for(int j=0;j<iterations+1;j++)
+				fprintf(fid1,"%e ", result_g[i][j]);
+			fprintf(fid1," \n");
+		}
+		fclose(fid1);
+
+
+		fid1 = fopen("Si_all_n_2D.txt","w");
+		for (int i = 0; i < points; i++)
+		{
+			fprintf(fid1,"%d \t", i+1);
+			for(int j=0;j<iterations+1;j++)
+				fprintf(fid1,"%e ", Si_grid_all[i][j]);
+			fprintf(fid1," \n");
+		}
+		fclose(fid1);
+
+		// save pop result
+		if (scattering_mechanisms[1] == 1)
+		{
+			fid1 = fopen("g_all_pop_n_2D.txt","w");
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", result_g_pop[i][j]);
+				fprintf(fid1," \n");
+			}
+			fclose(fid1);
+
+			fid1 = fopen("Si_all_pop_n_2D.txt","w");
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", Si_grid_all_pop[i][j]);
+				fprintf(fid1," \n");
+			}
+			fclose(fid1);
+		}
+
+
+		// save so pop result
+		if (scattering_mechanisms[10] == 1)
+		{
+
+			fid1 = fopen("g_all_so_pop_n_2D.txt","w");
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", result_g_so_pop[i][j]);
+				fprintf(fid1," \n");
+			}
+			fclose(fid1);
+
+			fid1 = fopen("Si_all_so_pop_n_2D.txt","w");
+			for (int i = 0; i < points; i++)
+			{
+				fprintf(fid1,"%d \t", i+1);
+				for(int j=0;j<iterations+1;j++)
+					fprintf(fid1,"%e ", Si_grid_all_so_pop[i][j]);
+				fprintf(fid1," \n");
+			}
+			fclose(fid1);
+		}				
+		//*/	    	    	
 	}  // end of else if condition geometry==2	    
 }

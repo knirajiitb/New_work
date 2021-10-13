@@ -53,11 +53,19 @@ void nu_rim_2D(double T)
 			q1[limit7] = q1[limit7-1];
 			
 			// overlap integral caculated here
-			for(int j=0;j<limit7+1;j++)			
-			{
-				aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-				aa[j] = aa[j] * aa[j];
+			if(overlap==1)
+			{			
+				for(int j=0;j<limit7+1;j++)			
+				{
+					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+					aa[j] = aa[j] * aa[j];
+				}
 			}
+			else
+			{
+				for(int j=0;j<limit7+1;j++)			
+					aa[j] = 1;
+			}					
 								
 			int index, last_index=0;
 			double min=1e20;
@@ -124,12 +132,20 @@ void nu_rim_2D(double T)
 			q1[limit7] = q1[limit7-1];
 			
 			// overlap integral caculated here
-			for(int j=0;j<limit7+1;j++)			
-			{
-				aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-				aa[j] = aa[j] * aa[j];
+			if(overlap==1)
+			{						
+				for(int j=0;j<limit7+1;j++)			
+				{
+					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+					aa[j] = aa[j] * aa[j];
+				}
 			}
-								
+			else
+			{
+				for(int j=0;j<limit7+1;j++)			
+					aa[j] = 1;
+			}					
+						
 			int index, last_index=0;
 			double min=1e20;
 			

@@ -73,8 +73,8 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 			    
 		// pop scattering
 		if(scattering_mechanisms[1]==1)
-			pop_So(T, efefn, ii, T_loop);
-//-------------------------------------------------------- pop_So calculated---------------------------------------
+			nu_pop(T, efefn, ii, T_loop);
+//-------------------------------------------------------- nu_pop calculated---------------------------------------
 
 //----------------------POP scattering rate completed--------------------------------------------------------------------
 
@@ -269,7 +269,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 		        //cout<<"f0x1_f0[counter] =  "<<f0x1_f0[counter]<<endl;
 		        //cout<<"electric_driving_force[counter]  = "<<electric_driving_force[counter]<<endl;
 		}
-		/*
+		
 		// save results
 		
 		FILE *fid1;
@@ -290,7 +290,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 			fprintf(fid1,"%e \n", thermal_driving_force[i]);	
 		fclose(fid1);
 		
-		*/
+		//*/
 			
 	        if (scattering_mechanisms[0]==1)
 	        {
@@ -300,7 +300,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 		// POP scattering
 	        if (scattering_mechanisms[1]==1)
 		{
-			nu_So_p_funct(T, T_loop, omega_LO);
+			nu_pop_p_funct(T, T_loop, omega_LO);
 		}
 			
 		// npop scattering

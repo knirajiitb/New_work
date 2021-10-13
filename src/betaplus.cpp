@@ -3,7 +3,7 @@
 double betaplus(int counter, double omega,double epsilon_s, double epsilon_inf, int points )
 // gives \betaplus [1/s] in equations for inelastic optical phonon scattering; equation (118) of Rode's book
 {
-    double k_plus = kplus_grid_pop[counter];
+    double k_plus = kplus_grid_pop[0][counter];
 
     int plus_index = plus_index_pop[0][counter];
 

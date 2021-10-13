@@ -60,7 +60,7 @@ extern int linear_fit, SORT, geometry, save_data;
 
 //-----------function for Valence band --------
 void nu_ii_p_funct(int T_loop);
-void nu_So_p_funct(double T, int T_loop,double omega_LO);
+void nu_pop_p_funct(double T, int T_loop,double omega_LO);
 void nu_npop_p_funct(double T);
 void nu_de_p_funct(int T_loop);
 
@@ -74,7 +74,7 @@ void nu_de_2D(double T);
 void nu_so_pop_2D(double T, int T_loop);
 void nu_rim_2D(double T);                       
 
-extern double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening;
+extern double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening, thickness;
 extern double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1];
 
 extern double So_ab_npop[limit5][limit2], So_em_npop[limit5][limit2], Se_npop[limit5][limit2], Sa_npop[limit5][limit2];
@@ -84,7 +84,7 @@ extern double So_npop[limit5][limit2], So_pop[limit5][limit2], So_so_pop[limit5]
 extern double nu_pop_total[limit2], nu_so_pop_total[limit2];
 extern int pop_number, so_pop_number;
 extern double we_pop[limit5], we_to[limit5], dist;
-extern int gd[limit5];
+extern int gd[limit5], method, overlap;
 extern double rimp, Si_so_pop_grid[limit2];
 
 
@@ -174,7 +174,7 @@ void fitting_band();
 void solve_g(double T);
 void save_results();
 void initialize_array();
-void pop_So(double T, double efef, int ii, int T_loop);
+void nu_pop(double T, double efef, int ii, int T_loop);
 
 /*
 void find_cbm(int spinorbit);
@@ -298,7 +298,8 @@ extern double electric_driving_force[limit2], thermal_driving_force[limit2];
 
 extern double df0dk_grid[limit2], f0x1_f0[limit2], electric_driving_force[limit2], thermal_driving_force[limit2], f_dist[limit2];
 
-extern double kplus_grid_pop[limit2], kminus_grid_pop[limit2];
+extern double kplus_grid_pop[limit5][limit2], kminus_grid_pop[limit5][limit2];
+extern double kplus_grid_so_pop[limit5][limit2], kminus_grid_so_pop[limit5][limit2];
 
 extern double betaplus_grid[limit2], betaminus_grid[limit2];
 

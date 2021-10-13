@@ -22,12 +22,12 @@ int freq_variation=0;
 double tau;
 
 //-------------------------------- 2D variables -------------------------------------------------------------
-double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1];
+double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1], thickness;
 double So_ab_npop[limit5][limit2], So_em_npop[limit5][limit2], Se_npop[limit5][limit2], Sa_npop[limit5][limit2];
 double So_ab_pop[limit5][limit2], So_em_pop[limit5][limit2], Se_pop[limit5][limit2], Sa_pop[limit5][limit2];
 double So_ab_so_pop[limit5][limit2], So_em_so_pop[limit5][limit2], Se_so_pop[limit5][limit2], Sa_so_pop[limit5][limit2];
 double So_npop[limit5][limit2], So_pop[limit5][limit2], So_so_pop[limit5][limit2];
-int gd[limit5];
+int gd[limit5], method=1, overlap = 0;
 double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening=0;
 int pop_number, so_pop_number;
 double we_pop[limit5], we_to[limit5];
@@ -72,7 +72,8 @@ double k_min, k_trans, k_step_fine, k_step;
 int points, points1, points2;
 double df0dk_grid[limit2], f0x1_f0[limit2], electric_driving_force[limit2], thermal_driving_force[limit2], f_dist[limit2];
 
-double kplus_grid_pop[limit2], kminus_grid_pop[limit2], betaplus_grid[limit2], betaminus_grid[limit2];
+double kplus_grid_pop[limit5][limit2], kminus_grid_pop[limit5][limit2], betaplus_grid[limit2], betaminus_grid[limit2];
+double kplus_grid_so_pop[limit5][limit2], kminus_grid_so_pop[limit5][limit2];
 
 double  Aminus_grid[limit2], Aplus_grid[limit2], lambda_i_plus_grid[limit2], lambda_o_plus_grid[limit2];
 double lambda_i_minus_grid[limit2], lambda_o_minus_grid[limit2], lambda_e_plus_grid[limit2][limit4], lambda_e_minus_grid[limit2][limit4];
@@ -1213,17 +1214,31 @@ void read_input_file()
 	//cout<<"End of Reading input.dat file"<<endl;
 
 	//printf("\n P_piezo =   %e \n",P_piezo);
-
-	if (scattering_mechanisms[1] == 0)
+	
+	if(geometry==1)
 	{
-		if (iterations != 1 )
+		if (scattering_mechanisms[1] == 0)
 		{
-		    iterations = 1;
-		    cout<<"Since polar optical phonon scattering is not used, so iterations is set to 1"<<endl;
+			if (iterations != 1 )
+			{
+			    iterations = 1;
+			    cout<<"Since polar optical phonon scattering is not used, so iterations is set to 1"<<endl;
+			}
+			T_trans = 0;
 		}
-		T_trans = 0;
 	}
-
+	else
+	{
+		if (scattering_mechanisms[1] == 0 && scattering_mechanisms[10] == 0)
+		{
+			if (iterations != 1 )
+			{
+			    iterations = 1;
+			    cout<<"Since polar optical phonon scattering and remote polar optical phonon scattering are not used, so iterations is set to 1"<<endl;
+			}
+			T_trans = 0;
+		}
+	}
 	if (De_ionization == 1)
 	{	// neutral impurity scattering
 		if (scattering_mechanisms[9] == 0)

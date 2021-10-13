@@ -7,7 +7,7 @@ double lambda_o_minus(int counter,double omega,double A_minus, double epsilon_s,
 {
     //cout<<endl<<"Inside lambda_o_minus"<<endl;
 	
-    double k_minus = kminus_grid_pop[counter];
+    double k_minus = kminus_grid_pop[0][counter];
 
     //cout<<"counter = "<<counter<<endl;    
     //cout<<"k_minus = "<<k_minus<<endl;

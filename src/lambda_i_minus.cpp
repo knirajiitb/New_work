@@ -5,7 +5,7 @@ double lambda_i_minus(int counter,double omega,double A_minus, double epsilon_s,
 // gives Lambda-_i in equations for inelastic optical phonon scattering; equation (123) of Rode's book
 {
     double l;
-    double k_minus = kminus_grid_pop[counter];
+    double k_minus = kminus_grid_pop[0][counter];
 
     //cout<<endl<<"Inside lambda_i_minus"<<endl;
     //cout<<"k_minus = "<<k_minus<<endl;

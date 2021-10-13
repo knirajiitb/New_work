@@ -37,11 +37,11 @@ void conductivity_time(double T, int j)
 
                     double arr[points];
                     for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kminus_grid_pop[counter1]);
+                        arr[i] = abs(k_grid[i] - kminus_grid_pop[0][counter1]);
                     int minus_index =FindMinInd(arr,points);
 
                     for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kplus_grid_pop[counter1]);
+                        arr[i] = abs(k_grid[i] - kplus_grid_pop[0][counter1]);
                     int plus_index =FindMinInd(arr,points);
 
                     // If POP scattering is included

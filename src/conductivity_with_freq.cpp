@@ -13,9 +13,9 @@ void conductivity_with_freq(double T)
 	{
 		for (int i = 0;i < points;i++)
 		{
-                        Sa[i] = N_poph_atT *lambda_i_minus_grid[i]*(1-f_dist[minus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kminus_grid_pop[i]/k_grid[i]);
+                        Sa[i] = N_poph_atT *lambda_i_minus_grid[i]*(1-f_dist[minus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kminus_grid_pop[0][i]/k_grid[i]);
 
-                        Se[i] = (N_poph_atT+1) *lambda_i_plus_grid[i]*(1-f_dist[plus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kplus_grid_pop[i]/k_grid[i]);
+                        Se[i] = (N_poph_atT+1) *lambda_i_plus_grid[i]*(1-f_dist[plus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kplus_grid_pop[0][i]/k_grid[i]);
 		}
 	}
 

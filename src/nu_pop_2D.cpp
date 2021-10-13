@@ -29,6 +29,26 @@ void nu_pop_2D(double T, int T_loop)
 		Z[i] = cos(theta[i]);
 	}
 	
+	for(int m3=0; m3<pop_number; m3++)
+	{			
+		for (int i = 0;i<points;i++)
+		{
+			kplus_grid_pop[m3][i] = kplus(i,we_pop[m3],points,energy_n);
+			kminus_grid_pop[m3][i] = kminus(i,we_pop[m3],points,energy_n);
+
+			for (int ii=0;ii<points;ii++)
+				arr[ii] = abs(k_grid[ii] - kminus_grid_pop[m3][i]);
+			minus_index =FindMinInd(arr,points);
+
+			for (int ii=0;ii<points;ii++)
+				arr[ii] = abs(k_grid[ii] - kplus_grid_pop[m3][i]);
+			plus_index =FindMinInd(arr,points);
+
+			plus_index_pop[m3][i] = plus_index;
+			minus_index_pop[m3][i] = minus_index;
+		}
+	}
+
 	if(screening==0)
 	{
 		for(int m3=0; m3<pop_number; m3++)
@@ -46,53 +66,45 @@ void nu_pop_2D(double T, int T_loop)
 	
 			for (int i = 0;i<points;i++)
 			{
+
 				//cout<<"i = "<<i<<endl;
-				//cout<<"k[i] = "<<k_grid[i]<<endl;
-				
+				//cout<<"k[i] = "<<k_grid[i]<<endl;				
 
 				k = k_grid[i]*1e9;   // converted from 1/nm to 1/m					
 		    		v = v_n[i]*1e-2;	      // converted from cm/s to m/s	
-				
-						
+										
 				//-------- overlap integral calculated for different theta------------------------------------
-				for(int j=0;j<limit7+1;j++)			
+				if(overlap==1)
 				{
-					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-					aa[j] = aa[j] * aa[j];
+					for(int j=0;j<limit7+1;j++)			
+					{
+						aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+						aa[j] = aa[j] * aa[j];
+					}
 				}
+				else
+				{
+					for(int j=0;j<limit7+1;j++)			
+						aa[j] = 1;
+				}					
 				//-------- overlap integral calculated completed for different theta------------------------------------
 
 				//--------- q_ab and q_em is calculated for different values of theta ----------------------
+
+
 				E1 = energy_n[i];
-				
-				E_plus =  E1 + h_bar*we_pop[m3];
-				if(E_plus > energy_n[points-1])
-					E_plus =  0;
-					
-				E_minus = E1- h_bar*we_pop[m3];
-				if(E_minus < 0)
-					E_minus = 0;
+				E_plus =  energy_n[plus_index_pop[m3][i]];					
+				E_minus = energy_n[minus_index_pop[m3][i]];
 												
 				f = 1/(1+exp(((E1 - efef_n)/(k_B*T))));
 				fp = 1/(1+exp((E_plus - efef_n)/(k_B*T)));
 				fm = 1/(1+exp((E_minus - efef_n)/(k_B*T)));
-
-				for (int i1=0;i1<points;i1++)
-					arr[i1] = abs(energy_n[i1] - E_plus);
-				plus_index =FindMinInd(arr,points);
-
-				for (int i1=0;i1<points;i1++)
-					arr[i1] = abs(energy_n[i1] - E_minus);
-				minus_index =FindMinInd(arr,points);					
 				
-				k_plus = k_grid[plus_index]*1e9;
-				k_minus = k_grid[minus_index]*1e9;
-		    		v_plus = v_n[plus_index]*1e-2;	      // converted from cm/s to m/s	
-		    		v_minus = v_n[minus_index]*1e-2;	      // converted from cm/s to m/s	
-				
-				plus_index_pop[m3][i] = plus_index;
-				minus_index_pop[m3][i] = minus_index;
-				
+				k_plus = k_grid[plus_index_pop[m3][i]]*1e9;
+				k_minus = k_grid[minus_index_pop[m3][i]]*1e9;
+		    		v_plus = v_n[plus_index_pop[m3][i]]*1e-2;	      // converted from cm/s to m/s	
+		    		v_minus = v_n[minus_index_pop[m3][i]]*1e-2;	      // converted from cm/s to m/s	
+								
 				/*
 				cout<<"i = "<<i<<endl;
 				cout<<"E1 = "<<E1<<endl;
@@ -144,6 +156,7 @@ void nu_pop_2D(double T, int T_loop)
 				//*/
 	    			// ----------------- out scattering rate is calculated here -------------------------
 	    			
+	    			
 	    			if(E_plus < energy_n[points-1])
 					So_ab_pop[m3][i] = popconst*(Nv)*(1 - fp)*I_plus*k_plus/(v_plus*(1-f));
 				else
@@ -153,11 +166,25 @@ void nu_pop_2D(double T, int T_loop)
 					So_em_pop[m3][i] = popconst*(Nv+1)*(1 - fm)*I_minus*k_minus/(v_minus*(1-f));
 				else
 					So_em_pop[m3][i] = 0;
-				
-				So_pop[m3][i] = So_ab_pop[m3][i] + So_em_pop[m3][i];
-				
+								
 				//--------- in scattering terms calculated here ----------------------------------
 								
+				if(method==1)   // rode direct method
+				{
+					//cout<<"Direct rode method is selected "<<endl;				
+					if(E1 > h_bar*we_pop[m3])
+						Sa_pop[m3][i] = popconst*(Nv+1)*(f)*J_minus*k_minus/(v_minus*(fm));		
+					else
+						Sa_pop[m3][i] = 0;
+						
+					if(E_plus < energy_n[points-1])
+						Se_pop[m3][i] = popconst*(Nv)*(f)*J_plus*k_plus/(v_plus*(fp));		
+					else	
+						Se_pop[m3][i] = 0;
+				}
+				else   // alternate rode direct method
+				{
+				//cout<<"ALternate rode method is selected "<<endl;
 				if(E1 > h_bar*we_pop[m3])
 				Sa_pop[m3][i] = popconst*(Nv+1)*(1 - fm)*J_minus*sqrt(E_minus/E1)*k_minus/(v_minus*(1-f));		
 				else
@@ -167,7 +194,8 @@ void nu_pop_2D(double T, int T_loop)
 				Se_pop[m3][i] = popconst*(Nv)*(1 - fp)*J_plus*sqrt(E_plus/E1)*k_plus/(v_plus*(1-f));		
 				else	
 					Se_pop[m3][i] = 0;
-					
+				
+				}					
 				/*
 				cout<<"So_ab_pop[m3][i] = "<<So_ab_pop[m3][i]<<endl;
 				cout<<"So_em_pop[m3][i] = "<<So_em_pop[m3][i]<<endl;
@@ -180,28 +208,15 @@ void nu_pop_2D(double T, int T_loop)
 				
 				//--------------------------------------------------------------------------------
 			} // loop for different k points finished here			
-		} // loop for different pop constants finished here
-				
-		for (int i = 0;i<points;i++)
-		{
-			for(int m3=0; m3<pop_number; m3++)
-				nu_pop_total[i] = nu_pop_total[i] + So_pop[m3][i];
-			
-			/*
-			cout<<"So_pop[m3][i] = "<<So_pop[0][i]<<endl;
- 			cout<<"nu_pop_total[i] = "<<nu_pop_total[i]<<endl;
-			getchar();
-			*/
-		}									
+		} // loop for different pop constants finished here		
 	}
 	else
 	{		
-
 		double pz_ab[limit7+1], pz_em[limit7+1], G_em, G_ab, ep_ab, ep_em;
 		for(int m3=0; m3<pop_number; m3++)
 		{
 		
-		Nv = 1/(exp((h_bar*we_pop[m3])/(k_B*T))-1);			
+			Nv = 1/(exp((h_bar*we_pop[m3])/(k_B*T))-1);			
         	popconst = abs((e*e*we_pop[m3])*(1/(epsilon_inf[T_loop]*epsilon_0) - 1/(epsilon_s[T_loop]*epsilon_0))/(8.0*pi*h_bar*e));
 			
 			//cout<<" we_pop[m3] = "<<we_pop[m3]<<endl;
@@ -218,47 +233,37 @@ void nu_pop_2D(double T, int T_loop)
 
 				k = k_grid[i]*1e9;   // converted from 1/nm to 1/m					
 		    		v = v_n[i]*1e-2;	      // converted from cm/s to m/s	
-				
-						
+								
 				//-------- overlap integral calculated for different theta------------------------------------
-				for(int j=0;j<limit7+1;j++)			
+				if(overlap==1)
 				{
-					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-					aa[j] = aa[j] * aa[j];
+					for(int j=0;j<limit7+1;j++)			
+					{
+						aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+						aa[j] = aa[j] * aa[j];
+					}
+					//-------- overlap integral calculated completed for different theta --------------------
 				}
-				//-------- overlap integral calculated completed for different theta------------------------------------
-
+				else
+				{
+					for(int j=0;j<limit7+1;j++)			
+						aa[j] = 1;
+				}					
+				
 				//--------- q_ab and q_em is calculated for different values of theta ----------------------
 				E1 = energy_n[i];
-				
-				E_plus =  E1 + h_bar*we_pop[m3];
-				if(E_plus > energy_n[points-1])
-					E_plus =  0;
-					
-				E_minus = E1- h_bar*we_pop[m3];
-				if(E_minus < 0)
-					E_minus = 0;
-												
+				E_plus =  energy_n[plus_index_pop[m3][i]];					
+				E_minus = energy_n[minus_index_pop[m3][i]];
+																
 				f = 1/(1+exp(((E1 - efef_n)/(k_B*T))));
 				fp = 1/(1+exp((E_plus - efef_n)/(k_B*T)));
 				fm = 1/(1+exp((E_minus - efef_n)/(k_B*T)));
-
-				for (int i1=0;i1<points;i1++)
-					arr[i1] = abs(energy_n[i1] - E_plus);
-				plus_index =FindMinInd(arr,points);
-
-				for (int i1=0;i1<points;i1++)
-					arr[i1] = abs(energy_n[i1] - E_minus);
-				minus_index =FindMinInd(arr,points);					
 				
-				k_plus = k_grid[plus_index]*1e9;
-				k_minus = k_grid[minus_index]*1e9;
-		    		v_plus = v_n[plus_index]*1e-2;	      // converted from cm/s to m/s	
-		    		v_minus = v_n[minus_index]*1e-2;	      // converted from cm/s to m/s	
+				k_plus = k_grid[plus_index_pop[m3][i]]*1e9;
+				k_minus = k_grid[minus_index_pop[m3][i]]*1e9;
+		    		v_plus = v_n[plus_index_pop[m3][i]]*1e-2;	      // converted from cm/s to m/s	
+		    		v_minus = v_n[minus_index_pop[m3][i]]*1e-2;	      // converted from cm/s to m/s	
 				
-				plus_index_pop[m3][i] = plus_index;
-				minus_index_pop[m3][i] = minus_index;
-
 				/*
 				cout<<"i = "<<i<<endl;
 				cout<<"E1 = "<<E1<<endl;
@@ -391,9 +396,7 @@ void nu_pop_2D(double T, int T_loop)
 					So_em_pop[m3][i] = popconst*(Nv+1)*(1 - fm)*I_minus*k_minus/(v_minus*(1-f));
 				else
 					So_em_pop[m3][i] = 0;
-				
-				So_pop[m3][i] = So_ab_pop[m3][i] + So_em_pop[m3][i];
-				
+								
 				//--------- in scattering terms calculated here ----------------------------------
 								
 				if(E1 > h_bar*we_pop[m3])
@@ -418,29 +421,40 @@ void nu_pop_2D(double T, int T_loop)
 				//--------------------------------------------------------------------------------
 			} // loop for different k points finished here			
 		} // loop for different pop constants finished here
-		
-		/*	
-		for(int m3=0; m3<pop_number; m3++)
-		{
-			// to remove nan due to E1=0
-			Sa_pop[m3][0] = Sa_pop[m3][1];
-			Se_pop[m3][0] = Se_pop[m3][1];
-		}
-		*/
-		
-		for (int i = 0;i<points;i++)
-		{
-			for(int m3=0; m3<pop_number; m3++)
-				nu_pop_total[i] = nu_pop_total[i] + So_pop[m3][i];
-			
-			/*
-			cout<<"So_pop[m3][i] = "<<So_pop[0][i]<<endl;
- 			cout<<"nu_pop_total[i] = "<<nu_pop_total[i]<<endl;
-			getchar();
-			*/
-		}									
+				
 	}  // else condiction for sceerning finshed here			
+
+	/*
+	for(int m3=0; m3<pop_number; m3++)
+	{
+		// to remove nan due to E1=0
+		Sa_pop[m3][0] = Sa_pop[m3][1];
+		Se_pop[m3][points-1] = Se_pop[m3][points-2];
+		
+		So_ab_pop[m3][points-1] = So_ab_pop[m3][points-2];
+		So_em_pop[m3][0] = So_em_pop[m3][1];
+		
+	}
+	//*/
+
 	
+	for (int i = 0;i<points;i++)
+	{
+
+		for(int m3=0; m3<pop_number; m3++)
+			So_pop[m3][i] = So_ab_pop[m3][i] + So_em_pop[m3][i];
+
+		for(int m3=0; m3<pop_number; m3++)
+			nu_pop_total[i] = nu_pop_total[i] + So_pop[m3][i];
+		
+		/*
+		cout<<"So_pop[m3][i] = "<<So_pop[0][i]<<endl;
+		cout<<"nu_pop_total[i] = "<<nu_pop_total[i]<<endl;
+		getchar();
+		*/
+	}									
+	
+	/*
 	FILE *fid1;
 	if(screening==0)
 		fid1 = fopen("pop_scattering_rate.dat","w");
@@ -448,12 +462,12 @@ void nu_pop_2D(double T, int T_loop)
 		fid1 = fopen("pop_scattering_rate_screening.dat","w");
 	
 	
-	fprintf(fid1,"Energy (eV)   scattering rates            total (last) \n ");
+	fprintf(fid1,"Energy (eV)   ab   em   total   ....  scattering rates ....      total (last) \n ");
 	for (int i = 0; i < points; i++)		
 	{
 		fprintf(fid1,"  %e \t", energy_n[i]);
 		for(int m3=0; m3<pop_number; m3++)
-			fprintf(fid1,"  %e  \t", So_pop[m3][i] );
+			fprintf(fid1,"  %e	%e	%e  \t", So_ab_pop[m3][i], So_em_pop[m3][i], So_pop[m3][i] );
 
 		fprintf(fid1,"  %e  \n", nu_pop_total[i] );
 	}
@@ -477,7 +491,7 @@ void nu_pop_2D(double T, int T_loop)
 	}
 		
 	fclose(fid1);
-
+	//*/
 }
 
 

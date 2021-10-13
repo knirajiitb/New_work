@@ -68,11 +68,20 @@ void nu_npop_2D(double T)
 				
 						
 				//-------- overlap integral calculated for different theta------------------------------------
-				for(int j=0;j<limit7+1;j++)			
+				if(overlap==1)
 				{
-					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-					aa[j] = aa[j] * aa[j];
+					for(int j=0;j<limit7+1;j++)			
+					{
+						aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+						aa[j] = aa[j] * aa[j];
+					}
 				}
+				else
+				{
+					for(int j=0;j<limit7+1;j++)			
+						aa[j] = 1;
+				}					
+					
 				//-------- overlap integral calculated completed for different theta------------------------------------
 
 				//--------- q_ab and q_em is calculated for different values of theta ----------------------
@@ -234,13 +243,20 @@ void nu_npop_2D(double T)
 				
 						
 				//-------- overlap integral calculated for different theta------------------------------------
-				for(int j=0;j<limit7+1;j++)			
+				if(overlap==1)
 				{
-					aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
-					aa[j] = aa[j] * aa[j];
+					for(int j=0;j<limit7+1;j++)			
+					{
+						aa[j] = pow(a_n[i],2) + pow(c_n[i],2)*Z[j] ;
+						aa[j] = aa[j] * aa[j];
+					}
 				}
 				//-------- overlap integral calculated completed for different theta------------------------------------
-
+				else
+				{
+					for(int j=0;j<limit7+1;j++)			
+						aa[j] = 1;
+				}					
 				//--------- q_ab and q_em is calculated for different values of theta ----------------------
 				E1 = energy_n[i];
 				

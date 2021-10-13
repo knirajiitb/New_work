@@ -5,7 +5,7 @@ void nu_de_2D(double T)
 //deformation potential scattering rate 
 {
 	
-	double k, v, nu[limit2][de_number]={0};
+	double k, v, nu_dummy[limit2][de_number]={0};
 	
 	/*
 	cout<<"E_deformation[0] = "<<E_deformation[0]<<endl;
@@ -15,6 +15,12 @@ void nu_de_2D(double T)
 	cout<<"T =  "<<T<<endl;
 	*/
 		
+	//cout<<"de_number =  "<<de_number<<endl;
+	//cout<<"T =  "<<T<<endl;
+
+	for (int counter = 0;counter<points;counter++)
+		nu_deformation[counter] = 0;
+
 	if(screening==0)
 	{
 		double aa[limit2];
@@ -23,35 +29,33 @@ void nu_de_2D(double T)
 			k = k_grid[counter]*1e9;   // converted from 1/nm to 1/m					
 	    		v = v_n[counter]*1e-2;	      // converted from cm/s to m/s	
 			
-			aa[counter] = pi*(2*pow(a_n[counter],4) + pow(c_n[counter],4) - 2*pow(a_n[counter],2)*pow(c_n[counter],2));
+			//aa[counter] = pi*(2*pow(a_n[counter],4) + pow(c_n[counter],4) - 2*pow(a_n[counter],2)*pow(c_n[counter],2));
 			
-			//aa[counter] = 1;
+			aa[counter] = 2*pi;
 			
-	    		nu[counter][0] = ((k_B*e)*T*pow(E_deformation[0],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_long*1e-3))*
+	    		nu_dummy[counter][0] = ((k_B*e)*T*pow(E_deformation[0],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_long*1e-3))*
 	    		aa[counter];
 			// E_deformation[0] is in eV and h_bar is in eV-s, so e^2 is both numerator and denominator cancelled 
 			// C_long is in dyne/cm so converted into mks N/m
 
 			if(de_number==2)		
 			{
-	    		nu[counter][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*
+	    		nu_dummy[counter][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*
 	    		aa[counter];
 			}
 			
 			if(de_number==3)		
 			{
 
-	    		nu[counter][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*
+	    		nu_dummy[counter][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*
 	    		aa[counter];
 
-	    		nu[counter][2] = ((k_B*e)*T*pow(E_deformation[2],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_za*1e-3))*
+	    		nu_dummy[counter][2] = ((k_B*e)*T*pow(E_deformation[2],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_za*1e-3))*
 	    		aa[counter];
 
 			}
 			
-			nu_deformation[counter] = nu[counter][0] + nu[counter][1] + nu[counter][2];
-			//cout<<"nu_deformation[counter] =  "<<nu_deformation[counter]<<endl;
-		}		
+		}
 	}
 	else
 	{	
@@ -149,68 +153,35 @@ void nu_de_2D(double T)
 			}
 			
 			
-	    		nu[i][0] = ((k_B*e)*T*pow(E_deformation[0],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_long*1e-3))*intg;
+	    		nu_dummy[i][0] = ((k_B*e)*T*pow(E_deformation[0],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_long*1e-3))*intg;
 			// E_deformation[0] is in eV and h_bar is in eV-s, so e^2 is both numerator and denominator cancelled 
 			// C_long is in dyne/cm so converted into mks
 
 			if(de_number==2)		
-	    			nu[i][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*intg;
+	    			nu_dummy[i][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*intg;
 			
 			
 			if(de_number==3)		
 			{
 
-	    		nu[i][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*intg;
+	    		nu_dummy[i][1] = ((k_B*e)*T*pow(E_deformation[1],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_trans*1e-3))*intg;
 
-	    		nu[i][2] = ((k_B*e)*T*pow(E_deformation[2],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_za*1e-3))*intg;
+	    		nu_dummy[i][2] = ((k_B*e)*T*pow(E_deformation[2],2)*k)/(2*pi*(h_bar*h_bar)*v*(C_za*1e-3))*intg;
 
 			}
 						
-			nu_deformation[i] = nu[i][0] + nu[i][1] + nu[i][2];
-			//cout<<"nu_deformation[counter] =  "<<nu_deformation[counter]<<endl;
-
 											
 		} // loop for different values of k		
 	} // else part with screening completed
 	
+	for(int counter=0;counter<points;counter++)
+	{
+		for(int i=0;i<de_number;i++)
+		{	nu_deformation[counter] = nu_deformation[counter] + nu_dummy[counter][i];
+			//cout<<"nu_deformation[counter] =  "<<nu_deformation[counter]<<endl;
+		}
+	}
 		
-			
-	
-	FILE *fid1;
-	if(screening==0)		
-		fid1 = fopen("acoustic_scattering_rate.dat","w");
-	else
-		fid1 = fopen("acoustic_scattering_rate_screening.dat","w");
-	
-		
-	if(de_number==1)
-		fprintf(fid1,"# energy           nu_LA    	 total \n");
-	else if(de_number==2)
-		fprintf(fid1,"# energy           nu_LA 	nu_TA	     total  \n");
-	else
-		fprintf(fid1,"# energy           nu_LA 	nu_TA		nu_ZA 		total  \n");
-	
-	if(de_number==1)
-	{
-		for (int i = 0; i < points; i++)		
-			fprintf(fid1,"  %e    	%e        %e   \n", energy_n[i], nu[i][0],  nu_deformation[i]);
-	}
-
-	if(de_number==2)
-	{
-		for (int i = 0; i < points; i++)		
-			fprintf(fid1,"  %e    	%e    %e       %e \n", energy_n[i], nu[i][0], nu[i][1],  nu_deformation[i]);
-	}
-
-	if(de_number==3)
-	{
-		for (int i = 0; i < points; i++)		
-			fprintf(fid1,"  %e    	%e   	%e	%e        %e \n", energy_n[i], nu[i][0], nu[i][1], 
-			nu[i][2], nu_deformation[i]);
-	}
-	fclose(fid1);
-
-
 //----------------------------------------------- acoustic scattering rate completed ----------------------------------
 
 
@@ -229,49 +200,91 @@ void nu_de_2D(double T)
 			const_pz[i] = const_pz[i] * const_pz[i]/2.0;
 			
 			for (int counter = 0;counter<points;counter++)
-				nu[counter][i] = nu[counter][i]*const_pz[i];
+				nu_dummy[counter][i] = nu_dummy[counter][i]*const_pz[i];
 		}
 		
 		for (int counter = 0;counter<points;counter++)
 		{
 			for(int i=0;i<de_number;i++)
-				nu_piezoelectric[counter] = nu_piezoelectric[counter] + nu[counter][i];
+				nu_piezoelectric[counter] = nu_piezoelectric[counter] + nu_dummy[counter][i];
 		}
-		
-		if(screening==0)		
-			fid1 = fopen("pz_scattering_rate.dat","w");
-		else
-			fid1 = fopen("pz_scattering_rate_screening.dat","w");
-		
-		
-		if(de_number==1)
-			fprintf(fid1,"# energy           nu_LA    	 total \n");
-		else if(de_number==2)
-			fprintf(fid1,"# energy           nu_LA 	nu_TA	     total  \n");
-		else
-			fprintf(fid1,"# energy           nu_LA 	nu_TA		nu_ZA 		total  \n");
-		
-		if(de_number==1)
-		{
-			for (int i = 0; i < points; i++)		
-				fprintf(fid1,"  %e    	%e        %e   \n", energy_n[i], nu[i][0],  nu_piezoelectric[i]);
-		}
-
-		if(de_number==2)
-		{
-			for (int i = 0; i < points; i++)		
-				fprintf(fid1,"  %e    	%e    %e       %e \n", energy_n[i], nu[i][0], nu[i][1],  nu_piezoelectric[i]);
-		}
-
-		if(de_number==3)
-		{
-			for (int i = 0; i < points; i++)		
-				fprintf(fid1,"  %e    	%e   	%e	%e        %e \n", energy_n[i], nu[i][0], nu[i][1], 
-				nu[i][2], nu_piezoelectric[i]);
-		}
-		fclose(fid1);
 	}
 	
+			
+	/*
+	FILE *fid1;
+	if(screening==0)		
+		fid1 = fopen("acoustic_scattering_rate.dat","w");
+	else
+		fid1 = fopen("acoustic_scattering_rate_screening.dat","w");
+	
+		
+	if(de_number==1)
+		fprintf(fid1,"# energy           nu_LA    	 total \n");
+	else if(de_number==2)
+		fprintf(fid1,"# energy           nu_LA 	nu_TA	     total  \n");
+	else
+		fprintf(fid1,"# energy           nu_LA 	nu_TA		nu_ZA 		total  \n");
+	
+	if(de_number==1)
+	{
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e        %e   \n", energy_n[i], nu_dummy[i][0],  nu_deformation[i]);
+	}
+
+
+	if(de_number==2)
+
+	{
+
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e    %e       %e \n", energy_n[i], nu_dummy[i][0], nu_dummy[i][1],  nu_deformation[i]);
+
+	}
+
+	if(de_number==3)
+	{
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e   	%e	%e        %e \n", energy_n[i], nu_dummy[i][0], nu_dummy[i][1], 
+			nu_dummy[i][2], nu_deformation[i]);
+	}
+
+	fclose(fid1);
+
+	//---------------------------------------------------------------------------------------------------------------------
+	if(screening==0)		
+		fid1 = fopen("pz_scattering_rate.dat","w");
+	else
+		fid1 = fopen("pz_scattering_rate_screening.dat","w");
+	
+	
+	if(de_number==1)
+		fprintf(fid1,"# energy           nu_LA    	 total \n");
+	else if(de_number==2)
+		fprintf(fid1,"# energy           nu_LA 	nu_TA	     total  \n");
+	else
+		fprintf(fid1,"# energy           nu_LA 	nu_TA		nu_ZA 		total  \n");
+	
+	if(de_number==1)
+	{
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e        %e   \n", energy_n[i], nu_dummy[i][0],  nu_piezoelectric[i]);
+	}
+
+	if(de_number==2)
+	{
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e    %e       %e \n", energy_n[i], nu_dummy[i][0], nu_dummy[i][1],  nu_piezoelectric[i]);
+	}
+
+	if(de_number==3)
+	{
+		for (int i = 0; i < points; i++)		
+			fprintf(fid1,"  %e    	%e   	%e	%e        %e \n", energy_n[i], nu_dummy[i][0], nu_dummy[i][1], 
+			nu_dummy[i][2], nu_piezoelectric[i]);
+	}
+	fclose(fid1);
+	//*/
 }
 
 
