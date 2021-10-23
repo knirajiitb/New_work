@@ -11,6 +11,9 @@ void nu_de_p_funct(int T_loop)
 	
 	double nu[limit2][de_number]={0};
 
+	for (int counter = 0;counter<points;counter++)
+		nu_deformation[counter] = 0;
+
 	//cout<< "temp  "<<T<< endl;
 	//cout<<"C_long = "<<C_long<<" dyme/cm^2"<<endl;	
 	for (int counter = 0;counter<points;counter++)
@@ -30,7 +33,10 @@ void nu_de_p_funct(int T_loop)
 		        nu[counter][2] = ((k_B*e)*T*pow(E_deformation[2],2)*(k_dum*k_dum))/(2*pi*h_bar*h_bar*(C_za/10.0)*v); 
 		}
 		
-	        nu_deformation_p[counter][0][0] = nu[counter][0] + nu[counter][1] + nu[counter][2]; 
+		for(int i=0;i<de_number;i++)
+			nu_deformation_p[counter][0][0] = nu_deformation_p[counter][0][0] + nu[counter][i];
+
+		nu_deformation[counter]= nu_deformation_p[counter][0][0];
 		
 		/*
 		cout<<"counter = "<<counter<<endl;
@@ -40,7 +46,7 @@ void nu_de_p_funct(int T_loop)
 		*/
 	    }
 	
-	
+	/*
 	FILE *fid1;
 	fid1 = fopen("acoustic_scattering_rate.dat","w");
 	
@@ -71,5 +77,5 @@ void nu_de_p_funct(int T_loop)
 	}
 	fclose(fid1);
 	
-	
+	//*/	
 }

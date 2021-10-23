@@ -98,6 +98,7 @@ void nu_npop_p_funct(double T)
 		 }	
 	 	nu_npop_p[counter][0][0]= nu_npop_p_total[counter];
 	 	
+		nu_npop_total[counter] = nu_npop_p[counter][0][0];
 	 	/*
 		cout<<"counter = "<<counter<<endl;	
 		cout<<"v = "<<v<<endl;

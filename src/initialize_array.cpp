@@ -11,6 +11,8 @@ void initialize_array()
 		    calc_mobility[i][0] = n_array[i];
 		    calc_mobility_rta[i][0] = n_array[i];
 		    calc_thermopower[i][0] = n_array[i];
+		    calc_thermal_conductivity[i][0] = n_array[i];
+		    calc_peltier[i][0] = n_array[i];
 		    calc_sigma[i][0] = n_array[i];
 		    calc_sigma_rta[i][0] = n_array[i];
 
@@ -52,6 +54,8 @@ void initialize_array()
 		    calc_mobility[i][0] = T_array[i];
 		    calc_mobility_rta[i][0] = T_array[i];
 		    calc_thermopower[i][0] = T_array[i];
+		    calc_thermal_conductivity[i][0] = T_array[i];
+		    calc_peltier[i][0] = T_array[i];
 		    calc_sigma[i][0] = T_array[i];
 		    calc_sigma_rta[i][0] = T_array[i];
 

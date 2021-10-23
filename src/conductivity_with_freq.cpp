@@ -3,23 +3,28 @@
 void conductivity_with_freq(double T)
 {	
 	cout<<"conductivity with freq "<<endl;
-	double Sa[points]={0}, Se[points]={0}, m1[points]={0}, m2[points]={0};
+	double Sa[pop_number][points]={0}, Se[pop_number][points]={0}, m1[points]={0}, m2[points]={0};
 
 	double fir[points]={0}, fii[points]={0}, fir_old[points]={0}, fii_old[points]={0};	
 
 	// Sa and Se calculated for in scattering rate	
 	// If POP scattering is included
-	if (scattering_mechanisms[1] == 1)
-	{
-		for (int i = 0;i < points;i++)
+	for (int m3 = 0;m3 < pop_number;m3++)
+	{	            
+		if (scattering_mechanisms[1] == 1)
 		{
-                        Sa[i] = N_poph_atT *lambda_i_minus_grid[i]*(1-f_dist[minus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kminus_grid_pop[0][i]/k_grid[i]);
+			for (int i = 0;i < points;i++)
+			{
+		        	Sa[m3][i] = N_poph_atT[m3] *lambda_i_minus_grid[m3][i]*(1-f_dist[minus_index_pop[m3][i]])/(1-f_dist[i]) 						        *(kminus_grid_pop[m3][i]/k_grid[i]);
 
-                        Se[i] = (N_poph_atT+1) *lambda_i_plus_grid[i]*(1-f_dist[plus_index_pop[0][i]])/(1-f_dist[i]) 						        *(kplus_grid_pop[0][i]/k_grid[i]);
+		                Se[m3][i] = (N_poph_atT[m3]+1) *lambda_i_plus_grid[m3][i]*
+		                (1-f_dist[plus_index_pop[m3][i]])/(1-f_dist[i])*(kplus_grid_pop[m3][i]/k_grid[i]);
+			}
 		}
 	}
 
-	int p,m;
+	
+	int pl,mi;
 
 	double de, integral_numerator1=0, integral_numerator2=0, integral_denominator=0;
 	
@@ -33,15 +38,25 @@ void conductivity_with_freq(double T)
 		fi_old[i] = 1/(denom[i]) ;
 	}
 
+	double t[points],z[points];
 	for (int iteration = 1;iteration<iterations;iteration++)
 	{            
+		
+		for (int i= 0;i < points;i++)
+			t[i] = 0;
+			
 		for (int i= 0;i < points;i++)
 		{
-			p = plus_index_pop[0][i];
-			m = minus_index_pop[0][i];
-			fi[i] = 1/(denom[i])*(1 + Sa[i]*fi_old[m] + Se[i]*fi_old[p]) ;
+			for (int m3 = 0;m3 < pop_number;m3++)
+			{	            
+				pl = plus_index_pop[m3][i];
+				mi = minus_index_pop[m3][i];
+				
+				t[i] = t[i] + Sa[m3][i]*fi_old[mi] + Se[m3][i]*fi_old[pl];					
+			}
+			fi[i] = 1/(denom[i])*(1 + t[i]) ;
 		}
-		
+				
 		for (int i= 0;i < points;i++)
 		{
 			fi_old[i] = fi[i] ;
@@ -106,14 +121,28 @@ void conductivity_with_freq(double T)
 		
 		for (int iteration = 1;iteration<iterations;iteration++)
 		{            
+			for (int i= 0;i < points;i++)
+			{
+				t[i] = 0;
+				z[i] = 0;
+			}
 			for (int i=0;i<points;i++)
 			{
-				p = plus_index_pop[0][i];
-				m = minus_index_pop[0][i];
+				for (int m3 = 0;m3 < pop_number;m3++)
+				{	            
+			
+					pl = plus_index_pop[m3][i];
+					mi = minus_index_pop[m3][i];
+					
+					t[i] = t[i] + (Sa[m3][i]*fir_old[mi] + Se[m3][i]*fir_old[pl]); 
+					
+					z[i] = z[i] + (Sa[m3][i]*fii_old[mi] + Se[m3][i]*fii_old[pl]);				
+				}				
 				
-				fir[i] = m1[i]*(1 + Sa[i]*fir_old[m] + Se[i]*fir_old[p]) + m2[i]*(Sa[i]*fii_old[m] + Se[i]*fii_old[p]);
-				fii[i] = -m2[i]*(1 + Sa[i]*fir_old[m] + Se[i]*fir_old[p]) + m1[i]*(Sa[i]*fii_old[m] + Se[i]*fii_old[p]);
+				fir[i] = m1[i]*(1 + t[i]) + m2[i]*z[i];
+				fii[i] = -m2[i]*(1 + t[i]) + m1[i]*z[i];
 			}
+			
 			for (int i=0;i<points;i++)
 			{
 				fir_old[i] = fir[i];

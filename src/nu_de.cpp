@@ -8,6 +8,9 @@ void nu_de(double T)
 	double k, v, nu[limit2][de_number]={0};
 
 	for (int counter = 0;counter<points;counter++)
+		nu_deformation[counter] = 0;
+
+	for (int counter = 0;counter<points;counter++)
 	{
 	        k = k_grid[counter];					
     		v = v_n[counter];
@@ -35,11 +38,13 @@ void nu_de(double T)
 		+ 6*pow(c_n[counter],4))*1e10*1.60217657/1e8;
 		}
 		
-		nu_deformation[counter] = nu[counter][0] + nu[counter][1] + nu[counter][2];
+		for(int i=0;i<de_number;i++)
+			nu_deformation[counter] = nu_deformation[counter] + nu[counter][i];
+		
 		//cout<<"nu_deformation[counter] =  "<<nu_deformation[counter]<<endl;
 	}
 			
-	
+	/*
 	FILE *fid1;
 	fid1 = fopen("acoustic_scattering_rate.dat","w");
 	
@@ -69,12 +74,12 @@ void nu_de(double T)
 	}
 	fclose(fid1);
 	
-	/* 			
+	 			
 	fid1 = fopen("nu_deformation.txt","w");
 	for (int i = 0; i < points; i++)
 	fprintf(fid1,"%d    %e\n", i+1, nu_deformation[i]);
 	fclose(fid1);
-	*/
+	//*/
 
 //------------------------------ reading data -----------------------------------------------
 	/*
@@ -87,5 +92,6 @@ void nu_de(double T)
 	fclose(fid1);
 	*/
 }
+
 
 

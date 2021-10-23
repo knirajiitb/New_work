@@ -85,7 +85,7 @@ void nu_npop_n(double T)
 		}
 	}
 
-		
+	/*		
 	FILE *fid1;
 	fid1 = fopen("npop_scattering_rate.dat","w");
 	fprintf(fid1,"# energy           total	individual cattering rates \n");

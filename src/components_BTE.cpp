@@ -269,29 +269,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 		        //cout<<"f0x1_f0[counter] =  "<<f0x1_f0[counter]<<endl;
 		        //cout<<"electric_driving_force[counter]  = "<<electric_driving_force[counter]<<endl;
 		}
-		
-		// save results
-		
-		FILE *fid1;
-		fid1 = fopen("electric_driving_force_p.txt","w");
-		
-		for (int i = 0; i < points; i++)
-			fprintf(fid1,"%e \n", electric_driving_force[i]);	
-		fclose(fid1);
-
-
-		fid1 = fopen("df0dk_p.txt","w");		
-		for (int i = 0; i < points; i++)
-			fprintf(fid1,"%e \n", df0dk_grid[i]);	
-		fclose(fid1);
-
-		fid1 = fopen("thermal_driving_force_p.txt","w");		
-		for (int i = 0; i < points; i++)
-			fprintf(fid1,"%e \n", thermal_driving_force[i]);	
-		fclose(fid1);
-		
-		//*/
-			
+					
 	        if (scattering_mechanisms[0]==1)
 	        {
 	        	nu_ii_p_funct(T_loop);
@@ -300,7 +278,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 		// POP scattering
 	        if (scattering_mechanisms[1]==1)
 		{
-			nu_pop_p_funct(T, T_loop, omega_LO);
+			nu_pop_p_funct(T, T_loop);
 		}
 			
 		// npop scattering
@@ -315,6 +293,7 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 			nu_de_p_funct(T_loop);
 		}
 
+
 		//*/
 
 		// total scattering rates calculated here
@@ -326,14 +305,16 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 		       
 			denom[counter] = (nu_So_p[counter][0][0]*scattering_mechanisms[1] + nu_el[counter]);	
 			//cout<<"nu_el[counter] = "<<nu_el[counter]<<endl;
-		}			
+		}
+					
 	}
 	else if(geometry==2)
 	{
 //--------------------------------------common terms calculated -------------------------------------------------------
 		
 		//cout<<"Components  result for 2D "<<endl;
-		polarizability(T, ii);
+		if(screening==1)
+			polarizability(T, ii);
 		
 		for (int counter = 0;counter<points;counter++)
 		{
@@ -412,7 +393,78 @@ void components_BTE(double T, int T_loop, double efefn, double efefp, int ii)   
 			
 		}			
 
-	}
+		//--------------------------- df0dz_integral -----------------------------------------
+		int factr = 10;
+		integral_numerator = 0;
+		integral_denominator = 0;
+		/*
+		double de1;
+		for(int counter = 0;counter<=points-2;counter++)
+		{
+			de1 = energy_n[counter+1]- energy_n[counter];
+			integral_numerator = integral_numerator + de1*(f0(energy_n[counter],efefn,T)*
+			(1-f0(energy_n[counter],efefn,T)))*energy_n[counter]/(k_B*T);
+			// Part of equation (54) of Rode's book
+
+			integral_denominator = integral_denominator + de1*f0(energy_n[counter],efefn,T)*
+			(1-f0(energy_n[counter],efefn,T));
+			// Part of equation (54) of Rode's book
+		}
+		*/		
+		double dk;
+		for(int counter = 0;counter<=points-2;counter++)
+		{
+			dk = (k_grid[counter+1]-k_grid[counter])/factr;
+			for (int ss = 0;ss<=factr-1;ss++)
+			{
+				integral_numerator = integral_numerator + dk*(((k_grid[counter]+ss*dk)/pi))
+						*f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T))*energy_n[counter]/(k_B*T);
+				// Part of equation (54) of Rode's book
+				integral_denominator = integral_denominator + dk*((k_grid[counter]+ss*dk)/pi)
+				*f0(energy_n[counter],efefn,T)*(1-f0(energy_n[counter],efefn,T));
+				// Part of equation (54) of Rode's book
+			}
+		}
+
+		df0dz_integral = integral_numerator/integral_denominator;
+		//cout<<"df0dz_integral for 2D geometry = "<<df0dz_integral<<endl;
+		//--------------------------- df0dz_integral calculated -----------------------------------------
+		
+		//------------------- thermal driving force ----------------------------------------------------
+		for (int counter = 0;counter<points;counter++)
+		{
+		        //cout<<"energy_n[counter]  = "<<energy_n[counter]<<endl;
+		        //cout<<"efefn = "<<efefn<<endl;
+		        //cout<<"T = "<<T<<endl;
+
+		        thermal_driving_force[counter] = -1*v_n[counter]*df0dz(k_dum, efefn, T, df0dz_integral,coefficients_cond,
+		        kindex_cond, a11);           
+		}		
+		//--------------------------------------------------------------------------------------------
+	}  // else if geometry==2;  2D material
+	
+	// save results
+	/*
+	FILE *fid1;
+	fid1 = fopen("electric_driving_force.txt","w");
+	
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", electric_driving_force[i]);	
+	fclose(fid1);
+
+
+	fid1 = fopen("df0dk.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", df0dk_grid[i]);	
+	fclose(fid1);
+
+	fid1 = fopen("thermal_driving_force.txt","w");		
+	for (int i = 0; i < points; i++)
+		fprintf(fid1,"%e \n", thermal_driving_force[i]);	
+	fclose(fid1);
+	
+	//*/
+	
 }
 
 

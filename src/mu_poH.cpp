@@ -1,7 +1,7 @@
 
 #include"main.h"
 
-double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double h_LO[],double nu_el[],int points, int aa[])
+double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double h_LO[],double nu_el[],int points, int aa[], double energy[], double v[], double Ds[])
 // It gives the effct of polar optical phonon on mobility in units of (cm^2/V.s)
 // According to Equation (46) in Semiconductors and Semimetals volume1 10 (Rode's chapter),
 // but with calculated group velocity from band structure and DOS both calculated from DFT:
@@ -20,7 +20,7 @@ double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], dou
         {
             ddf = (df0dk(k_grid[counter+1],T,e_f,coefficients,kindex,aa) - df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa))/factor;
             
-            beta1[counter] = e*(v_n[counter]*0.01)*Bfield/((h_bar*e) * (k_grid[counter]*pow(10,9)) * nu_el[counter]);
+            beta1[counter] = e*(v[counter]*0.01)*Bfield/((h_bar*e) * (k_grid[counter]*pow(10,9)) * nu_el[counter]);
             // unitless
             
             for (int i = 0;i<=factor-1;i++)
@@ -39,17 +39,17 @@ double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], dou
     {
         for (int counter = 0;counter<points-1;counter++)
         {
-            dv = (v_n[counter+1]-v_n[counter])/factor;
+            dv = (v[counter+1]-v[counter])/factor;
 
             k_step = (k_grid[counter+1]-k_grid[counter])/factor;
 
             for (int i = 0;i<=factor-1;i++)
             {
-                integral_numerator = integral_numerator + k_step * pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter] + 				i*dv)*h_LO[counter] / (Bfield*0.0001);
+                integral_numerator = integral_numerator + k_step * pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter] + 				i*dv)*h_LO[counter] / (Bfield*0.0001);
                     // Bfield is multplied with 0.0001 to convert into cgs unit
                     // =1/Bfield*int[h_LO(En)*DOS(En)*v(En)*dEn]
  
-                integral_denominator = integral_denominator + k_step * pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter] + 				i*dv)*g_LO[counter];
+                integral_denominator = integral_denominator + k_step * pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter] + 				i*dv)*g_LO[counter];
                     // = int[h_LO(En)*DOS(En)*v(En)*dEn]
             }
         }
@@ -58,13 +58,13 @@ double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], dou
     {
         for (int counter = 0;counter<=points-2;counter++)
         {
-            de = (energy_n[counter+1]-energy_n[counter]);
+            de = (energy[counter+1]-energy[counter]);
 
-            integral_numerator = integral_numerator + de * Ds_n[counter]/volume1 * v_n[counter] * h_LO[counter]/(Bfield*0.0001);
+            integral_numerator = integral_numerator + de * Ds[counter]/volume1 * v[counter] * h_LO[counter]/(Bfield*0.0001);
             // =1/Bfield*int[h_LO(En)*DOS(En)*v(En)*dEn]
             // Bfield is multplied with 0.0001 to convert into cgs unit
 
-            integral_denominator = integral_denominator + de * Ds_n[counter]/volume1 * v_n[counter] * g_LO[counter];
+            integral_denominator = integral_denominator + de * Ds[counter]/volume1 * v[counter] * g_LO[counter];
             // =int[g_LO(En)*DOS(En)*v(En)*dEn]
         }
     }

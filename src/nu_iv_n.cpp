@@ -97,7 +97,7 @@ void nu_iv_n(double T)
 
 		}  
 	}
-		
+	/*	
 	FILE *fid1;
 	fid1 = fopen("intervalley_scattering_rate.dat","w");
 	fprintf(fid1,"# energy           total	individual cattering rates \n");

@@ -19,8 +19,11 @@ void nu_de_2D(double T)
 	//cout<<"T =  "<<T<<endl;
 
 	for (int counter = 0;counter<points;counter++)
+	{
 		nu_deformation[counter] = 0;
-
+		nu_piezoelectric[counter] = 0;
+	}
+	
 	if(screening==0)
 	{
 		double aa[limit2];
@@ -190,7 +193,7 @@ void nu_de_2D(double T)
 	if(scattering_mechanisms[4]==1)   // pz scattering
 	{
 		
-		cout<<"e11 C/cm   = "<<P_piezo[0]<<" C/cm"<<endl;
+		//cout<<"e11 C/cm   = "<<P_piezo[0]<<" C/cm"<<endl;
 		
 		double const_pz[de_number];
 		

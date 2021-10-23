@@ -5,6 +5,9 @@
 void find_fermi(double n, double T, int ii)
 {
 
+	if(geometry==1)  // for 3D
+		thickness = 1.0/100;
+		
     if (n > 5e20)
         n = 5e20;
 
@@ -46,15 +49,18 @@ void find_fermi(double n, double T, int ii)
 		
 		if(type == "n")
 		{
-		        integral_n = integral_n+de_n*Ds_n[counter]/volume1*f0(energy_n[counter],e_f,T)*N_cb;
-		        integral_p = integral_p+de_p*Ds_p[counter]/volume1*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
-			// integral_n unit is 1/cm^3 ; 
+		        integral_n = integral_n+de_n*(Ds_n[counter]*thickness*100)/volume1*f0(energy_n[counter],e_f,T)*N_cb;
+		        integral_p = integral_p+de_p*(Ds_p[counter]*thickness*100)/volume1*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
+			 
 		}
 		else
 		{
-		        integral_n = integral_n+de_n*Ds_n[counter]/volume1*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
-		        integral_p = integral_p+de_p*Ds_p[counter]/volume1*f0(energy_p[counter],e_f,T)*N_vb;
-			// integral_n unit is 1/cm^3 ; 
+		        integral_n = integral_n+de_n*(Ds_n[counter]*thickness*100)/volume1*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
+		        integral_p = integral_p+de_p*(Ds_p[counter]*thickness*100)/volume1*f0(energy_p[counter],e_f,T)*N_vb;
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
 
                 //cout<<"counter = "<<counter+1<<endl;
@@ -76,20 +82,24 @@ void find_fermi(double n, double T, int ii)
 		        integral_n = integral_n+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_n[counter],e_f,T)*N_cb;
 		        integral_p = integral_p+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
 		        // multipiled with 1e21 to convert (1/nm)^3 to (1/cm)^3  
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
 		else
 		{
 		        integral_n = integral_n+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
 		        integral_p = integral_p+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_p[counter],e_f,T)*N_vb;
 		        // multipiled with 1e21 to convert (1/nm)^3 to (1/cm)^3  
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}	
             }
         }
 
 	if(type == "n")
-	        temp = (integral_n - integral_p);  // to have n in units of [1/cm^3]
+	        temp = (integral_n - integral_p);  // to have n in units of [1/cm^3] for 3D and [1/cm^2] for 2D
 	else
-	        temp = (integral_p - integral_n);  // to have n in units of [1/cm^3]
+	        temp = (integral_p - integral_n);  // to have n in units of [1/cm^3] for 3D and [1/cm^2] for 2D
 	
 	
         if (i==1)
@@ -133,15 +143,17 @@ void find_fermi(double n, double T, int ii)
                 de_p = energy_p[counter+1]-energy_p[counter];
 		if(type == "n")
 		{
-			integral_n = integral_n+de_n*Ds_n[counter]/volume1*f0(energy_n[counter],e_f,T)*N_cb;
-			integral_p = integral_p+de_p*Ds_p[counter]/volume1*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
-			// integral_n unit is 1/cm^3 ;
+			integral_n = integral_n+de_n*(Ds_n[counter]*thickness*100)/volume1*f0(energy_n[counter],e_f,T)*N_cb;
+			integral_p = integral_p+de_p*(Ds_p[counter]*thickness*100)/volume1*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
 		else
 		{
-			integral_n = integral_n+de_n*Ds_n[counter]/volume1*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
-			integral_p = integral_p+de_p*Ds_p[counter]/volume1*f0(energy_p[counter],e_f,T)*N_vb;
-			// integral_n unit is 1/cm^3 ;
+			integral_n = integral_n+de_n*(Ds_n[counter]*thickness*100)/volume1*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
+			integral_p = integral_p+de_p*(Ds_p[counter]*thickness*100)/volume1*f0(energy_p[counter],e_f,T)*N_vb;
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
             }
         }
@@ -156,12 +168,16 @@ void find_fermi(double n, double T, int ii)
 		        integral_n = integral_n+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_n[counter],e_f,T)*N_cb;
 		        integral_p = integral_p+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_p[counter],-(e_f+Bgap[ii]),T)*N_vb;
 		        // multipiled with 1e21 to convert (1/nm)^3 to (1/cm)^3  
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
 		else
 		{
 		        integral_n = integral_n+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_n[counter],-(e_f+Bgap[ii]),T)*N_cb;
 		        integral_p = integral_p+(dk*(pow((k_grid[counter]/pi),2))*1e21)*f0(energy_p[counter],e_f,T)*N_vb;
 		        // multipiled with 1e21 to convert (1/nm)^3 to (1/cm)^3  
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 		}
                
             }
@@ -184,12 +200,21 @@ void find_fermi(double n, double T, int ii)
     E_F = e_f;
     n_e = integral_n;    // to have n in units of [1/cm^3]
     n_h = integral_p;    // to have n in units of [1/cm^3]
+			// integral_n unit is 1/cm^3 ; for 3D
+			// integral_n unit is 1/cm^2 ; for 2D
 
-
-        cout<<"E_F = "<<E_F<<" eV"<<endl;
-        cout<<"n_e = "<<n_e<<" cm^-3"<<endl;
-        cout<<"n_h = "<<n_h<<" cm^-3"<<endl;
-	
+	if(geometry==1)  // for 3D
+	{
+		cout<<"E_F = "<<E_F<<" eV"<<endl;
+		cout<<"n_e = "<<n_e<<" cm^-3"<<endl;
+		cout<<"n_h = "<<n_h<<" cm^-3"<<endl;
+	}
+	else if(geometry==2)  // for 2D
+	{
+		cout<<"E_F = "<<E_F<<" eV"<<endl;
+		cout<<"n_e = "<<n_e<<" cm^-2"<<endl;
+		cout<<"n_h = "<<n_h<<" cm^-2"<<endl;
+	}
 	//cout<<"n = "<<n<<endl;
 		
 	//cout<<"(n_e-n_h)/n = "<<(n_e-n_h)/n<<endl;
@@ -239,18 +264,21 @@ void find_fermi(double n, double T, int ii)
                 }
             }
 
-	    double a1;
-	    if (scattering_mechanisms[6]==1)   // disloaction scattering
-		a1 = abs(N_dis/c_lattice*1e7);
-	    else
-		a1=0;
-	    				
-            N_ii = (n_e + n_h) + a1;
-	    cout<<"Net ionized donors concentration =  "<<N_ii<<"  cm^(-3)"<<endl;
+	    if(geometry==1)  // for 3D
+	    {	
+		    double a1;
+		    if (scattering_mechanisms[6]==1)   // disloaction scattering
+			a1 = abs(N_dis/c_lattice*1e7);
+		    else
+			a1=0;
+		    				
+		    N_ii = (n_e + n_h) + a1;
+				cout<<"Net ionized donors concentration =  "<<N_ii<<"  cm^(-3)"<<endl;
 
-            // net neutral impurity
-            cout<<"Net neutral impurity =  "<<N_im[ii]<<" cm^(-3)"<<endl;
-
+			if(geometry==1)  // for 3D
+			    cout<<"Net neutral impurity =  "<<N_im[ii]<<" cm^(-3)"<<endl;
+			    // net neutral impurity
+	    }	
 }
 
 

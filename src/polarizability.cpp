@@ -92,7 +92,9 @@ void polarizability(double T, int ii)
 	//pz_q0 = abs(-gs*gv*m_eff/(2*pi*e*h_bar*e*h_bar));
 	
 	double pz_q0 = const1[0];
+	
 	cout<<" pz_q0 = "<<pz_q0<<endl;					
+	
 	
 	FILE *fid1;
 	fid1 = fopen("pz.dat","w");
@@ -102,6 +104,8 @@ void polarizability(double T, int ii)
 	for (int j=0;j<=limit6;j++)     // loop for q change in wave vector variation from 0 to 2k
 		fprintf(fid1," %e   %e \n",q[j], pz[j]);		
 
+	//*/
+	
 }
 
 

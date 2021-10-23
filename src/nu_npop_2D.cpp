@@ -465,6 +465,7 @@ void nu_npop_2D(double T)
 		}									
 	}  // else condiction for sceerning finshed here			
 	
+	/*
 	FILE *fid1;
 	
 	if(screening==0)
@@ -502,7 +503,7 @@ void nu_npop_2D(double T)
 	}
 		
 	fclose(fid1);
-
+	//*/
 }
 
 

@@ -32,7 +32,21 @@ double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screenin
 int pop_number, so_pop_number;
 double we_pop[limit5], we_to[limit5];
 double nu_pop_total[limit2], dist, nu_so_pop_total[limit2];
-double rimp, Si_so_pop_grid[limit2];
+double rimp;
+
+
+double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
+double gH_pop[limit2], hH_pop[limit2], gH_so_pop[limit2], hH_so_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2], Si_so_pop_grid_g[limit2], Si_so_pop_grid_h[limit2];
+
+
+double g[limit2], g_rta[limit2], g_old[limit2], g_iv[limit2], g_so_pop[limit2], g_pop[limit2];
+double g_th[limit2], g_th_old[limit2], g_th_pop[limit2], g_th_so_pop[limit2];
+double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1]; 
+double result_g_th[limit2][limit8+1], result_g_th_pop[limit2][limit8+1], result_g_th_so_pop[limit2][limit8+1];
+double Si_grid[limit2], Si_pop_grid[limit2], Si_so_pop_grid[limit2];
+double Si_th_grid[limit2], Si_th_pop_grid[limit2], Si_th_so_pop_grid[limit2];
+
 
 //---------------------------------------------------------------------------------------------------------------
 
@@ -53,30 +67,29 @@ double n0, Nd1,Na1, efef_n, efef_p, N_ii;
 int cc=-1, count_d, count_t, VASP=1, geometry=1;
 double mobility_ii, mobility_po, mobility_to, mobility_de, mobility_pe, mobility_dis, mobility_so_pop;
 double mobility_alloy, mobility_iv, mobility_neutral, mobility_npop, mobility_avg, mobility, mobility_rta;
-double mobility_hall_ii, mobility_hall_po, mobility_hall_to, mobility_hall_de;
+double mobility_hall_ii, mobility_hall_po, mobility_hall_so_po, mobility_hall_to, mobility_hall_de;
 double mobility_hall_pe, mobility_hall_dis, mobility_hall_alloy, mobility_hall_iv;
 double mobility_hall_neutral, mobility_hall_npop, mobility_hall_avg, mobility_hall, mobility_hall_rta, hall_factor1, hall_factor_rta1;
-double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta;
+double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta, peltier, thermal_conductivity;
 
 double denom[limit2];
 int plus_index_pop[limit5][limit2], minus_index_pop[limit5][limit2];
 int plus_index_so_pop[limit5][limit2], minus_index_so_pop[limit5][limit2];
-double g[limit2], g_rta[limit2], g_old[limit2], g_pop[limit2], g_iv[limit2], g_th[limit2];
-double g_so_pop[limit2], g_th_old[limit2], g_pop_th[limit2];
-double S_o_grid[limit2]={0}, S_o_grid_total[limit2]={0}, Si_grid[limit2], Si_pop_grid[limit2], Si_th_grid[limit2], Si_pop_th_grid[limit2];
-double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1], result_g_th[limit2][limit8+1];
 
-double N_poph_atT, df0dz_integral, N_e[limit4], beta_constant; 
+double N_poph_atT[limit5], df0dz_integral, N_e[limit4], beta_constant; 
 
 double k_min, k_trans, k_step_fine, k_step;
 int points, points1, points2;
 double df0dk_grid[limit2], f0x1_f0[limit2], electric_driving_force[limit2], thermal_driving_force[limit2], f_dist[limit2];
 
-double kplus_grid_pop[limit5][limit2], kminus_grid_pop[limit5][limit2], betaplus_grid[limit2], betaminus_grid[limit2];
+double kplus_grid_pop[limit5][limit2], kminus_grid_pop[limit5][limit2];
 double kplus_grid_so_pop[limit5][limit2], kminus_grid_so_pop[limit5][limit2];
 
-double  Aminus_grid[limit2], Aplus_grid[limit2], lambda_i_plus_grid[limit2], lambda_o_plus_grid[limit2];
-double lambda_i_minus_grid[limit2], lambda_o_minus_grid[limit2], lambda_e_plus_grid[limit2][limit4], lambda_e_minus_grid[limit2][limit4];
+double betaplus_grid[limit5][limit2], betaminus_grid[limit5][limit2];
+double Aminus_grid[limit5][limit2], Aplus_grid[limit5][limit2];
+double lambda_i_plus_grid[limit5][limit2], lambda_o_plus_grid[limit5][limit2];
+double lambda_i_minus_grid[limit5][limit2], lambda_o_minus_grid[limit5][limit2];
+double lambda_e_plus_grid[limit2][limit4], lambda_e_minus_grid[limit2][limit4];
 double lambda_e_plus_grid_npop[limit2][limit5], lambda_e_minus_grid_npop[limit2][limit5], N_npop[limit5];
 int npop_number;
 
@@ -85,24 +98,25 @@ int a11[2],b11[2];
 double h_bar,CBM,VBM;
 int count1,count2;
 int count_orbital, count_orbital_p;
+double px, Bx, Kx, sx;
+double result_gH[limit2][limit8+1], result_hH[limit2][limit8+1]; 
 
-double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
-double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
-double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2], S_o_gridH[limit2]={0}, S_o_grid_totalH[limit2]={0};
+double S_o_gridH[limit2]={0}, S_o_grid_totalH[limit2]={0};
 
 double mobility_all[11]={0} , calc_mobility[30][2] = {0}, calc_mobility_rta[30][2] = {0};
 double calc_thermopower[30][2] = {0}, calc_sigma[30][2] = {0}, calc_sigma_rta[30][2] = {0};
+double calc_peltier[30][2]={0}, calc_thermal_conductivity[30][2]={0} ;
 
 double calc_mobility_pe[30][1] = {0}, calc_mobility_de[30][1] = {0}, calc_mobility_dis[30][1] = {0}, calc_mobility_ii[30][1] = {0};
 double calc_mobility_po[30][1] = {0}, calc_mobility_to[30][1] = {0}, calc_mobility_alloy[30][1] = {0}, calc_mobility_iv[30][1] = {0};
 double calc_mobility_neutral[30][1] = {0}, calc_mobility_npop[30][1] = {0}, calc_mobility_so_pop[30][1] = {0};
 
-double mobility_hall_all[10]={0}, calc_mobility_hall[30][2] = {0}, calc_mobility_hall_rta[30][2] = {0};
+double mobility_hall_all[11]={0}, calc_mobility_hall[30][2] = {0}, calc_mobility_hall_rta[30][2] = {0};
 double calc_sigma_hall[30][2] = {0}, calc_sigma_hall_rta[30][2] = {0}, hall_factor[30][2] = {0}, hall_factor_rta[30][2] = {0};
 
 double calc_mobility_hall_pe[30][1] = {0}, calc_mobility_hall_de[30][1] = {0}, calc_mobility_hall_dis[30][1] = {0};
 double calc_mobility_hall_ii[30][1] = {0}, calc_mobility_hall_iv[30][1] = {0}, calc_mobility_hall_neutral[30][1] = {0}, calc_mobility_hall_npop[30][1] = {0};
-double calc_mobility_hall_po[30][1] = {0}, calc_mobility_hall_to[30][1] = {0}, calc_mobility_hall_alloy[30][1] = {0}; 
+double calc_mobility_hall_po[30][1] = {0}, calc_mobility_hall_so_po[30][1] = {0} ,calc_mobility_hall_to[30][1] = {0}, calc_mobility_hall_alloy[30][1] = {0}; 
 double kcbm[3],kvbm[3];
 
 double k_grid[limit2]={0}, v_n[limit2]={0}, v_p[limit2]={0};	
@@ -131,7 +145,7 @@ int length_fraction;
 int De_ionization,N_cb, N_vb, iterations=10, variation, scattering_mechanisms[11]={0}, iv_number, de_number;
 int fitting_1, fitting_2, fitting_3;
 
-double rho=0, k_max, N_dis, omega_LO, omega_TO, E_deformation[3]={0}, C_long, C_trans, C_za=0, c_bar, C_11, C_12, C_44,
+double rho=0, k_max, N_dis, omega_TO, E_deformation[3]={0}, C_long, C_trans, C_za=0, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 
 double Bfield=0;
@@ -490,23 +504,13 @@ void read_input_file()
 		  tmp>> rho;		  
 		}
 
-		if(str=="DISpopCATIONDENSITY")
+		if(str=="DISLOCATIONDENSITY")
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> N_dis;
-		  cout<< "DISpopCATION DENSITY " <<N_dis<< " /CM^2 "<<endl;
+		  cout<< "DISLOCATION DENSITY " <<N_dis<< " /CM^2 "<<endl;
 		}
-
-		if(str=="LPOPFREQUENCY") // for 3D
-		{
-		  getline(in,ss);
-		  stringstream tmp(ss);
-		  tmp>>omega_LO;
-		  cout<< "LONGITUDINAL POP FREQUENCY " <<omega_LO<< " THz " <<endl;
-	          omega_LO = omega_LO*2*pi*1e12;
-		}
-
 
 		if(str=="POPFREQUENCY")   // for 2D
 		{
@@ -601,12 +605,12 @@ void read_input_file()
 		  tmp>>C_za;
 		}
 
-		if(str=="ALpopYPOTENTIAL")
+		if(str=="ALLOYPOTENTIAL")
 		{
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> Uall;
-		  cout<< "ALpopY POTENTIAL " <<Uall<< "eV"<<endl;
+		  cout<< "ALLOY POTENTIAL " <<Uall<< "eV"<<endl;
 		}
 
 		if(str=="VOLUME-PRIMITIVECELL")
@@ -614,7 +618,7 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>> V0;
-		  cout<< "VOLUME OF PRIMITIVE CELL OF ALpopY  " <<V0<< " (nm)^3 "<<endl;
+		  cout<< "VOLUME OF PRIMITIVE CELL OF ALLOY  " <<V0<< " (nm)^3 "<<endl;
 		}
 
 		if(str=="FRACTIONOFATOM")
@@ -622,7 +626,7 @@ void read_input_file()
 		  getline(in,ss);
 		  stringstream tmp(ss);
 		  tmp>>xx;
-		  cout<< "FRACTION OF ATOM FOR ALpopY " <<xx<<endl;
+		  cout<< "FRACTION OF ATOM FOR ALLOY " <<xx<<endl;
 		}
 
 		if(str=="INTRAVALLEYPHONONFREQUENCY")
@@ -1047,7 +1051,29 @@ void read_input_file()
 		}	
 	}
 	
-	
+	if(type=="n" && geometry==1)  // 3D and n type
+	{
+		  scattering_mechanisms[10] = 0;	// so pop scattering	
+	}
+	else if(type=="p" && geometry==1)	// 3D and p-type
+	{
+		  scattering_mechanisms[4] = 0;	// Piezoelectric scattering          
+		  //scattering_mechanisms[5] = 0;  // Transverse optical POP scattering be default is zero
+		  scattering_mechanisms[6] = 0;	// Dislocation scattering 
+		  scattering_mechanisms[7] = 0;	// Alloy scattering
+		  scattering_mechanisms[8] = 0;	// Intra-valley scattering
+		  scattering_mechanisms[9] = 0;	// Neutral impurity scattering
+		  scattering_mechanisms[10] = 0;	// so pop scattering
+	}
+	else // 2D 
+	{
+		  //scattering_mechanisms[5] = 0;  // Transverse optical POP scattering be default is zero
+		  scattering_mechanisms[6] = 0;	// Dislocation scattering 
+		  scattering_mechanisms[7] = 0;	// Alloy scattering
+		  scattering_mechanisms[8] = 0;	// Intra-valley scattering
+		  scattering_mechanisms[9] = 0;	// Neutral impurity scattering
+	}	
+		
 	if(flag[0]==0)
 	{
 		cout<<"Temeprature is not given as input. Exit from program"<<endl;

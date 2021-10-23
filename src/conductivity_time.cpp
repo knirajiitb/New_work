@@ -32,47 +32,53 @@ void conductivity_time(double T, int j)
             {
 
                 for (int counter1 = 0;counter1 < points;counter1++)
+			Si_grid[counter1] = 0;
+			
+                for (int counter1 = 0;counter1 < points;counter1++)
                 {
                     double k_dum = k_grid[counter1];
 
-                    double arr[points];
-                    for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kminus_grid_pop[0][counter1]);
-                    int minus_index =FindMinInd(arr,points);
+		    // If POP scattering is included
+	            if (scattering_mechanisms[1] == 1)
+	            {
+			for (int m3 = 0;m3 < pop_number;m3++)
+			{	            
+				double arr[points];
+				for (int i=0;i<points;i++)
+				arr[i] = abs(k_grid[i] - kminus_grid_pop[m3][counter1]);
+				int minus_index =FindMinInd(arr,points);
 
-                    for (int i=0;i<points;i++)
-                        arr[i] = abs(k_grid[i] - kplus_grid_pop[0][counter1]);
-                    int plus_index =FindMinInd(arr,points);
+				for (int i=0;i<points;i++)
+				arr[i] = abs(k_grid[i] - kplus_grid_pop[m3][counter1]);
+				int plus_index =FindMinInd(arr,points);
 
-                    // If POP scattering is included
-                    if (scattering_mechanisms[1] == 1)
-                    {
-                        Si_grid[counter1] = (N_poph_atT + f_dist[counter1])*lambda_i_minus_grid[counter1]*g_time[minus_index]+
-                        (N_poph_atT+1-f_dist[counter1])*lambda_i_plus_grid[counter1]*g_time[plus_index];
-			
-			                            
-                            /*
-                            cout<<"counter1 = "<<counter1<<endl;
-                            cout<<"Si_grid[counter1] = "<<Si_grid[counter1]<<endl;
-      			     cout<<"N_poph_atT =    "<<N_poph_atT<<endl;
-			     cout<<"lambda_o_minus_grid[counter1] =    "<<lambda_o_minus_grid[counter1]<<endl;
-			     cout<<"lambda_o_plus_grid[counter1]   "<<lambda_o_plus_grid[counter1]<<endl;
-			     getchar();
-			     //*/	                            
-                    }
-
+				Si_grid[counter1] = Si_grid[counter1] + 
+				Sa_pop[m3][counter1]*g_time[minus_index] + Se_pop[m3][counter1]*g_time[plus_index];
+					                    
+				/*
+				cout<<"counter1 = "<<counter1<<endl;
+				cout<<"Si_grid[counter1] = "<<Si_grid[counter1]<<endl;
+				cout<<"N_poph_atT[m3] =    "<<N_poph_atT[m3]<<endl;
+				cout<<"Sa_pop[m3][counter1] =    "<<Sa_pop[m3][counter1]<<endl;
+				cout<<"Se_pop[m3][counter1]   "<<Se_pop[m3][counter1]<<endl;
+				getchar();
+				//*/	                            
+		            }
+			}
                 }
                 
 
                 for (int counter1=0;counter1<points;counter1++)
                 {
                 	if(j!=0)
-            		{
-		    		g_time[counter1] = (Si_grid[counter1] + electric_driving_force_new[counter1] + omega_s*g_time_old[counter1])/(denom1[counter1]);
+			{
+				g_time[counter1] = (Si_grid[counter1] + electric_driving_force_new[counter1] +
+				 omega_s*g_time_old[counter1])/(denom1[counter1]);
 			}
 			else
 			{
-		    		g_time[counter1] = (Si_grid[counter1] + electric_driving_force_new[counter1])/denom1[counter1];
+		    		g_time[counter1] = (Si_grid[counter1] + electric_driving_force_new[counter1])
+		    		/denom1[counter1];
 			
 			}
 			
@@ -92,7 +98,7 @@ void conductivity_time(double T, int j)
 			            
                 }
                    
-            }
+            }  // uteration loop ends here
             
 	for (int counter1=0;counter1<points;counter1++)
 		g_time_old[counter1] = g_time[counter1];

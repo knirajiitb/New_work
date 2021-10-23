@@ -71,9 +71,20 @@ double mu_overall(double e_f,double T,double coefficients[5][7],double kindex[],
 		// =int[f(En)*DOS(En)*dEn]
         }
     }
+	
+	/*
+	cout<<endl<<"integral_numerator   =   "<<integral_numerator<<" 1/cm^3"<<endl;
+	if(geometry==1)
+		cout<<"integral_denominator   =   "<<integral_denominator<<" 1/cm^3"<<endl;
+	else	
+		cout<<"integral_denominator*thickness = "<<integral_denominator*thickness*100<<" 1/cm^2"<<endl;
+
+	getchar();
+	*/
 
     double mobility_overall;
 
+	
     if(geometry==1)  // for 3D   
     	mobility_overall = (1/3.0)*integral_numerator/integral_denominator;
     else if(geometry==2)   // for 2D		

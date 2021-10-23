@@ -64,7 +64,7 @@ void nu_so_pop_2D(double T, int T_loop)
 			cout<<"Fv2 = "<<Fv2<<endl;
 			cout<<"so_popconst = "<<so_popconst<<endl;
 			cout<<"we_so_pop[m3] = "<<we_so_pop[m3]<<endl;
-			cout<<"to_pop[m3] = "<<to_pop[m3]<<endl;
+			//cout<<"to_pop[m3] = "<<to_pop[m3]<<endl;
 			getchar();
 			//*/
 			
@@ -156,7 +156,7 @@ void nu_so_pop_2D(double T, int T_loop)
 				cout<<"J_minus =  "<<J_minus<<endl;
 				cout<<"I_plus =  "<<I_plus<<endl;
 				cout<<"I_minus =  "<<I_minus<<endl;
-				*/
+				//*/
 	    			// ----------------- out scattering rate is calculated here -------------------------
 	    			if(E_plus < energy_n[points-1])
 					So_ab_so_pop[m3][i] = so_popconst*(Nv)*(1 - fp)*I_plus*k_plus/(v_plus*(1-f));
@@ -470,13 +470,14 @@ void nu_so_pop_2D(double T, int T_loop)
 		getchar();
 		*/
 	}									
-		/*
-		cout<<"so_pop[m3][i] = "<<so_pop[0][i]<<endl;
-		cout<<"nu_so_pop_total[i] = "<<nu_so_pop_total[i]<<endl;
-		getchar();
-		*/
-										
 
+	/*
+	cout<<"so_pop[m3][i] = "<<so_pop[0][i]<<endl;
+	cout<<"nu_so_pop_total[i] = "<<nu_so_pop_total[i]<<endl;
+	getchar();
+	*/
+										
+	/*
 	FILE *fid1;
 	if(screening==0)		
 		fid1 = fopen("so_pop_scattering_rate.dat","w");
@@ -514,6 +515,8 @@ void nu_so_pop_2D(double T, int T_loop)
 	}
 		
 	fclose(fid1);
+	//*/
+	
 
 }
 

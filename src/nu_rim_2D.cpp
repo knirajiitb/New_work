@@ -195,7 +195,7 @@ void nu_rim_2D(double T)
 	} // else part with screening completed
 	
 		
-			
+	/*		
 	
 	FILE *fid1;
 	if(screening==0)
@@ -209,7 +209,7 @@ void nu_rim_2D(double T)
 		fprintf(fid1,"  %e    	%e   \n", energy_n[i], nu_ionizedimpurity[i] );
 
 	fclose(fid1);
-	
+	//*/
 }
 
 

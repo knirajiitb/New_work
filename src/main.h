@@ -42,7 +42,7 @@ using namespace std;
 #define k_step_fine0  0.001
 #define k_step0 0.01
 #define E 1    // Electric field unit cgs V/cm
-#define dTdz 10
+#define dTdz 10   // K/
 #define LORBIT 11
 #define limit1 6000  // size for time variation
 #define limit2 2000  // size for kpoints after fitting
@@ -60,7 +60,7 @@ extern int linear_fit, SORT, geometry, save_data;
 
 //-----------function for Valence band --------
 void nu_ii_p_funct(int T_loop);
-void nu_pop_p_funct(double T, int T_loop,double omega_LO);
+void nu_pop_p_funct(double T, int T_loop);
 void nu_npop_p_funct(double T);
 void nu_de_p_funct(int T_loop);
 
@@ -76,7 +76,7 @@ void nu_rim_2D(double T);
 
 extern double eps_sub_low, eps_sub_high, eps_up_low, eps_up_high, eps_avg_low, screening, thickness;
 extern double q[limit6+1], pz[limit6+1], X[limit7+1], Y[limit7+1], Z[limit7+1], theta[limit7+1];
-
+extern double px, Bx, Kx, sx;
 extern double So_ab_npop[limit5][limit2], So_em_npop[limit5][limit2], Se_npop[limit5][limit2], Sa_npop[limit5][limit2];
 extern double So_ab_pop[limit5][limit2], So_em_pop[limit5][limit2], Se_pop[limit5][limit2], Sa_pop[limit5][limit2];
 extern double So_ab_so_pop[limit5][limit2], So_em_so_pop[limit5][limit2], Se_so_pop[limit5][limit2], Sa_so_pop[limit5][limit2];
@@ -94,6 +94,8 @@ void read_input_file();
 void copyright(); 
 void generate_output_files();
 
+//double heat_current_density(double e_f,double T,double coefficients[5][7],double kindex[], double g[],double nu_el[],int points,int aa[], double energy[], double v[], double Ds[]);
+//double electric_current_density(double e_f,double T,double coefficients[5][7],double kindex[], double g[],double nu_el[],int points,int aa[], double energy[], double v[], double Ds[]);
 void find_cbm_vbm(int , int);
 void calculate_mobility(double T, int ii);
 
@@ -154,21 +156,20 @@ double df0dz(double k, double e_f, double T, double df0dz_integral, double coeff
 
 double mu_elastic(double e_f,double T,double coefficients[5][7],double kindex[],double nu_elastic[],double g[],int points, int aa[], double energy[], double v[], double Ds[]);
 double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[],
-        double nu_elastic[], int points, int aa[]);
+        double nu_elastic[], int points, int aa[], double energy[], double v[], double Ds[]);
 
 double mu_overall(double e_f,double T,double coefficients[5][7],double kindex[],
         double g[],double nu_el[],int points,int aa[], double energy[], double v[], double Ds[]);
 double mu_overallH(double e_f,double T,double coefficients[5][7],double kindex[],
-        double g[], double h[], double nu_el[],int points,int aa[]);
+        double g[], double h[], double nu_el[],int points,int aa[], double energy[], double v[], double Ds[]);
 
 void save_scattering_rate();
 void save_perturbation();
 double mu_po(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double g[],double nu_el[],int points, int aa[], double energy[], double v[], double Ds[]);
-double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double h_LO[],double nu_el[],int points, int aa[]);
+double mu_poH(double e_f,double T,double coefficients[5][7],double kindex[], double g_LO[],double h_LO[],double nu_el[],int points, int aa[], double energy[], double v[], double Ds[]);
 void components_BTE(double T, int T_loop, double efefn, double efefp, int ii);
 
-double J(double T,double m,double g_th[],  int points, double v[]);
-double DOS_value1(double energy, int a);
+double J(double T,double g_th[],  int points, double v[]);
 int read_ispin();
 void fitting_band();
 void solve_g(double T);
@@ -268,7 +269,7 @@ extern int points, points1, points2;
 
 extern int De_ionization,N_cb, N_vb, iterations, scattering_mechanisms[11], iv_number, de_number, fitting_1, fitting_2, fitting_3;
 
-extern double Ed, c_lattice, rho, k_max, N_dis, omega_LO, omega_TO, E_deformation[3], C_long, C_trans, C_za, c_bar, C_11, C_12, C_44,
+extern double Ed, c_lattice, rho, k_max, N_dis, omega_TO, E_deformation[3], C_long, C_trans, C_za, c_bar, C_11, C_12, C_44,
 C_piezo_c14, P_piezo_h14, Uall, V0, xx, m ,m_h, T_trans ;
 
 extern double Bfield;
@@ -301,17 +302,18 @@ extern double df0dk_grid[limit2], f0x1_f0[limit2], electric_driving_force[limit2
 extern double kplus_grid_pop[limit5][limit2], kminus_grid_pop[limit5][limit2];
 extern double kplus_grid_so_pop[limit5][limit2], kminus_grid_so_pop[limit5][limit2];
 
-extern double betaplus_grid[limit2], betaminus_grid[limit2];
+extern double betaplus_grid[limit5][limit2], betaminus_grid[limit5][limit2];
 
-extern double  Aminus_grid[limit2], Aplus_grid[limit2], lambda_i_plus_grid[limit2], lambda_o_plus_grid[limit2];
-extern double lambda_i_minus_grid[limit2], lambda_o_minus_grid[limit2];
+extern double Aminus_grid[limit5][limit2], Aplus_grid[limit5][limit2];
+extern double lambda_i_plus_grid[limit5][limit2], lambda_o_plus_grid[limit5][limit2];
+extern double lambda_i_minus_grid[limit5][limit2], lambda_o_minus_grid[limit5][limit2];
 extern double lambda_e_plus_grid[limit2][limit4], lambda_e_minus_grid[limit2][limit4];
 extern double B_ii, D_ii, A_ii;
 
 extern double lambda_e_plus_grid_npop[limit2][limit5], lambda_e_minus_grid_npop[limit2][limit5], N_npop[limit5];
 extern double we_npop[limit5],De_npop[limit5];
 
-extern double N_poph_atT, N_e[limit4], df0dz_integral, beta_constant;
+extern double N_poph_atT[limit5], N_e[limit4], df0dz_integral, beta_constant;
 
 
 extern double nu_deformation[limit2], nu_piezoelectric[limit2], nu_ionizedimpurity[limit2], nu_dislocation[limit2], nu_alloy[limit2];
@@ -323,42 +325,44 @@ extern double nu_deformation_p[limit2][2][2], nu_ionizedimpurity_p[limit2][2][2]
 extern double nu_npop_p[limit2][2][2], nu_So_p[limit2][2][2];
 
 extern double beta1[limit2], gH[limit2], hH[limit2], gH_rta[limit2], hH_rta[limit2];
-extern double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
-extern double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2];
+extern double gH_pop[limit2], hH_pop[limit2], gH_so_pop[limit2], hH_so_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
+extern double Si_pop_grid_g[limit2], Si_pop_grid_h[limit2], Si_so_pop_grid_g[limit2], Si_so_pop_grid_h[limit2];
 
 
-extern double Si_grid[limit2];
-extern double Si_pop_grid[limit2], Si_th_grid[limit2], Si_pop_th_grid[limit2];
+extern double g[limit2], g_rta[limit2], g_old[limit2], g_iv[limit2], g_so_pop[limit2], g_pop[limit2];
+extern double g_th[limit2], g_th_old[limit2], g_th_pop[limit2], g_th_so_pop[limit2];
+extern double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1]; 
+extern double result_g_th[limit2][limit8+1], result_g_th_pop[limit2][limit8+1], result_g_th_so_pop[limit2][limit8+1];
+extern double Si_grid[limit2], Si_pop_grid[limit2], Si_so_pop_grid[limit2];
+extern double Si_th_grid[limit2], Si_th_pop_grid[limit2], Si_th_so_pop_grid[limit2];
+extern double result_gH[limit2][limit8+1], result_hH[limit2][limit8+1]; 
 
 extern int plus_index_pop[limit5][limit2], minus_index_pop[limit5][limit2]; 
 extern int plus_index_so_pop[limit5][limit2], minus_index_so_pop[limit5][limit2];
 
-extern double g[limit2], g_rta[limit2], g_old[limit2], g_so_pop[limit2], g_pop[limit2];
-extern double g_iv[limit2], g_th[limit2], g_th_old[limit2], g_pop_th[limit2];
-extern double result_g[limit2][limit8+1], result_g_pop[limit2][limit8+1], result_g_so_pop[limit2][limit8+1], result_g_th[limit2][limit8+1];
-extern double gH_pop[limit2], hH_pop[limit2], Si_grid_g[limit2], Si_grid_h[limit2];
-
 extern double mobility_ii, mobility_po, mobility_to, mobility_npop, mobility_de, mobility_pe, mobility_dis, mobility_so_pop;
 extern double mobility_alloy, mobility_iv, mobility_neutral, mobility_npop, mobility_avg, mobility, mobility_rta;
-extern double mobility_hall_ii, mobility_hall_po, mobility_hall_to, mobility_hall_npop, mobility_hall_de;
+extern double mobility_hall_ii, mobility_hall_po, mobility_hall_so_po, mobility_hall_to, mobility_hall_npop, mobility_hall_de;
 extern double mobility_hall_pe, mobility_hall_dis, mobility_hall_alloy, mobility_hall_iv;
 extern double mobility_hall_neutral, mobility_hall_npop, mobility_hall_avg, mobility_hall, mobility_hall_rta, hall_factor1, hall_factor_rta1;
-extern double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta;
+extern double sigma_hall_rta, sigma_hall, thermopower, sigma, sigma_rta, peltier, thermal_conductivity;
 
 extern double mobility_all[11] , calc_mobility[30][2] , calc_mobility_rta[30][2] ;
-extern double calc_thermopower[30][2] , calc_sigma[30][2] , calc_sigma_rta[30][2] ;
+extern double calc_thermopower[30][2] , calc_sigma[30][2] , calc_sigma_rta[30][2];
+extern double calc_peltier[30][2], calc_thermal_conductivity[30][2];
 
 extern double calc_mobility_pe[30][1] , calc_mobility_de[30][1] , calc_mobility_dis[30][1] , calc_mobility_ii[30][1] ;
 extern double calc_mobility_po[30][1] , calc_mobility_to[30][1] , calc_mobility_alloy[30][1] , calc_mobility_iv[30][1] ;
 extern double calc_mobility_neutral[30][1], calc_mobility_npop[30][1], calc_mobility_so_pop[30][1] ;
 
-extern double mobility_hall_all[10], calc_mobility_hall[30][2] , calc_mobility_hall_rta[30][2];
+extern double mobility_hall_all[11], calc_mobility_hall[30][2] , calc_mobility_hall_rta[30][2];
 extern double calc_sigma_hall[30][2] , calc_sigma_hall_rta[30][2] , hall_factor[30][2] , hall_factor_rta[30][2] ;
 
 extern double calc_mobility_hall_pe[30][1] , calc_mobility_hall_de[30][1] , calc_mobility_hall_dis[30][1] ;
 extern double calc_mobility_hall_ii[30][1] , calc_mobility_hall_iv[30][1] , calc_mobility_hall_neutral[30][1] ;
 extern double calc_mobility_hall_npop[30][1];
-extern double calc_mobility_hall_po[30][1], calc_mobility_hall_to[30][1], calc_mobility_hall_alloy[30][1];
+extern double calc_mobility_hall_po[30][1], calc_mobility_hall_so_po[30][1], 
+calc_mobility_hall_to[30][1], calc_mobility_hall_alloy[30][1];
 extern double n0,Nd1,Na1, efef_n, efef_p, N_ii;
 //-------------------------------------------------------------------------------------------------------------
 #endif // MAIN_H_INCLUDED

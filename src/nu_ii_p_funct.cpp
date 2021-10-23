@@ -76,6 +76,7 @@ void nu_ii_p_funct(int T_loop)
 		iiB = abs((3*A -1)*(3*A -1)*log(B) - 18*A +12 -8/(A+1));
 				
 		nu_ionizedimpurity_p[counter][0][0]= iiA*iiB  ; 
+		nu_ionizedimpurity[counter]= nu_ionizedimpurity_p[counter][0][0]; 
 		/*
 		cout<<"counter = "<<counter<<endl;	
 		cout<<"v = "<<v<<endl;

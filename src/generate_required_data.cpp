@@ -45,7 +45,7 @@ void generate_required_data(double T)
 		else
 		    k_dum = k_trans+(counter-points1+1)*k_step;
 
-		k_grid[counter] = k_dum;
+		k_grid[counter] = k_dum;  // unit 1/nm
 		//cout<<"k_grid[counter] = "<<k_grid[counter]<<endl;
 
 		energy_n[counter] = conduction_dispersion(k_dum, coefficients_cond, kindex_cond, a11);

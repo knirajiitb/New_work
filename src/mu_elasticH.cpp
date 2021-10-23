@@ -1,7 +1,7 @@
 
 #include"main.h"
 
-double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[], double nu_elastic[], int points, int aa[])
+double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[], double nu_elastic[], int points, int aa[], double energy[], double v[], double Ds[])
 // It gives effect of an elastic scattering mechanism on mobility in units of (cm^2/V.s)
 {
 
@@ -18,7 +18,7 @@ double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[]
     
 	for (int counter = 0;counter<points-1;counter++)
 	{   
-	  	beta1[counter] = e*(v_n[counter]*0.01)*Bfield/((h_bar*e)*(k_grid[counter]*pow(10,9)) *(nu_elastic[counter]));
+	  	beta1[counter] = e*(v[counter]*0.01)*Bfield/((h_bar*e)*(k_grid[counter]*pow(10,9)) *(nu_elastic[counter]));
 	  	// unitless	
 	}	  	
     
@@ -27,11 +27,11 @@ double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[]
         for (int counter = 0;counter<points-1;counter++)
         {
             k_step = (k_grid[counter+1]-k_grid[counter])/factor;
-            dv = (v_n[counter+1]-v_n[counter])/factor;
+            dv = (v[counter+1]-v[counter])/factor;
 
             ddf = (df0dk(k_grid[counter+1],T,e_f,coefficients,kindex,aa) - 								 df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa))/factor;
  
-		df = (f0(energy_n[counter+1],e_f,T)-f0(energy_n[counter],e_f,T))/factor;
+		df = (f0(energy[counter+1],e_f,T)-f0(energy[counter],e_f,T))/factor;
 
             for (int i=0;i<=factor-1;i++)
             {
@@ -42,12 +42,12 @@ double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[]
                 
                 // The last number is the conversion from convensional units to cancel out to be unitless (as in g)
                 
-                integral_numerator = integral_numerator + k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter] +     				i*dv)*h_elastic[counter]/(Bfield*0.0001);
+                integral_numerator = integral_numerator + k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter] +     				i*dv)*h_elastic[counter]/(Bfield*0.0001);
                                 // Bfield is multplied with 0.0001 to convert into cgs unit
                                 
                 // =1/Bfield*int[h_elastic(En)*DOS(En)*v(En)*dEn]
 
-                integral_denominator = integral_denominator + k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v_n[counter] +     				i*dv)*g_elastic[counter];
+                integral_denominator = integral_denominator + k_step*pow(((k_grid[counter]+i*k_step)/pi),2)*(v[counter] +     				i*dv)*g_elastic[counter];
             }
         }
     }
@@ -55,9 +55,9 @@ double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[]
     {
         for (int counter = 0;counter<dos_intervals-1;counter++)
         {
-            de = (energy_n[counter+1]-energy_n[counter])/factor;
-            ds = (Ds_n[counter+1]-Ds_n[counter])/factor;
-            dv = (v_n[counter+1]-v_n[counter])/factor;
+            de = (energy[counter+1]-energy[counter])/factor;
+            ds = (Ds[counter+1]-Ds[counter])/factor;
+            dv = (v[counter+1]-v[counter])/factor;
             ddf = (df0dk(k_grid[counter+1],T,e_f,coefficients,kindex,aa)-df0dk(k_grid[counter],T,e_f,coefficients,kindex,aa))/ factor;
 
             for (int i = 0;i<=factor-1;i++)
@@ -68,11 +68,11 @@ double mu_elasticH(double e_f,double T,double coefficients[5][7],double kindex[]
                 
 
                 //// The last number is the conversion from convensional units to cancel out to be unitless (as in g)
-                integral_numerator = integral_numerator+de*(Ds_n[counter]+i*ds)/volume1*(v_n[counter]+i*dv)*h_elastic[counter]/(Bfield*0.0001);
+                integral_numerator = integral_numerator+de*(Ds[counter]+i*ds)/volume1*(v[counter]+i*dv)*h_elastic[counter]/(Bfield*0.0001);
                 //// =1/Bfield*int[h_elastic(En)*DOS(En)*v(En)*dEn]
                                 // Bfield is multplied with 0.0001 to convert into cgs unit
 
-                integral_denominator = integral_denominator + de*(Ds_n[counter]+i*ds)/volume1*(v_n[counter]+i*dv)*g_elastic[counter];
+                integral_denominator = integral_denominator + de*(Ds[counter]+i*ds)/volume1*(v[counter]+i*dv)*g_elastic[counter];
                 //// = int[h_elastic(En)*DOS(En)*v(En)*dEn]
             }
         }
